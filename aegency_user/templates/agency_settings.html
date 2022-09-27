@@ -1,0 +1,368 @@
+{% extends 'agency_base.html' %}
+{% load static %}
+{% block title %}
+    <title>Agency Settings</title>
+{% endblock %}
+
+{% block page_content %}
+<div class="rw_inner_area rw_inner_form_area ">
+    <div class="rw_tabs">
+        <ul class="nav rw_tab_ul" id="myTab" role="tablist">
+            <li class="nav-item" role="presentation">
+                <a href="javascript:;" class="active tab_link" id="account_settings_tab" data-bs-toggle="tab"
+                    data-bs-target="#account_settings" role="tab">account settings</a>
+            </li>
+            <li class="nav-item" role="presentation">
+                <a href="{% url 'agency-change-password' %}" class="tab_link" id="change_password_tab"  aria-selected="false">Change Password</a>
+            </li>
+            <li class="nav-item" role="presentation">
+                <a href="{% url 'agency-twillio' %}" class="tab_link" id="account_twili_tab"  aria-selected="false">twilio</a>
+            </li>
+            <li class="nav-item" role="presentation">
+                <a href="{% url 'agency-whitelabel-setting' %}" class="tab_link" id="agency_whitelabel_tab"  aria-selected="false">Whitelabel</a>
+            </li>
+        </ul>
+
+        <!-- Tab panes -->
+       {% if messages %}
+    {% for message in messages %}
+         {% if message.tags == 'error' %}
+             <div class="rw_suc_err_wrapper rw_error_toast active" >
+                <div class="rw_suc_err_block ">
+                    <img src="{% static 'images/icons/error.svg'%}" alt="error">
+                    <p>There was a problem saving your changes</p>
+                    <a href="javascript:;" class="close error_close"><img src="{% static 'images/icons/close_white.svg'%}" alt="close"></a>
+                </div>
+            </div>
+        {% else %}
+        <div class="rw_suc_err_wrapper rw_success_toast active" >
+            <div class="rw_suc_err_block ">
+                <img src="{% static 'images/icons/check_white.svg' %}" alt="Done">
+                <p>{{message}}</p>
+                <a href="javascript:;" class="close success_close"><img src="{% static 'images/icons/close_white.svg' %}" alt="close"></a>
+            </div>
+        </div>
+        {% endif %}
+{% endfor %}
+{% endif %}
+       <div class="tab-content">
+            <div class="tab-pane active" id="account_settings" role="tabpanel">
+                <div class="rw_inner_form_inner_area ">
+                    <form action="" method="post" id="agency_form">
+
+                    {% csrf_token %}
+                    <div class="rw_inn_form_box">
+                        <div class="row">
+                            <div class="col-lg-4 col-md-6">
+                                <div class="rw_form_inputs" id="div_business">
+                                    <label class="rw_form_label">Business Name</label>
+                                    <div class="rw_input">
+                                        {{agency_form.business_name}}
+                                        <span class="input_icon business"></span>
+                                    </div>
+                                    <div class="form_error"  id="business_error"></div>
+                                </div>
+                            </div>
+                            <div class="col-lg-4 col-md-6">
+                                <div class="rw_form_inputs" id="div_email">
+                                    <label class="rw_form_label">Business Email</label>
+                                    <div class="rw_input">
+                                        {{agency_form.business_email}}
+                                        <span class="input_icon email"></span>
+                                    </div>
+                                    <div class="form_error"  id="email_error"></div>
+                                </div>
+                            </div>
+                            <div class="col-lg-4 col-md-6">
+                                <div class="rw_form_inputs">
+                                    <label class="rw_form_label">Business Phone</label>
+                                    <div class="rw_input">
+                                        {{agency_form.business_phone_no}}
+                                        <span class="input_icon phone"></span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-4 col-md-6">
+                                <div class="rw_form_inputs">
+                                     <label class="rw_form_label">Time Zone</label>
+                                    <div class="rw_custom_dropdown">
+
+                                            {{agency_form.time_zone}}
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="rw_inn_form_box">
+                        <div class="row">
+                            <div class="col-lg-8 col-md-12">
+                                <div class="rw_form_inputs">
+                                    <label class="rw_form_label">address</label>
+                                    <div class="rw_input">
+                                        {{add_form.address }}
+                                        <span class="input_icon location"></span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-lg-4 col-md-6">
+                                <div class="rw_form_inputs">
+                                    <label class="rw_form_label">Country</label>
+                                    <div class="rw_custom_dropdown">
+
+                                            {{add_form.country}}
+
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-4 col-md-6">
+                                <div class="rw_form_inputs">
+                                    <label class="rw_form_label">State</label>
+                                    <div class="rw_custom_dropdown">
+
+                                            {{add_form.state}}
+
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-4 col-md-6">
+                                <div class="rw_form_inputs">
+                                    <label class="rw_form_label">City</label>
+                                    <div class="rw_input">
+                                        {{ add_form.city }}
+                                        <span class="input_icon"></span>
+                                    </div>
+                                    <!-- <div class="rw_dropdown">
+                                            <div class="select_dropdown">
+                                                <span class="input_icon"><img src="../assets/images/icons/caret.svg" alt="caret"></span>
+                                                <select  >
+                                                    <option value="" class="drop_option">Choose City</option>
+                                                    <option value="">Indore</option>
+                                                    <option value="">Bhopal</option>
+                                                    <option value="">Dewas</option>
+                                                </select>
+                                            </div>
+                                        </div> -->
+                                </div>
+                            </div>
+                            <div class="col-lg-4 col-md-6">
+                                <div class="rw_form_inputs">
+                                    <label class="rw_form_label">Zip</label>
+                                    <div class="rw_input">
+                                        {{add_form.zip_code }}
+                                        <span class="input_icon"></span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="rw_save_btn">
+                        <input type="button" class="rw_btn" value="save changes" id="submit_btn" style="border:none;">
+                    </div>
+                
+                    </form>
+            
+                </div>
+            </div>
+
+    </div>
+</div>
+
+<div class="modal fade twilio_modal rw_modal" id="twilio_edit" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal_title">
+                    <img src="{% static 'images/twilio-logo.svg'%}" alt="twilio-logo">
+                    <h4>StarBucks no 1</h4>
+                </div>
+                <a href="javascript:;" class="popup_close" data-bs-dismiss="modal" aria-label="Close"><img
+                        src="{% static 'images/icons/close.svg'%}" alt="close"></a>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="rw_form_inputs">
+                            <label class="rw_form_label">Account SID</label>
+                            <div class="rw_input">
+                                <input type="text" placeholder="Account SID" value="abcdecdwh87r32ijv4h6ufgb">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-12">
+                        <div class="rw_form_inputs">
+                            <label class="rw_form_label">Auth Token</label>
+                            <div class="rw_input">
+                                <input type="password" class="eye_pass" placeholder="Auth Token" value="545646546545">
+                                <span class="input_icon rw_eye"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <ul class="modal_btns">
+                    <li><a href="javascript:;" class="modal_btn cancel" data-bs-dismiss="modal">cancel</a></li>
+                    <li><a href="javascript:;" class="modal_btn">save</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+{% endblock %}
+
+
+{% block script %}
+<script>
+$('#id_business_phone_no').on('keypress', function (event) {
+    var regex = new RegExp("^[0-9]+$");
+    var key = String.fromCharCode(!event.charCode ? event.which : event.charCode);
+    if (!regex.test(key)) {
+       event.preventDefault();
+       return false;
+    }
+});
+const validateEmail = (email) => {
+            return email.match(
+                /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+        );
+        };
+    
+        $(document).ready(function(){
+        var state_value = $('#id_state').val()
+        console.log(state_value);
+        if ($("#id_country").val() != 0){
+            
+                console.log('aaaaaa')
+                link = "{% url 'country-state' %}";
+                $.ajax({
+                    type: 'GET',
+                    url: link,
+                    data: {
+                        id: $("#id_country").val(),
+                    },
+                    success: function (response) {
+                        if (response['status'] == true) {
+                            $('#id_state').empty()
+                            $('#id_state').append("<option value='' selected>Select State/Region</option>")
+                            for (let i = 0; i < response['state'].length; i++) {
+                                $('#id_state').append("<option value=" + response['state'][i]['id'] + ">" + response['state'][i]['name'] + "</option>")
+                            }
+
+                        }
+                        $('#id_state').val(state_value).change()
+                    }
+                });
+            
+        }else{
+            $('#id_state').empty()
+            $('#id_state').append("<option value='' selected>Select State/Region</option>")
+        }
+    });
+    
+    $('#id_country').change(function () {
+        console.log('aaaaaa')
+        link = "{% url 'country-state' %}";
+        $.ajax({
+            type: 'GET',
+            url: link,
+            data: {
+                id: $("#id_country").val(),
+            },
+            success: function (response) {
+                if (response['status'] == true) {
+                    $('#id_state').empty()
+                    $('#id_state').append("<option value='' selected>Select State/Region</option>")
+                    for (let i = 0; i < response['state'].length; i++) {
+                        $('#id_state').append("<option value=" + response['state'][i]['id'] + ">" + response['state'][i]['name'] + "</option>")
+                    }
+
+                }
+            }
+        });
+    });
+    $('#twl_btn').click(function () {
+         console.log('assdasdasd')
+         if ($("#acc_sid").val().trim().length <= 0) {
+            $('#acc_sid_error').text('Please enter Account SID')
+            $('#div_acc_sid').addClass('error')
+        }
+        if ($("#auth_token").val().trim().length <= 0) {
+            $('#auth_token_error').text('Please enter Auth Token')
+            $('#div_auth_token').addClass('error')
+
+        }
+        if ($("#acc_sid").val().trim().length > 0 && $("#auth_token").val().length > 0) {
+            link = "{% url 'agency-twillio' %}";
+            $.ajax({
+                type: 'POST',
+                url: link,
+                data: {
+                    acc_sid: $("#acc_sid").val(),
+                    auth_token:$("#auth_token").val(),
+                    csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val(),
+                },
+                success: function (response) {
+                    console.log(response)
+                    if(response['status']==true){
+                        $('#message').text(response['message'])
+                    }else{
+                       $('#message').text(response['message'])
+                       $('#message').css({"color": "red", "font-size":"16px"})
+
+                    }
+
+                }
+            });
+        }
+
+    });
+    $('#acc_sid').on('keyup change', function (event) {
+        if ($("#acc_sid").val().length > 0) {
+            $("#acc_sid_error").text('')
+            $('#div_acc_sid').removeClass('error')
+        }
+    });
+    $('#auth_token').on('keyup change', function (event) {
+        if ($("#auth_token").val().length > 0) {
+            $("#auth_token_error").text('')
+            $('#div_auth_token').removeClass('error')
+        }
+    });
+    $('#submit_btn').on('click', function (event) {
+        var valid=true;
+        if ($("#id_business_email").val().length > 0) {
+           if (!validateEmail($("#id_business_email").val())){
+               $('#email_error').text('Please enter proper Email')
+               $('#div_email').addClass('error')
+                valid = false;
+           }
+        }
+
+        if ($("#id_business_name").val().trim().length <= 0) {
+            $('#business_error').text('Please enter Business Name')
+            $('#div_business').addClass('error')
+        }else if(valid == false){
+            console.log('asdasdas',valid)
+        }else{
+            $('#loader').removeClass('rw_loader_none')
+            $("#agency_form").submit()
+        }
+    });
+    $('#id_business_name').on('keyup change', function (event) {
+        if ($("#id_business_name").val().length > 0) {
+            $("#business_error").text('')
+            $('#div_business').removeClass('error')
+        }
+    });
+    $('#id_business_email').on('keyup change', function (event) {
+        if ($("#id_business_name").val().length > 0) {
+            $("#email_error").text('')
+            $('#div_email').removeClass('error')
+        }
+    });;
+</script>
+{% endblock %}

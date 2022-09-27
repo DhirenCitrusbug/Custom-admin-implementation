@@ -1,0 +1,79 @@
+{% load static %}
+{% load tz %}
+
+<table id="rw_cl_contact_table" class="table rw_pagination" >
+    <thead>
+        <tr>
+            <th>Phone Number</th>
+            <th>Name</th>
+            <th>Date</th>
+            <th class="sorting_none">Type</th>
+            <th class="sorting_none text-center">Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+    {% for i in client_phone %}
+    <tr>
+        {% if i.is_default %}
+        <td>
+            <div class="d-flex">
+                {{i.phone_number}} <div class="default_label"><img src="{% static 'images/icons/make_default.svg'%}" alt="image"><span>Default</span></div>
+                </div>
+        </td>
+        {% else %}
+        <td>{{i.phone_number}}</td>
+        {% endif %}
+        <td>{{i.name}}</td>
+        {% if request.user.time_zone %}
+        {% timezone request.user.time_zone.value %}
+        <td data-order="{{i.created_at|date:'Y-m-d H:i'}}">Added on {{i.created_at |date:"j M, Y h:i A"}}</td>
+        {% endtimezone %}
+        {% else %}
+        <td data-order="{{i.created_at|date:'Y-m-d H:i'}}">Added on {{i.created_at |date:"j M, Y h:i A"}}</td>
+        {% endif %}
+        <td>{{i.phone_type|capfirst}}</td>
+        <td class="text-center">
+            <div class="action_dropdown">
+            <ul class="drop_ul">
+                <li class="position-relative"><a href="javascript:;" class="action_btn"><img src="{% static 'images/icons/action.svg'%}" alt="action"></a>
+                    <ul class="action_submenu">
+                        <li><a href="{% url 'client-phone-make-defualt' i.id %}" class="remove_action" id="make_defult"><img src="{% static 'images/icons/make_default.svg'%}" alt="image">Make Default</a></li>
+                        <li><a href="javascript:;" class="remove_action" data-bs-toggle="modal" data-bs-target="#delete_confirm_popup-{{i.id}}"><img src="{% static 'images/icons/delete.svg'%}" alt="image">delete</a></li>
+                        <li><a href="javascript:;" class="remove_action" data-bs-toggle="modal" data-bs-target="#"><img src="{% static 'images/icons/colored_icon/campaing.svg'%}" alt="image">Send Broadcast</a></li>
+                    </ul>
+                </li>
+            </ul>
+            </div>
+        </td>
+    </tr>
+    <div class="modal fade rw_modal delete_popup" id="delete_confirm_popup-{{i.id}}" tabindex="-1"  aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <div class="modal_title">
+                            <h4>Delete Client Phone Number</h4>
+                        </div>
+                    <a href="javascript:;" class="popup_close" data-bs-dismiss="modal" aria-label="Close"><img src="{% static 'images/icons/close.svg'%}" alt="close"></a>
+                    </div>
+                    <div class="modal-body">
+                        <div class="delete_modal_body">
+                            <img src="{% static 'images/delete_popup.svg'%}" alt="">
+                            <h1>Delete Client Phone Number</h1>
+                            <p>Are you sure you want to delete {{i.name}}?</p>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                    <ul class="modal_btns">
+                        <li><a href="javascript:;" class="modal_btn cancel" data-bs-dismiss="modal">no</a></li>
+                        <li><a href="{% url 'client-phone-delete' i.id %}" class="modal_btn" id="phone_delete">yes</a></li>
+                    </ul>
+                    </div>
+                </div>
+                </div>
+        </div>
+    {% endfor %}
+
+
+
+    </tbody>
+</table>

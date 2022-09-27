@@ -1,0 +1,87 @@
+{% extends 'client_base.html' %}
+{% load static %}
+{% load tz %}
+{% block title %}
+<title>Client Broadcast</title>
+{% endblock %}
+{% block head %}
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js" crossorigin="anonymous"></script>
+{% endblock %}
+
+{% block page_content %}
+        <div class="trigger_overlays"></div>
+
+        <div class="rw_inner_area rw_inner_form_area rw_modal_backdrop">
+            <div class="rw_tabs">
+                <ul class="nav rw_tab_ul" id="myTab" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <a href="{% url 'client-sch-broadcast' client.id %}" class=" tab_link" >Send Broadcast</a>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <a href="{% url 'broadcast-schedule-listing' client.id %}" class=" tab_link" >Scheduled</a>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <a href="{% url 'broadcast-sent-listing' client.id %}" class="active tab_link" >Sent</a>
+                    </li>
+                  </ul>
+
+                {% if messages %}
+    {% for message in messages %}
+         {% if message.tags == 'error' %}
+             <div class="rw_suc_err_wrapper rw_error_toast active" >
+                <div class="rw_suc_err_block ">
+                    <img src="{% static 'images/icons/error.svg'%}" alt="error">
+                    <p>{{message}}</p>
+                    <a href="javascript:;" class="close error_close"><img src="{% static 'images/icons/close_white.svg'%}" alt="close"></a>
+                </div>
+            </div>
+        {% else %}
+        <div class="rw_suc_err_wrapper rw_success_toast active" >
+            <div class="rw_suc_err_block ">
+                <img src="{% static 'images/icons/check_white.svg' %}" alt="Done">
+                <p>{{message}}</p>
+                <a href="javascript:;" class="close success_close"><img src="{% static 'images/icons/close_white.svg' %}" alt="close"></a>
+            </div>
+        </div>
+        {% endif %}
+{% endfor %}
+{% endif %}
+
+                <div class="tab-content">
+                   <div class="tab-pane active " id="sent" role="tabpanel" >
+                        <div class="rw_inner_form_inner_area">
+                            <div class="rw_table_wrapper">
+                                <div class="rw_table_inner rw_cl_schedule_broadcast_table rw_sent_broad_table">
+                                    <table id="rw_sent_brd_table" class="table rw_pagination" >
+                                        <thead>
+                                            <tr>
+                                                <th>Date</th>
+                                                <th>Message</th>
+                                                <th class="text-center">Contacts</th>
+
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                        {% for i in broadcast %}
+                                        <tr>
+                                            {% if request.user.time_zone %}
+                                            {% timezone request.user.time_zone.value %}
+                                            <td  data-order="{{i.created_at|date:'Y-m-d H:i'}}">Sent on {{i.created_at |date:"j M, Y h:i A" }}</td>
+                                            {% endtimezone %}
+                                            {% else %}
+                                            <td  data-order="{{i.created_at|date:'Y-m-d H:i'}}">Sent on {{i.created_at |date:"j M, Y h:i A" }}</td>
+                                            {% endif %}
+                                            <td><p>{{i.message}}</p></td>
+                                            <td class="text-center">{{i.contacts_count}}</td>
+
+                                            </tr>
+                                          {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% endblock %}

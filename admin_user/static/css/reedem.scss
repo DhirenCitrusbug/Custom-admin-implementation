@@ -1,0 +1,374 @@
+@import "common";
+.mobile_coupons {
+  .modal-backdrop {
+    background: rgba(17, 38, 60, 0.8);
+  }
+  .rw_checkbox {
+    margin-bottom: 20px;
+    label {
+      a {
+        background: linear-gradient(
+          269.36deg,
+          #ed2a3a -23.62%,
+          #f7983b 120.63%
+        );
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        text-decoration: none;
+      }
+    }
+  }
+}
+.rw_mobile_wrapper {
+  .rw_mobile_inner {
+    max-width: 575px;
+    width: 100%;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    background-color: #fff;
+    .rw_mobile_head {
+      background: url(../images/mobile_header.svg);
+      background-position: center;
+      background-size: cover;
+      background-repeat: no-repeat;
+      max-width: 575px;
+      width: 100%;
+      min-height: 259px;
+      .offer {
+        background: url(../images/off_bg.svg);
+        background-position: center;
+        background-size: contain;
+        background-repeat: no-repeat;
+        min-width: 300.28px;
+        min-height: 108.93px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-top: 69px;
+        padding-left: 13px;
+        h2 {
+          font-weight: 900;
+          font-size: 40px;
+          line-height: 50px;
+          background: linear-gradient(
+            269.36deg,
+            #ed2a3a -23.62%,
+            #f7983b 120.63%
+          );
+          -webkit-background-clip: text;
+          -webkit-text-fill-color: transparent;
+          text-transform: capitalize;
+          margin-bottom: 0;
+          transform: rotate(-5.41deg);
+        }
+      }
+      .rotate_para {
+        margin-bottom: 0;
+        margin-top: -7px;
+        font-weight: normal;
+        font-size: 15px;
+        line-height: 20px;
+        letter-spacing: 0.4px;
+        color: #ffffff;
+        text-align: center;
+        padding-left: 13px;
+        transform: rotate(-5.26deg);
+      }
+    }
+    .rw_mobile_content {
+      width: 100%;
+      padding: 0 24px;
+      .warning {
+        background: #f8dddf;
+        border-radius: 3px;
+        width: 100%;
+        padding: 8px 16px 8px;
+        margin: -34px auto 0;
+        .warning_title {
+          display: flex;
+          align-items: center;
+          img {
+            margin-right: 10px;
+          }
+          h6 {
+            font-weight: 600;
+            font-size: 14px;
+            line-height: 26px;
+            color: #ed2a3a;
+            margin-bottom: 0;
+          }
+        }
+        p {
+          font-weight: normal;
+          font-size: 14px;
+          line-height: 26px;
+          color: #ed2a3a;
+          margin-bottom: 0;
+        }
+      }
+      &.reedem_content {
+        margin-bottom: 168px;
+      }
+    }
+    .rw_form_inputs {
+      margin-bottom: 26px;
+      .rw_form_label {
+        font-size: 14px;
+        font-weight: 400;
+      }
+      .rw_input {
+        input {
+          font-size: 14px;
+          color: #11263c;
+          font-weight: 400 !important;
+          &::placeholder {
+            font-size: 14px;
+            color: #000 !important;
+            opacity: 0.4;
+          }
+        }
+      }
+    }
+    .rw_btn {
+      font-size: 16px;
+      height: 56px;
+      margin-top: 8px;
+      text-transform: none;
+    }
+    .form_title {
+      margin-top: 26px;
+      h4 {
+        font-weight: 600;
+        font-size: 16px;
+        line-height: 26px;
+        color: #000000;
+        margin-bottom: 14px;
+      }
+    }
+  }
+}
+.mobile_form {
+  margin-top: 35px;
+  .rw_form_inputs {
+    margin-bottom: 24px;
+    .rw_input {
+      input {
+        padding: 0 15px;
+      }
+    }
+    .input_icon {
+      right: 10px;
+    }
+    .rw_bootstrap_drop_down {
+      .dropdown-toggle {
+        padding: 0 15px;
+        &::before {
+          right: 10px;
+        }
+      }
+      .dropdown-menu {
+        min-height: 120px;
+        li {
+          a {
+            padding: 7px 15px;
+            font-size: 14px;
+          }
+        }
+      }
+    }
+  }
+}
+.mobile_modal {
+  .modal-dialog {
+    max-width: 490px;
+    margin: 0 auto;
+  }
+  .modal-header {
+    .modal_title {
+      h4 {
+        font-size: 16px;
+        line-height: 26px;
+        font-weight: 600;
+      }
+    }
+  }
+  .invalid_body {
+    text-align: center;
+    padding: 12px 0 40px;
+    img {
+      margin-bottom: 19px;
+    }
+    h2 {
+      font-weight: 600;
+      font-size: 24px;
+      line-height: 32px;
+      background: linear-gradient(269.36deg, #ed2a3a -23.62%, #f7983b 120.63%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      max-width: 230px;
+      margin: 0 auto;
+    }
+  }
+  .rw_form_label {
+    font-size: 14px !important;
+    font-weight: 400 !important;
+  }
+}
+.confirm_modal {
+  .modal-body {
+    padding: 23px 25px 16px !important;
+  }
+  .confirm_body {
+    h2 {
+      font-weight: 600;
+      font-size: 24px;
+      line-height: 30px;
+      background: linear-gradient(269.36deg, #ed2a3a -23.62%, #f7983b 120.63%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 49px;
+    }
+    .mobile_form {
+      .form_title {
+        h4 {
+          font-weight: 600;
+          font-size: 16px;
+          line-height: 26px;
+          color: #000000;
+        }
+      }
+      .rw_btn {
+        text-transform: capitalize;
+        margin-top: 16px;
+      }
+    }
+  }
+}
+.congratulation_page {
+  .rw_form_label {
+    font-size: 14px !important;
+  }
+  .mobile_form {
+    margin-top: 0;
+  }
+  .rw_mobile_head {
+    background: url(../images/Congratulations_bg.svg) !important;
+    background-size: cover !important;
+    background-repeat: no-repeat;
+    min-height: 380px !important;
+    .offer {
+      min-width: 245px !important;
+      max-width: 245px !important;
+      min-height: 88.88px !important;
+      margin: 18px auto 0 !important;
+      h2 {
+        font-size: 32.6362px !important;
+        line-height: 41px !important;
+        transform: none !important;
+      }
+      .coupon_code_box {
+        text-align: center;
+        margin-top: 13px;
+        margin-right: 10px;
+        padding-bottom: 10px;
+        transform: rotate(-5.26deg);
+        p {
+          font-weight: 600;
+          font-size: 14px;
+          line-height: 22px;
+          color: #ffffff;
+          margin-bottom: 0;
+          background: linear-gradient(
+            269.36deg,
+            #ed2a3a -23.62%,
+            #f7983b 120.63%
+          );
+          -webkit-background-clip: text;
+          -webkit-text-fill-color: transparent;
+          text-transform: capitalize;
+        }
+        h2 {
+          font-weight: 600;
+          font-size: 34px;
+          line-height: 40px;
+          color: #ffffff;
+          background: linear-gradient(
+            269.36deg,
+            #ed2a3a -23.62%,
+            #f7983b 120.63%
+          );
+          -webkit-background-clip: text;
+          -webkit-text-fill-color: transparent;
+          text-transform: capitalize;
+        }
+      }
+    }
+  }
+  .cong_title {
+    text-align: center;
+    margin-top: 80px;
+    h1 {
+      font-weight: 900;
+      font-size: 36px;
+      line-height: 38px;
+      letter-spacing: 0.4px;
+      color: #ffffff;
+    }
+    .head_para {
+      font-weight: 600;
+      font-size: 14px;
+      line-height: 22px;
+      color: #ffffff;
+      max-width: 300px;
+      margin: 0 auto;
+    }
+  }
+
+  .cong_content {
+    background: #fafafa;
+    border-radius: 40px 40px 0 0;
+    margin-top: -54px;
+    margin-bottom: 32px !important;
+
+    .content_title {
+      padding: 32px 0 8px;
+      text-align: center;
+      p {
+        font-weight: normal;
+        font-size: 14px;
+        line-height: 22px;
+        color: #000000;
+      }
+    }
+  }
+}
+.thank_you .rw_mobile_inner .rw_mobile_head {
+  min-height: 100vh !important;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+@media screen and (max-width: 900px) and (orientation: landscape) {
+  .thank_you .cong_title {
+    margin-top: 65px !important;
+  }
+}
+@media screen and (max-width: 900px) and (orientation: landscape) {
+  .rw_mobile_wrapper {
+    .rw_mobile_inner {
+      max-width: 100%;
+      .rw_mobile_head {
+        max-width: 100%;
+      }
+    }
+  }
+  .congratulation_page {
+    .cong_title {
+      margin-top: 117px;
+    }
+  }
+}

@@ -1,0 +1,9 @@
+{
+    "version": 3,
+    "mappings": "AAAA,AACI,oBADgB,CAChB,gBAAgB,CAAA;EACZ,MAAM,EAAE,MAAM;EACd,OAAO,EAAE,aAAa;EACtB,gBAAgB,EAAE,IAAI;EACtB,aAAa,EAAE,GAAG;CACrB",
+    "sources": [
+        "admin_dashboard.scss"
+    ],
+    "names": [],
+    "file": "admin_dashboard.css"
+}

@@ -1,0 +1,1657 @@
+{% extends 'client_base.html' %}
+{% load static %}
+{% load tag_filter %}
+{% block title %}
+<title>Campaigns Action</title>
+{% endblock %}
+{% block head %}
+<link rel="stylesheet" href="{% static 'css/campaign_creation.css' %}">
+<link rel="stylesheet" href="{% static 'css/campaign_modal.css' %}">
+{% endblock head %}
+{% block header_title %}
+<div class="header_title camp_header_title">
+    <a href="{% url 'client-campaigns' client.id %}" class="back_arrow"><img
+            src="{% static 'images/icons/camp_back_arrow.svg'%}" alt="back_arrow"></a>
+    <div id="camp_name">{{campaign.name}}</div>
+    <a id="edit_name_btn">
+        <img src="{% static 'images/icons/edit_dark.svg'%}" class="camp_edit_icon" alt="edit">
+    </a>
+</div>
+{% endblock %}
+
+
+{% block page_content %}
+<div class="trigger_overlay"></div>
+<input type="hidden" id="client_business_name" value="{{client.business_name}}">
+<div class="rw_inner_area rw_inner_form_area">
+    {% if messages %}
+        {% for message in messages %}
+             {% if message.tags == 'error' %}
+                 <div class="rw_suc_err_wrapper rw_error_toast active" >
+                    <div class="rw_suc_err_block ">
+                        <img src="{% static 'images/icons/error.svg'%}" alt="error">
+                        <p></p>
+                        <a href="javascript:;" class="close error_close"><img src="{% static 'images/icons/close_white.svg'%}" alt="close"></a>
+                    </div>
+                </div>
+            {% else %}
+            <div class="rw_suc_err_wrapper rw_success_toast active" >
+                <div class="rw_suc_err_block ">
+                    <img src="{% static 'images/icons/check_white.svg' %}" alt="Done">
+                    <p>{{message}}</p>
+                    <a href="javascript:;" class="close success_close"><img src="{% static 'images/icons/close_white.svg' %}" alt="close"></a>
+                </div>
+            </div>
+            {% endif %}
+    {% endfor %}
+    {% endif %}
+    <div class="rw_tabs">
+        <ul class="nav rw_tab_ul" id="myTab" role="tablist">
+            <li class="nav-item" role="presentation">
+                <a href="javascript:;" class="active tab_link" id="campaigns_action_tab" data-bs-toggle="tab"
+                    data-bs-target="#campaigns_action" role="tab" aria-selected="true">actions</a>
+            </li>
+            <li class="nav-item" role="presentation">
+                <a href="javascript:;" class="tab_link" id="campaigns_setting_tab" data-bs-toggle="tab"
+                    data-bs-target="#campaigns_setting" role="tab" aria-selected="false">Settings</a>
+            </li>
+        </ul>
+
+        <!-- Tab panes -->
+        <div class="tab-content">
+            <div class="tab-pane active" id="campaigns_action" role="tabpanel">
+                <div class="rw_inner_form_inner_area camp_creation_inner">
+                    <div class="campaigns_action_content">
+                        <div class="compaign_section_1">
+
+                        </div>
+                        <input type="hidden" id="div_length">
+                        <div class="campaigns_trigger">
+                            <div class="campaigns_trigger_inner">
+                                <div class="trigger_title_head">
+                                    <div class="trigger_title">
+                                        <img src="{% static 'images/icons/flash_on.svg'%}" alt="flash_on">
+                                        <h5>Trigger</h5>
+                                    </div>
+                                </div>
+                                {% if campaign.keyword_value%}
+                                <div class="camp_keyword">
+                                    <h5>Keyword</h5>
+                                    <ul>
+                                        <li><a href="javascript:;">{{campaign.keyword_value}}</a></li>
+                                    </ul>
+                                </div>
+                                {% elif campaign.trigger_type.trigger_type == "date" %}
+                                <div class="camp_keyword">
+                                    <h5>Date Based</h5>
+                                    <ul>
+                                        {% for t in campaign.trigger_type.trigger_value.date_based %}
+                                        <li><a href="javascript:;">{{t}}{% if campaign.trigger_type.trigger_value.before_days %}(-{{campaign.trigger_type.trigger_value.before_days}} days){% endif %}</a></li>
+                                        {% endfor %}
+                                    </ul>
+                                </div>
+                                {% elif campaign.trigger_type.trigger_type == "tag" %}
+                                <div class="camp_keyword">
+                                    <h5>Tag Based</h5>
+                                    <ul>
+                                        {% for t in campaign.trigger_type.trigger_value %}
+                                        <li><a href="javascript:;">{{t.name|title}}</a></li>
+                                        {% endfor %}
+                                    </ul>
+                                </div>
+                                {% else %}
+                                <div class="trigger_add_new_btn">
+                                    <input type="hidden" id="add_trigger_value">
+                                    <a href="#z" class="add_new_trigger" id="add_trigger">+add Trigger</a>
+                                </div>
+                                {% endif %}
+                            </div>
+                            <div class="campiagns_plus trigger_dropdown">
+                                <div class="add_btn_box trigg_add_btn">
+                                    <a href="javascript:;" class="plus_icon"></a>
+                                </div>
+                                <ul class="trigger_dropdown">
+                                    <li><a href="javascript:;" class="text_msg_click" order-id="0"><img
+                                                src="{% static 'images/icons/message.svg'%}" alt="image">Text
+                                            Message</a></li>
+                                    <li><a href="javascript:;" class="time_delay_click" order-id="0"><img
+                                                src="{% static 'images/icons/time.svg'%}" alt="image">Time Delay</a>
+                                    </li>
+                                    <li><a href="javascript:;" class="wait_until_click" order-id="0"><img
+                                                src="{% static 'images/icons/wait.svg'%}" alt="image">Wait Until</a>
+                                    </li>
+                                    <li><a href="javascript:;" class="tag_click" order-id="0"><img
+                                                src="{% static 'images/icons/tag.svg'%}" alt="image">Tag</a></li>
+                                </ul>
+                            </div>
+                            {% for action in cam_actions %}
+                            {% if action.action.action_type == "text_message" %}
+                            <a href="javascript:;" class="remove_action edit_cam_action" data-bs-toggle="modal"
+                                model-id="{{action.id}}">
+                                <div class="trigger_textbox">
+                                    <div class="text_message_title">
+                                        <img src="{% static 'images/icons/message.svg'%}" alt="message">
+                                        <h5>Text Message</h5>
+                                    </div>
+                                    <p>
+                                        {{action.action.action_value}}
+                                    </p>
+                                </div>
+                            </a>
+
+                            {% elif action.action.action_type == "wait_until"%}
+                            <a href="javascript:;" class="remove_action edit_cam_action" data-bs-toggle="modal"
+                                model-id="{{action.id}}">
+                                <div class="wait_label">
+                                    <h5>Wait until
+                                        {{action.action.action_value.hour|twodigit}}:{{action.action.action_value.minute|twodigit}} {{action.action.action_value.time_am}}
+                                    </h5>
+                                </div>
+                            </a>
+
+                            {% elif action.action.action_type == "time_delay"%}
+                            <a href="javascript:;" class="remove_action edit_cam_action" data-bs-toggle="modal"
+                                model-id="{{action.id}}">
+                                <div class="wait_label">
+                                    <h5>Wait for {{action.action.action_value.time_val}} {% if action.action.action_value.time == "hours" %} hour(s) {% else %}{{action.action.action_value.time}}(s) {% endif %}
+                                    </h5>
+                                </div>
+                            </a>
+                            {% elif action.action.action_type == "tag_action"%}
+                            <a href="javascript:;" class="remove_action edit_cam_action" data-bs-toggle="modal"
+                                model-id="{{action.id}}">
+                                <div class="campaigns_trigger_inner campaign_tag_inner">
+                                    <div class="trigger_title_head">
+                                        <div class="trigger_title">
+                                            <img src="{% static 'images/icons/add_box.svg'%}" alt="flash_on">
+                                            <h5>Tag</h5>
+                                        </div>
+                                    </div>
+
+                                    <div class="camp_keyword">
+                                        <ul  class="edit_cam_action" model-id="{{action.id}}">
+                                            {% for t in action.action.action_value %}
+                                            <li class="click_tag_list"><a href="javascript:;">{{t.name|title}}</a></li>
+                                            {% endfor %}
+                                        </ul>
+                                    </div>
+                                </div>
+                            </a>
+
+                            {% endif %}
+                            <div class="campiagns_plus trigger_dropdown">
+                                <div class="add_btn_box trigg_add_btn">
+                                    <a href="javascript:;" class="plus_icon"></a>
+                                </div>
+                                <ul class="trigger_dropdown">
+                                    <li><a href="javascript:;" class="text_msg_click" order-id="{{action.order}}"><img
+                                                src="{% static 'images/icons/message.svg'%}" alt="image">Text
+                                            Message</a></li>
+                                    <li><a href="javascript:;" class="time_delay_click" order-id="{{action.order}}"><img
+                                                src="{% static 'images/icons/time.svg'%}" alt="image">Time Delay</a>
+                                    </li>
+                                    <li><a href="javascript:;" class="wait_until_click" order-id="{{action.order}}"><img
+                                                src="{% static 'images/icons/wait.svg'%}" alt="image">Wait Until</a>
+                                    </li>
+                                    <li><a href="javascript:;" class="tag_click" order-id="{{action.order}}"><img
+                                                src="{% static 'images/icons/tag.svg'%}" alt="image">Tag</a></li>
+                                </ul>
+                            </div>
+                            {% endfor %}
+
+                            <div class="end_label">
+                                <img src="{% static 'images/icons/flag.svg'%}" alt="flag">
+                                <h5>end</h5>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="tab-pane" id="campaigns_setting" role="tabpanel">
+                <form method="post" id="setting_form" action="{% url 'campaign-edit' campaign.id %}">
+                    {% csrf_token %}
+                    <input type="hidden" name="campaign_form_name" value="{{campaign.name}}">
+                    <div class="rw_inner_form_inner_area">
+                        <div class="campaigns_setting_content">
+                            <div class="rw_broadcast_wrapper">
+                                <div class="rw_broadcast_inner">
+                                    <div class="row">
+                                        <div class="col-md-4">
+                                            <div class="broadcast_left">
+                                                <div class="broadcast_head">
+                                                    <div class="title">
+                                                        <h4>Sending Window</h4>
+                                                        <p>Limit sending time and day</p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-8">
+                                            <div class="broadcast_right">
+                                                <div class="camp_head">
+                                                    <div class="camp_toggle_switch">
+                                                        <div class="rw_toggle_switch">
+                                                            <div class="rw_switch">
+                                                                {% if campaign.is_sending %}
+                                                                <input type="checkbox" checked="" id="send_check"
+                                                                    name="send_check">
+                                                                {% else %}
+                                                                <input type="checkbox" id="send_check"
+                                                                    name="send_check">
+                                                                {% endif %}
+                                                            </div>
+                                                        </div>
+                                                        <h5>Sending Window</h5>
+                                                    </div>
+                                                </div>
+                                                <div class="camp_content">
+                                                    <div class="camp_days">
+                                                        <div class="rw_form_inputs">
+                                                            <label class="rw_form_label">Days</label>
+                                                        </div>
+
+                                                        <ul>
+                                                            {% for i in days %}
+                                                            {% if i in campaign.sending_days.all %}
+                                                            <li>
+                                                                <input type="checkbox" name="days" id="days-{{i.id}}"
+                                                                    value="{{i.id}}" checked>
+                                                                <label for="days-{{i.id}}">{{i}}</label>
+                                                            </li>
+                                                            {% else %}
+                                                            <li>
+                                                                <input type="checkbox" name="days" id="days-{{i.id}}"
+                                                                    value="{{i.id}}">
+                                                                <label for="days-{{i.id}}">{{i}}</label>
+                                                            </li>
+                                                            {% endif %}
+                                                            {% endfor %}
+                                                        </ul>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="col-md-6">
+                                                            <div class="rw_form_inputs">
+                                                                <input type="hidden" value="{{campaign.start_time}}"
+                                                                    id="start_time_val">
+                                                                <label class="rw_form_label">Start time </label>
+
+                                                                <div class="rw_custom_dropdown">
+                                                                    <select name="start_time" class="rw_cstm_dropdown"
+                                                                        id="start_time">
+
+                                                                        {% for i in time %}
+
+                                                                        <option value="{{i}}-AM">{{i}} AM </option>
+                                                                        <option value="{{i}}-PM">{{i}} PM </option>
+
+                                                                        {% endfor %}
+                                                                    </select>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="col-md-6">
+                                                            <div class="rw_form_inputs">
+                                                                <input type="hidden" value="{{campaign.end_time}}"
+                                                                    id="end_time_val">
+                                                                <label class="rw_form_label">End time</label>
+                                                                <div class="rw_custom_dropdown">
+                                                                    <select name="end_time" class="rw_cstm_dropdown"
+                                                                        id="end_time">
+                                                                        {% for i in time %}
+                                                                        <option value="{{i}}-AM">{{i}} AM </option>
+                                                                        <option value="{{i}}-PM">{{i}} PM </option>
+                                                                        {% endfor %}
+                                                                    </select>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="rw_broadcast_inner">
+                                    <div class="row">
+                                        <div class="col-md-4">
+                                            <div class="broadcast_left">
+                                                <div class="broadcast_head">
+                                                    <div class="title">
+                                                        <h4>Send Number</h4>
+                                                        <p>Choose number for your campaign</p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-8">
+                                            <div class="broadcast_right">
+                                                <div class="camp_head">
+                                                    <div class="camp_toggle_switch">
+                                                        <h5>Send Number</h5>
+                                                    </div>
+                                                </div>
+                                                <div class="camp_content">
+                                                    <div class="row">
+                                                        <div class="col-lg-6 col-md-12">
+                                                            <div class="rw_form_inputs">
+                                                                <label class="rw_form_label">mobile number</label>
+                                                                <div class="rw_custom_dropdown">
+                                                                    <select name="send_number" class="rw_cstm_dropdown"
+                                                                        id="send_number">
+
+                                                                        {% for i in client_phone %}
+                                                                        {% if i == campaign.send_phone %}
+                                                                        <option value="{{i.id}}" selected>
+                                                                            {{i.phone_number}}</option>
+                                                                        {% else %}
+                                                                        <option value="{{i.id}}">{{i.phone_number}}
+                                                                        </option>
+                                                                        {% endif %}
+                                                                        {% endfor %}
+                                                                    </select>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="rw_broadcast_inner">
+                                    <div class="row">
+                                        <div class="col-md-4">
+                                            <div class="broadcast_left schedule_left">
+                                                <div class="broadcast_head">
+                                                    <div class="title">
+                                                        <h4>Double Optin</h4>
+                                                        <p>Require double-optin for campaign</p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-8">
+                                            <div class="broadcast_right">
+                                                <div class="camp_head">
+                                                    <div class="camp_toggle_switch">
+                                                        <div class="rw_toggle_switch">
+                                                            <div class="rw_switch">
+                                                                {% if campaign.is_double %}
+                                                                <input type="checkbox" id="double_optin"
+                                                                    name="double_optin" checked>
+                                                                {% else %}
+                                                                <input type="checkbox" id="double_optin"
+                                                                    name="double_optin">
+                                                                {% endif %}
+                                                            </div>
+                                                        </div>
+                                                        <h5>Double Optin</h5>
+                                                    </div>
+                                                </div>
+                                                <div class="camp_content">
+                                                    <div class="row">
+                                                        <div class="col-lg-6 col-md-12">
+                                                            <div class="rw_form_inputs mb-3" id="div_double_keyword">
+                                                                <label class="rw_form_label">keywords</label>
+                                                                <div class="rw_input">
+                                                                    <input type="email" placeholder="Enter Keyword"
+                                                                        id="double_keyword" name="double_keyword"
+                                                                        value="{% if campaign.double_keyword %}{{campaign.double_keyword}}{%endif%}">
+                                                                </div>
+                                                                <div class="form_error" id="double_keyword_error"></div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-md-12">
+                                                            <div class="rw_form_inputs" id="div_double_message">
+                                                                <label class="rw_form_label">Double Optin
+                                                                    Message</label>
+                                                                <div class="rw_input">
+                                                                    <textarea placeholder="Type Message"
+                                                                        id="double_message"
+                                                                        name="double_message">{% if campaign.double_message %}{{campaign.double_message}}{%endif%}</textarea>
+                                                                </div>
+                                                                <div class="form_error" id="double_message_error"></div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="rw_broadcast_inner">
+                                    <div class="row">
+                                        <div class="col-md-4">
+                                            <div class="broadcast_left schedule_left">
+                                                <div class="broadcast_head">
+                                                    <div class="title">
+                                                        <h4>Limit Multiple</h4>
+                                                        <p>Prevent duplicate campaign signups</p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-8">
+                                            <div class="broadcast_right">
+                                                <div class="camp_head">
+                                                    <div class="camp_toggle_switch">
+                                                        <div class="rw_toggle_switch">
+                                                            <div class="rw_switch">
+                                                                {% if campaign.is_limit%}
+                                                                <input type="checkbox" name="limit_multiple"
+                                                                    id="limit_multiple" checked>
+                                                                {% else %}
+                                                                <input type="checkbox" name="limit_multiple"
+                                                                    id="limit_multiple">
+                                                                {% endif %}
+                                                            </div>
+                                                        </div>
+                                                        <h5>Limit Multiple</h5>
+                                                    </div>
+                                                </div>
+                                                <div class="camp_content">
+                                                    <div class="row">
+                                                        <div class="col-md-12">
+                                                            <div class="rw_form_inputs" id="div_limit_message">
+                                                                <label class="rw_form_label">Limit Multiple
+                                                                    Message</label>
+                                                                <div class="rw_input">
+                                                                    <textarea placeholder="Type Message"
+                                                                        id="limit_message"
+                                                                        name="limit_message" maxlength="300">{% if campaign.limit_message %}{{campaign.limit_message}}{%endif%}</textarea>
+                                                                </div>
+                                                                <div class="form_error" id="limit_message_error"></div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="rw_broadcast_inner">
+                                    <div class="row">
+                                        <div class="col-md-4">
+                                            <div class="broadcast_left schedule_left">
+                                                <div class="broadcast_head">
+                                                    <div class="title">
+                                                        <h4>Cancellation Trigger</h4>
+                                                        <p>Choose actions that cancel the campaign
+                                                        </p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-8">
+                                            <div class="broadcast_right">
+                                                <div class="camp_head">
+                                                    <div class="camp_toggle_switch">
+                                                        <div class="rw_toggle_switch">
+                                                            <div class="rw_switch">
+                                                                {% if campaign.is_cancel %}
+                                                                <input type="checkbox" name="cancel_trigger"
+                                                                    id="cancel_trigger" checked>
+                                                                {% else %}
+                                                                <input type="checkbox" name="cancel_trigger"
+                                                                    id="cancel_trigger">
+                                                                {% endif %}
+                                                            </div>
+                                                        </div>
+                                                        <h5>Cancellation Trigger</h5>
+                                                    </div>
+                                                </div>
+                                                <div class="camp_content">
+                                                    <div class="campaigns_action_content">
+                                                        <div class="campaigns_box">
+                                                            <ul class="trigger_ul">
+                                                                {% if campaign.on_reply %}
+                                                                <li class="trigger_li orange_border">
+                                                                    <div class="rw_checkbox">
+                                                                        <input type="checkbox" class="check_input"
+                                                                            name="on_reply" id="on_reply" checked>
+                                                                        <label for="on_reply">On Reply</label>
+                                                                    </div>
+                                                                    <p>
+                                                                        Cancel this campaign if a message is received from the contact
+                                                                    </p>
+
+                                                                </li>
+                                                                {% else %}
+                                                                <li class="trigger_li">
+                                                                    <div class="rw_checkbox">
+                                                                        <input type="checkbox" class="check_input"
+                                                                            name="on_reply" id="on_reply">
+                                                                        <label for="on_reply">On Reply</label>
+                                                                    </div>
+                                                                    <p>
+                                                                        Cancel this campaign if a message is received from the contact
+                                                                    </p>
+
+                                                                </li>
+                                                                {% endif %}
+
+                                                            </ul>
+                                                            <div class="form_error" id="cancel_trigger_error"></div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="rw_save_btn">
+                                    <a href="javascript:;" class="rw_btn" id="save_btn">Save Changes</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<!--<div class="rw_zoom_in_out">-->
+<!--    <h6>80%</h6>-->
+<!--    <ul>-->
+<!--        <li><a href="javascript:;"><img src="{% static 'images/icons/zoom_in.svg.svg'%}" alt="zoom_in"></a></li>-->
+<!--        <li><a href="javascript:;"><img src="{% static 'images/icons/zoom_out.svg'%}" alt="zoom_out"></a></li>-->
+<!--    </ul>-->
+<!--</div>-->
+
+<div style="display:none;" id="text_action">
+    <div class="trigger_textbox">
+        <div class="text_message_title">
+            <img src="{% static 'images/icons/message.svg'%}" alt="message">
+            <h5>Text Message</h5>
+        </div>
+        <p>
+            {FirstName} Treat yourself for the new year😄 All personal training sessions ...
+        </p>
+    </div>
+</div>
+<div style="display:none;" id="plus_action">
+    <div class="campiagns_plus trigger_dropdown">
+        <div class="add_btn_box trigg_add_btn">
+            <a href="javascript:;" class="plus_icon"></a>
+        </div>
+        <ul class="trigger_dropdown">
+            <li><a href="javascript:;" class="text_msg_click"><img src="{% static 'images/icons/message.svg'%}"
+                        alt="image">Text
+                    Message</a></li>
+            <li><a href="javascript:;" class="time_delay_click"><img src="{% static 'images/icons/time.svg'%}"
+                        alt="image">Time Delay</a>
+            </li>
+            <li><a href="javascript:;" class="wait_until_click"><img src="{% static 'images/icons/wait.svg'%}"
+                        alt="image">Wait Until</a>
+            </li>
+            <li><a href="javascript:;" class="tag_click"><img src="{% static 'images/icons/tag.svg'%}"
+                        alt="image">Tag</a></li>
+        </ul>
+    </div>
+</div>
+<div style="display:none;" id="wait_action">
+    <div class="wait_label">
+        <h5>Wait for 2 Hours</h5>
+    </div>
+</div>
+
+<!--Trigger Modal-->
+<div class="modal fade rw_modal campaign_modal add_contact" id="Trigger_modal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal_title">
+                    <h4>Trigger</h4>
+                </div>
+                <a href="javascript:;" class="popup_close" data-bs-dismiss="modal" aria-label="Close"><img
+                        src="{% static 'images/icons/close.svg'%}" alt="close"></a>
+            </div>
+            <div class="modal-body">
+                <div class="campaigns_action_content">
+                    <div class="campaigns_box trigger new_trigger">
+                        <div class="textmessage_box_header">
+
+                            <div class="text_message_title">
+                                <img src="{% static 'images/icons/flash_on.svg'%}" alt="trigger">
+                                <h5>Trigger</h5>
+                            </div>
+                        </div>
+                        <p>
+                            Define trigger type. Triggers can be keywords, dates or tags.
+                        </p>
+                        <ul class="trigger_ul">
+                            <li>
+                                <div class="rw_radio_btns">
+                                    <input type="radio" name="radio" id="Keywords" value="0" checked>
+                                    <label for="Keywords">Keywords</label>
+                                </div>
+                            </li>
+                            <li>
+                                <div class="rw_radio_btns">
+                                    <input type="radio" name="radio" id="data_based" value="1">
+                                    <label for="data_based">Date Based</label>
+                                </div>
+                            </li>
+                            <li>
+                                <div class="rw_radio_btns">
+                                    <input type="radio" name="radio" id="tags" value="2">
+                                    <label for="tags">Tags</label>
+                                </div>
+                            </li>
+                        </ul>
+                        <div class="textmessage_footer">
+                            <ul>
+                                <!-- <li><a href="javascript:;" class="delete">delete</a></li> -->
+                                <li><a href="javascript:;" class="popup_close" data-bs-dismiss="modal" aria-label="Close">cancel</a></li>
+                                <li><a href="javascript:;" class="rw_btn" id="trigger_next">Next</a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!--End-->
+
+<!--Keyword Trigger Modal-->
+<div class="modal fade rw_modal campaign_modal add_contact rw_select2_modal" id="keyword_trigger_modal" tabindex="-1"
+    aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal_title">
+                    <h4>Keyword Trigger</h4>
+                </div>
+                <a href="javascript:;" class="popup_close" data-bs-dismiss="modal" aria-label="Close"><img
+                        src="{% static 'images/icons/close.svg'%}" alt="close"></a>
+            </div>
+            <div class="modal-body">
+                <div class="campaigns_action_content">
+                    <form method="post" action="{% url 'campaign-action-create' campaign.id %}" id="keyword_form">
+                        {%csrf_token%}
+                        <input type="hidden" name="campaign_form_name" value="{{campaign_name}}">
+                        <div class="campaigns_box camp_absolute keyword_trigger ">
+                            <div class="textmessage_box_header">
+
+                                <div class="text_message_title">
+                                    <img src="{% static 'images/icons/flash_on.svg'%}" alt="trigger">
+                                    <h5>Trigger</h5>
+                                </div>
+                            </div>
+                            <a href="#" class="trigger_back">
+                                <div class="date_based">
+
+                                    <img src="{% static 'images/icons/back_arrow.svg'%}" alt="back_arrow">
+                                    <h6>Select Keywords</h6>
+                                </div>
+                            </a>
+                            <div class="rw_form_inputs rw_select2_inputs">
+                                <label class="rw_form_label">Select Number</label>
+                                <div class="rw_custom_dropdown">
+                                    <select name="keyword_phone" class="rw_popup_cstm_dropdown" id="keyword_phone">
+
+                                        {% for i in client_phone %}
+                                        {% if i.is_default %}
+                                        <option value="{{i.id}}" selected>{{i.phone_number}}</option>
+                                        {% else %}
+                                        <option value="{{i.id}}">{{i.phone_number}} </option>
+                                        {% endif %}
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                                <div class="form_error" id="keyword_phone_error"></div>
+                            </div>
+                            <div class="rw_form_inputs" id="div_keyword">
+                                <label class="rw_form_label">Add Keywords</label>
+                                <div class="rw_input">
+                                    <input type="email" placeholder="Enter Keyword" id="keyword" name="keyword" maxlength="30">
+                                </div>
+                                <div class="form_error" id="keyword_error"></div>
+
+                            </div>
+                            <!-- <ul class="key_ul">
+                                <li>Type two or more keywords seperated with commas (,) to add in the
+                                    trigger. </li>
+                                <li>Type your keywords in small cases</li>
+                            </ul> -->
+                            <div class="form_error main_error"></div>
+                            <div class="textmessage_footer">
+                                <ul>
+                                    <li><a href="javascript:;" class="delete">delete</a></li>
+                                    <li><a href="javascript:;" class="popup_close" data-bs-dismiss="modal" aria-label="Close">cancel</a></li>
+                                    <li><a href="javascript:;" class="rw_btn" id="keyword_save">Save</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!--End-->
+
+<!--Datebased Trigger Modal-->
+<div class="modal fade rw_modal campaign_modal add_contact rw_select2_modal" id="date_trigger_modal" tabindex="-1"
+    aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal_title">
+                    <h4>Date based trigger</h4>
+                </div>
+                <a href="javascript:;" class="popup_close" data-bs-dismiss="modal" aria-label="Close"><img
+                        src="{% static 'images/icons/close.svg'%}" alt="close"></a>
+            </div>
+            <div class="modal-body">
+                <div class="campaigns_action_content">
+                    <form method="post" action="{% url 'campaign-action-create' campaign.id %}" id="date_based_form">
+                        {%csrf_token%}
+                        <input type="hidden" name="campaign_form_name" value="{{campaign_name}}">
+                        <div class="campaigns_box camp_absolute trigger_select_tags_box ">
+                            <div class="textmessage_box_header">
+
+                                <div class="text_message_title">
+                                    <img src="{% static 'images/icons/flash_on.svg'%}" alt="trigger">
+                                    <h5>Trigger</h5>
+                                </div>
+                            </div>
+                            <a href="#" class="trigger_back">
+                                <div class="date_based mb-3">
+
+                                    <img src="{% static 'images/icons/back_arrow.svg'%}" alt="back_arrow">
+                                    <h6>Select Date</h6>
+                                </div>
+                            </a>
+                            <div class="rw_form_inputs rw_select2_inputs">
+                                <label class="rw_form_label">Select Date</label>
+                                <div class="rw_custom_dropdown">
+                                    <select id="datebased_trigger" name="datebased_trigger"
+                                        class="rw_popup_cstm_dropdown">
+                                        <option value=""></option>
+                                        <option value="Birthday">Birthday</option>
+                                        <option value="Anniversary">Anniversary</option>
+                                        {% for i in custom_fields %}
+                                            {% if i.field_type == 'date' or i.field_type == 'datetime-local' %}
+                                                <option value="{{i.field_name}}">{{i.field_name}}</option>
+                                            {% endif %}
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                                <div class="form_error" id="datebased_error"></div>
+                            </div>
+
+                            <div class="rw_form_inputs rw_select2_inputs">
+                                <label class="rw_form_label">Select Before Day</label>
+                                <div class="rw_custom_dropdown">
+                                    <select id="before_days" name="before_days"
+                                        class="rw_popup_cstm_dropdown">
+                                        <option value=""></option>
+                                        {% for i in before_days %}
+                                        <option value="{{i}}">{{i}}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                                <div class="form_error" id="before_days_error"></div>
+                            </div>
+                            
+                            <div class="form_error main_error"></div>
+                            <div class="form_error">Note: When adding this date-based trigger, the sending window settings will be switched off by default.</div>
+                            <div class="textmessage_footer">
+                                <ul>
+                                    <li><a href="javascript:;" class="delete">delete</a></li>
+                                    <li><a href="javascript:;" class="popup_close" data-bs-dismiss="modal" aria-label="Close">cancel</a></li>
+                                    <li><a href="javascript:;" class="rw_btn" id="datebased_btn">Save</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!--End-->
+
+<!--select Tag Trigger Modal-->
+<div class="modal fade rw_modal campaign_modal add_contact rw_select2_modal" id="select_tag_trigger_modal" tabindex="-1"
+    aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal_title">
+                    <h4>Select Tag Trigger</h4>
+                </div>
+                <a href="javascript:;" class="popup_close" data-bs-dismiss="modal" aria-label="Close"><img
+                        src="{% static 'images/icons/close.svg'%}" alt="close"></a>
+            </div>
+            <div class="modal-body">
+                <div class="campaigns_action_content">
+                    <form method="post" action="{% url 'campaign-action-create' campaign.id %}" id="tag_form">
+                        {%csrf_token%}
+                        <input type="hidden" name="campaign_form_name" value="{{campaign_name}}">
+                        <div class="campaigns_box camp_absolute trigger_select_tags_box ">
+                            <div class="textmessage_box_header">
+
+                                <div class="text_message_title">
+                                    <img src="{% static 'images/icons/flash_on.svg'%}" alt="trigger">
+                                    <h5>Trigger</h5>
+                                </div>
+                            </div>
+                            <a href="#" class="trigger_back">
+                                <div class="date_based mb-3">
+
+                                    <img src="{% static 'images/icons/back_arrow.svg'%}" alt="back_arrow">
+                                    <h6>Select Tags</h6>
+                                </div>
+                            </a>
+                            <div class="rw_form_inputs rw_select2_inputs">
+                                <label class="rw_form_label">Select Tags</label>
+                                <div class="rw_custom_dropdown">
+                                    <select id="tag_based" name="tag_based" class="rw_popup_cstm_dropdown">
+                                        <option value=""></option>
+                                        {% for t in tags %}
+                                        <option value="{{t.id}}">{{t.name}}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+
+                            </div>
+                            <div class="textmessage_footer">
+                                <ul>
+                                    <li><a href="javascript:;" class="delete">delete</a></li>
+                                    <li><a href="javascript:;" class="popup_close" data-bs-dismiss="modal" aria-label="Close">cancel</a></li>
+                                    <li><a href="javascript:;" class="rw_btn" id="tag_btn">Save</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!--End-->
+
+<!--Edit Name-->
+<div class="modal fade rw_modal campaign_modal add_contact rw_select2_modal" id="edit_name_modal" tabindex="-1"
+    aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal_title">
+                    <h4> Campaign Name </h4>
+                </div>
+                <a href="javascript:;" class="popup_close" data-bs-dismiss="modal" aria-label="Close"><img
+                        src="{% static 'images/icons/close.svg'%}" alt="close"></a>
+            </div>
+            <div class="modal-body">
+                <div class="campaigns_action_content">
+                    <form method="post" action="{% url 'campaign-edit' campaign.id %}" id="name_form">
+                        {%csrf_token%}
+                        <!--                    <input type="hidden" name="campaign_form_name" value="{{campaign_name}}">-->
+                        <div class="campaigns_box camp_absolute trigger_select_tags_box ">
+                            <!-- <div class="textmessage_box_header">
+                            </div> -->
+
+                            <div class="rw_form_inputs" id="div_campaign_name">
+                                <label class="rw_form_label">Campaign Name</label>
+                                <div class="rw_input">
+                                    <input type="email" placeholder="Enter Keyword" id="campaign_name"
+                                        name="campaign_form_name" value="{{campaign.name}}" maxlength="30">
+                                </div>
+                                <div class="form_error" id="campaign_name_error"></div>
+
+                            </div>
+                            <div class="textmessage_footer">
+                                <ul>
+                                    <!-- <li><a href="javascript:;" class="delete">delete</a></li> -->
+                                    <li><a href="javascript:;" class="popup_close" data-bs-dismiss="modal" aria-label="Close">cancel</a></li>
+                                    <li><a href="javascript:;" class="rw_btn" id="name_btn">Save</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!--End-->
+
+
+<!--Text Message Modal-->
+<div class="modal fade rw_modal campaign_modal add_contact rw_select2_modal" id="text_message_modal" tabindex="-1"
+    aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal_title">
+                    <h4>Text Message</h4>
+                </div>
+                <a href="javascript:;" class="popup_close" data-bs-dismiss="modal" aria-label="Close"><img
+                        src="{% static 'images/icons/close.svg'%}" alt="close"></a>
+            </div>
+            <div class="modal-body">
+                <form method="post" action="{% url 'campaign-action-create' campaign.id %}" id="text_message_form">
+                    {%csrf_token%}
+                    <input type="hidden" name="campaign_form_name" value="{{campaign.name}}">
+                    <input type="hidden" id="order" name="order">
+                    <div class="campaigns_action_content">
+                        <div class="campaigns_box text_message_box">
+                            <div class="textmessage_box_header">
+
+                                <div class="text_message_title">
+                                    <img src="{% static 'images/icons/message.svg'%}" alt="message">
+                                    <h5>Text Message</h5>
+                                </div>
+                            </div>
+                            <div class="text_input_box">
+                                <textarea  name="message" id="message"></textarea>
+                                <div class="input_icon_wrapper">
+                                    <div class="input_words">
+                                        <p id="char">0/160 characters</p>
+                                    </div>
+                                    <div class="input_icons ">
+                                        <ul class="">
+                                            <li><a href="javascript:;" title="Referral" class="add_tag"
+                                                id="add_referral_camp"><img
+                                                    src="{% static 'images/icons/colored_icon/new_referral_color_logo.svg'%}"
+                                                    alt="image"></a>
+                                                <ul class="input_submenu" id="ul_referral_camp">
+                                                    {% if referral_camp %}
+                                                    {% for rc in referral_camp %}
+                                                    <li><a href="javascript:;" class="referral_name"
+                                                            referral-code="{{rc.ref_camp_name}}">{{rc.ref_camp_name}}</a>
+                                                    </li>
+                                                    {% endfor %}
+                                                    {% else %}
+                                                    <li><a href="javascript:;" class="referral_name"
+                                                            coupon-code="">No Coupons Found</a> </li>
+                                                    {% endif %}
+                                                </ul>
+                                                <input type="hidden" id="referral_code" value="">
+                                            </li>
+                                            <li><a href="javascript:;" title="Coupon" class="add_tag"
+                                                    id="add_coupon"><img
+                                                        src="{% static 'images/icons/colored_icon/coupon.svg'%}"
+                                                        alt="image"></a>
+                                                <ul class="input_submenu" id="ul_coupon">
+                                                    {% if coupon %}
+                                                    {% for k in coupon %}
+                                                    <li><a href="javascript:;" class="coupon_name"
+                                                            coupon-code="{{k.coupon_name}}">{{k.coupon_name}}</a> </li>
+                                                    {% endfor %}
+                                                    {% else %}
+                                                    <li><a href="javascript:;" class="coupon_name" coupon-code="">No
+                                                            Coupons Found</a> </li>
+                                                    {% endif %}
+                                                </ul>
+                                                <input type="hidden" id="coupon_code" value="">
+                                            </li>
+                                            <li>
+                                                <a href="javascript:;" title="Add Tag" class="add_tag" id="add_tag"><img
+                                                        src="{% static 'images/icons/add_box.svg'%}" alt="image"></a>
+                                                <ul class="input_submenu" id="ul_tag">
+                                                    <li><a href="javascript:;" class="click_1" id="click_1">First Name</a></li>
+                                                    <li><a href="javascript:;" class="click_1" id="click_2">Last Name</a></li>
+                                                    <li><a href="javascript:;" class="click_1"
+                                                            id="click_3">Birthdate</a></li>
+                                                    <li><a href="javascript:;" class="click_1"
+                                                            id="click_4">Anniversary</a></li>
+                                                    {% for i in custom_fields %}
+                                                    <li><a href="javascript:;" class="click_1 click_custom_field"
+                                                        id="click_custom_field_{{i.id}}" custom-field-id="{{i.id}}">{{i.field_name}}</a></li>
+                                                    {% endfor %}
+                                                </ul>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                                <div class="form_error" id="message_error"></div>
+                            </div>
+                            <div class="textmessage_footer">
+                                <ul>
+                                    <li><a href="javascript:;" class="popup_close" data-bs-dismiss="modal"
+                                            aria-label="Close">cancel</a></li>
+                                    <li><a href="javascript:;" class="rw_btn" id="text_save">save</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<!--End-->
+
+<!--Time Delay Modal-->
+<div class="modal fade rw_modal campaign_modal add_contact rw_select2_modal" id="time_delay_modal" tabindex="-1"
+    aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal_title">
+                    <h4>Time Delay</h4>
+                </div>
+                <a href="javascript:;" class="popup_close" data-bs-dismiss="modal" aria-label="Close"><img
+                        src="{% static 'images/icons/close.svg'%}" alt="close"></a>
+            </div>
+            <div class="modal-body">
+                <form method="post" action="{% url 'campaign-action-create' campaign.id %}" id="time_delay_form">
+                    {%csrf_token%}
+                    <input type="hidden" name="campaign_form_name" value="{{campaign.name}}">
+                    <input type="hidden" name="order">
+                    <div class="campaigns_action_content">
+                        <div class="campaigns_action_content">
+                            <div class="campaigns_box time_delay">
+                                <div class="textmessage_box_header">
+
+                                    <div class="text_message_title">
+                                        <img src="{% static 'images/icons/time.svg'%}" alt="time">
+                                        <h5>Time Delay</h5>
+                                    </div>
+                                </div>
+                                <p>
+                                    Enter a time delay below in minutes, hours or days
+                                </p>
+                                <div class="time_delay_inputs choose_time">
+                                    <div class="time_delay_input_box">
+                                        
+                                        <div class="rw_form_inputs" id="div_time_val">
+                                            <div class="rw_input">
+                                                <input type="text" placeholder="Number" value="" min="1"
+                                                    class="quanti-invitati3" name="time_val" id="time_val" autocomplete="off">
+                                                <!-- <ul class="input_spinner">
+                                                    <li class="quanti-invitati-op3" data-op="1"><img
+                                                            src="{% static 'images/icons/sort_up.svg'%}" alt="">
+                                                    </li>
+                                                    <li class="quanti-invitati-op3" data-op="-1"><img
+                                                            src="{% static 'images/icons/sort_down.svg'%}" alt="">
+                                                    </li>
+                                                </ul> -->
+                                                
+                                            </div>
+
+                                        </div>
+                                        <div class="rw_form_inputs rw_select2_inputs">
+                                            <div class="rw_custom_dropdown ">
+                                                <select name="time" class="rw_popup_cstm_dropdown" id="time">
+                                                    <option value="minute" selected>Minute(s)</option>
+                                                    <option value="hours">Hour(s)</option>
+                                                    <option value="day">Day(s)</option>
+
+                                                </select>
+
+                                            </div>
+                                            
+                                        </div>
+
+                                    </div>
+
+                                    <!-- <div class="rw_form_inputs">
+                                        <div class="rw_input">
+                                            <div class="rw_dropdown">
+                                                <div class="select_dropdown">
+                                                    <select>
+                                                        <option value="after" selected>After</option>
+                                                        <option value="before">Before</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div> -->
+
+                                </div>
+                                <div class="form_error" id="time_val_error"></div>
+                                <div class="form_error" id="time_error"></div>
+                                <div class="textmessage_footer">
+                                    <ul>
+                                        <li><a href="javascript:;" class="popup_close" data-bs-dismiss="modal" aria-label="Close">cancel</a></li>
+                                        <li><a href="javascript:;" class="rw_btn" id="time_delay_btn">save</a></li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<!--End-->
+
+<!--Wait Until Modal-->
+<div class="modal fade rw_modal campaign_modal add_contact rw_select2_modal" id="wait_until_modal" tabindex="-1"
+    aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal_title">
+                    <h4>Wait Until</h4>
+                </div>
+                <a href="javascript:;" class="popup_close" data-bs-dismiss="modal" aria-label="Close"><img
+                        src="{% static 'images/icons/close.svg'%}" alt="close"></a>
+            </div>
+            <div class="modal-body">
+                <form method="post" action="{% url 'campaign-action-create' campaign.id %}" id="wait_until_form">
+                    {%csrf_token%}
+                    <input type="hidden" name="campaign_form_name" value="{{campaign.name}}">
+                    <input type="hidden" name="order">
+                    <div class="campaigns_action_content">
+                        <div class="campaigns_box trigger wait_until">
+                            <div class="textmessage_box_header">
+
+                                <div class="text_message_title">
+                                    <img src="{% static 'images/icons/wait.svg'%}" alt="wait">
+                                    <h5>Wait Until</h5>
+                                </div>
+                            </div>
+                            <p>
+                                Choose time for your campaign by selecting below fields
+                            </p>
+
+                            <ul class="trigger_ul">
+                                <li>
+                                    <!-- <div class="rw_form_inputs p-0">
+                                    <label class="rw_form_label">Choose Date</label>
+                                    <div class="rw_input">
+                                        <input type="text" placeholder="dd/mm/yyyy" id="datepicker2">
+                                        <span class="input_icon calendar"></span>
+                                    </div>
+                                </div> -->
+                                    <div class="rw_form_inputs p-0">
+                                        <label class="rw_form_label">Select Time</label>
+                                        <div class="choose_time">
+                                            <div class="rw_input">
+                                                <div class="rw_dropdown">
+                                                    <div class="select_dropdown">
+                                                        <select id="hour" name="hour">
+                                                            <option value="">Hours</option>
+                                                            {% for i in hours %}
+                                                            <option value="{{i}}">{{i|twodigit}}</option>
+                                                            {% endfor %}
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="form_error" id="hour_error"></div>
+                                            <span>:</span>
+                                            <div class="rw_input">
+                                                <div class="rw_dropdown">
+                                                    <div class="select_dropdown">
+                                                        <select id="minute" name="minute">
+                                                            <option value="">Minute</option>
+                                                            {% for i in minute %}
+                                                            <option value="{{i}}">{{i|twodigit}}</option>
+                                                            {% endfor %}
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="form_error" id="minute_error"></div>
+                                            <span>:</span>
+                                            <div class="rw_input">
+                                                <div class="rw_dropdown am_pm_drop">
+                                                    <div class="select_dropdown">
+                                                        <select id="time_am" name="time_am">
+                                                            <option value="AM">AM</option>
+                                                            <option value="PM">PM</option>
+                                                        </select>
+                                                    </div>
+                                                </div>
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="form_error" id="wait_error"></div>
+                                </li>
+                            </ul>
+                            <div class="textmessage_footer">
+                                <ul>
+                                    <li><a href="javascript:;" class="popup_close" data-bs-dismiss="modal" aria-label="Close">cancel</a></li>
+                                    <li><a href="javascript:;" class="rw_btn" id="wait_until_btn">save</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<!--End-->
+
+<!-- Select Tag Action Model -->
+<div class="modal fade rw_modal campaign_modal add_contact rw_select2_modal" id="select_tag_action_modal" tabindex="-1"
+    aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal_title">
+                    <h4>Select Tag Trigger</h4>
+                </div>
+                <a href="javascript:;" class="popup_close" data-bs-dismiss="modal" aria-label="Close"><img
+                        src="{% static 'images/icons/close.svg'%}" alt="close"></a>
+            </div>
+            <div class="modal-body">
+                <div class="campaigns_action_content">
+                    <form method="post" action="{% url 'campaign-action-create' campaign.id %}" id="tag_action_form">
+                        {%csrf_token%}
+                        <input type="hidden" name="campaign_form_name" value="{{campaign.name}}">
+                        <input type="hidden" name="order">
+                        <div class="campaigns_box camp_absolute trigger_select_tags_box ">
+                            <div class="textmessage_box_header">
+
+                                <div class="text_message_title">
+                                    <h5>Tag</h5>
+                                </div>
+                            </div>
+                            <div class="rw_form_inputs rw_select2_inputs">
+                                <label class="rw_form_label">Select Tags</label>
+                                <div class="rw_select2">
+                                    <div class="form-group">
+                                        <select id="tag_action" name="tag_action"
+                                            class="form-control trigger_select_tags floating-control" multiple>
+                                            <option value=""></option>
+                                            {% for t in tags %}
+                                            <option value="{{t.id}}">{{t.name}}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="form_error" id="action_error"></div>
+                            </div>
+                            <div class="textmessage_footer">
+                                <ul>
+                                    <li><a href="javascript:;" class="popup_close" data-bs-dismiss="modal" aria-label="Close">cancel</a></li>
+                                    <li><a href="javascript:;" class="rw_btn" id="tag_action_btn">Save</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!--End-->
+
+
+
+
+
+<!--Edit Text Message Modal-->
+<div class="modal fade rw_modal campaign_modal add_contact rw_select2_modal" id="edit_text_popup"
+    tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal_title">
+                    <h4>Text Message</h4>
+                </div>
+                <a href="javascript:;" class="popup_close" data-bs-dismiss="modal" aria-label="Close"><img
+                        src="{% static 'images/icons/close.svg'%}" alt="close"></a>
+            </div>
+            <div class="modal-body">
+                <form method="post" action="{% url 'campaign-action-edit' %}" id="text_message_edit_form">
+                    {%csrf_token%}
+                    <input type="hidden" name="campaign_form_name" value="{{campaign.name}}">
+                    <input type="hidden" name="cam_action_id">
+                    <div class="campaigns_action_content">
+                        <div class="campaigns_box text_message_box">
+                            <div class="textmessage_box_header">
+
+                                <div class="text_message_title">
+                                    <img src="{% static 'images/icons/message.svg'%}" alt="message">
+                                    <h5>Text Message</h5>
+                                </div>
+                            </div>
+                            <div class="text_input_box">
+                                <textarea  class="message" id="message_edit" value=""
+                                    name="message"></textarea>
+                                <div class="input_icon_wrapper">
+                                    <div class="input_words">
+                                        <p id="char_edit">0/160 characters</p>
+                                    </div>
+                                    <div class="input_icons ">
+                                        <ul class="">
+                                            <li><a href="javascript:;" title="Referral" class="add_tag"
+                                                id="edit_referral_camp"><img
+                                                    src="{% static 'images/icons/colored_icon/new_referral_color_logo.svg'%}"
+                                                    alt="image"></a>
+                                                <ul class="input_submenu" id="edit_ul_referral_camp">
+                                                    {% if referral_camp %}
+                                                    {% for rc in referral_camp %}
+                                                    <li><a href="javascript:;" class="referral_name"
+                                                            referral-code="{{rc.ref_camp_name}}">{{rc.ref_camp_name}}</a>
+                                                    </li>
+                                                    {% endfor %}
+                                                    {% else %}
+                                                    <li><a href="javascript:;" class="referral_name"
+                                                            coupon-code="">No Coupons Found</a> </li>
+                                                    {% endif %}
+                                                </ul>
+                                                <input type="hidden" id="edit_referral_code" value="">
+                                            </li>
+                                            <li><a href="javascript:;" title="Coupon" class="add_tag"
+                                                    id="edit_add_coupon"><img
+                                                        src="{% static 'images/icons/colored_icon/coupon.svg'%}"
+                                                        alt="image"></a>
+                                                <ul class="input_submenu" id="edit_ul_coupon">
+                                                    {% if coupon %}
+                                                    {% for k in coupon %}
+                                                    <li><a href="javascript:;" class="coupon_name"
+                                                            coupon-code="{{k.coupon_name}}">{{k.coupon_name}}</a>
+                                                    </li>
+                                                    {% endfor %}
+                                                    {% else %}
+                                                    <li><a href="javascript:;" class="coupon_name" coupon-code="">No
+                                                            Coupons
+                                                            Found</a> </li>
+                                                    {% endif %}
+                                                </ul>
+                                                <input type="hidden" id="edit_coupon_code" value="">
+                                            </li>
+                                            <li>
+                                                <a href="javascript:;" title="Add Tag" class="add_tag" id="edit_add_tag"><img
+                                                        src="{% static 'images/icons/add_box.svg'%}" alt="image"></a>
+                                                <ul class="input_submenu" id="edit_ul_tag">
+                                                    <li><a href="javascript:;" class="click_1" id="edit_click_1">First Name</a></li>
+                                                    <li><a href="javascript:;" class="click_1" id="edit_click_2">Last Name</a></li>
+                                                    <li><a href="javascript:;" class="click_1"
+                                                            id="edit_click_3">Birthdate</a></li>
+                                                    <li><a href="javascript:;" class="click_1"
+                                                            id="edit_click_4">Anniversary</a>
+                                                    </li>
+                                                    {% for i in custom_fields %}
+                                                    <li><a href="javascript:;" class="click_1 edit_click_custom_field"
+                                                        id="edit_click_custom_field_{{i.id}}" custom-field-id="{{i.id}}">{{i.field_name}}</a></li>
+                                                    {% endfor %}
+                                                </ul>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                                <div class="form_error" id="edit_message_error"></div>
+                            </div>
+                            <div class="textmessage_footer">
+                                <ul>
+                                    <li><a href="javascript:;" class="delete" id="text_delete">delete</a>
+                                    </li>
+                                    <li><a href="javascript:;" class="popup_close" data-bs-dismiss="modal"
+                                            aria-label="Close">cancel</a></li>
+                                    <li><a href="javascript:;" class="rw_btn message_save" id="text_edit_save">save</a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<!--End-->
+
+<!--Edit Wait Until Modal-->
+<div class="modal fade rw_modal campaign_modal add_contact rw_select2_modal" id="edit_wait_until_popup"
+    tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal_title">
+                    <h4>Wait Until</h4>
+                </div>
+                <a href="javascript:;" class="popup_close" data-bs-dismiss="modal" aria-label="Close"><img
+                        src="{% static 'images/icons/close.svg'%}" alt="close"></a>
+            </div>
+            <div class="modal-body">
+                <form method="post" action="{% url 'campaign-action-edit' %}" id="wait_until_edit_form">
+                    {%csrf_token%}
+                    <input type="hidden" name="campaign_form_name" value="{{campaign.name}}">
+                    <input type="hidden" name="cam_action_id">
+                    <div class="campaigns_action_content">
+                        <div class="campaigns_box trigger wait_until">
+                            <div class="textmessage_box_header">
+
+                                <div class="text_message_title">
+                                    <img src="{% static 'images/icons/wait.svg'%}" alt="wait">
+                                    <h5>Wait Until</h5>
+                                </div>
+                            </div>
+                            <p>
+                                Choose time for your campaign by selecting below fields
+                            </p>
+
+                            <ul class="trigger_ul">
+                                <li>
+
+                                    <div class="rw_form_inputs p-0">
+                                        <label class="rw_form_label">Select Time</label>
+                                        <div class="choose_time">
+                                            <div class="rw_input">
+                                                <div class="rw_dropdown">
+                                                    <div class="select_dropdown">
+                                                        <select id="hour_edit" name="hour">
+                                                            <option value="">Hours</option>
+                                                            {% for i in hours %}
+                                                            <option value="{{i}}">{{i|twodigit}}
+                                                            </option>
+                                                            {% endfor %}
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="form_error" id="hour_error"></div>
+                                            <span>:</span>
+                                            <div class="rw_input">
+                                                <div class="rw_dropdown">
+                                                    <div class="select_dropdown">
+                                                        <select id="minute_edit" name="minute">
+                                                            <option value="">Minute</option>
+                                                            {% for i in minute %}
+                                                            <option value="{{i}}">{{i|twodigit}}
+                                                            </option>
+                                                            {% endfor %}
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="form_error" id="minute_error"></div>
+                                            <span>:</span>
+                                            <div class="rw_input">
+                                                <div class="rw_dropdown am_pm_drop">
+                                                    <div class="select_dropdown">
+                                                        <select id="time_am_edit" name="time_am">
+                                                            <option value="AM">AM</option>
+                                                            <option value="PM">PM</option>
+                                                        </select>
+                                                    </div>
+                                                </div>
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="form_error" id="edit_wait_error"></div>
+                                </li>
+                            </ul>
+                            <div class="textmessage_footer">
+                                <ul>
+                                    <li><a href="javascript:;" class="delete" id="wait_until_delete">delete</a>
+                                    </li>
+                                    <li><a href="javascript:;" class="popup_close" data-bs-dismiss="modal" aria-label="Close">cancel</a></li>
+                                    <li><a href="javascript:;" class="rw_btn" id="wait_until_edit_save">save</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<!--End-->
+
+<!--Edit Time Delay Modal-->
+<div class="modal fade rw_modal campaign_modal add_contact rw_select2_modal" id="edit_time_delay_popup" tabindex="-1"
+    aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal_title">
+                    <h4>Time Delay</h4>
+                </div>
+                <a href="javascript:;" class="popup_close" data-bs-dismiss="modal" aria-label="Close"><img
+                        src="{% static 'images/icons/close.svg'%}" alt="close"></a>
+            </div>
+            <div class="modal-body">
+                <form method="post" action="{% url 'campaign-action-edit' %}" id="time_delay_edit_form">
+                    {%csrf_token%}
+                    <input type="hidden" name="campaign_form_name" value="{{campaign.name}}">
+                    <input type="hidden" name="cam_action_id">
+                    <div class="campaigns_action_content">
+                        <div class="campaigns_action_content">
+                            <div class="campaigns_box time_delay">
+                                <div class="textmessage_box_header">
+
+                                    <div class="text_message_title">
+                                        <img src="{% static 'images/icons/time.svg'%}" alt="time">
+                                        <h5>Time Delay</h5>
+                                    </div>
+                                </div>
+                                <p>
+                                    Enter a time delay below in minutes, hours or days
+                                </p>
+                                <div class="time_delay_inputs choose_time">
+                                    <div class="time_delay_input_box">
+                                        
+                                        <div class="rw_form_inputs" id="div_time_val_edit">
+                                            <div class="rw_input">
+                                                <input type="text" placeholder="Number" value="" min="1"
+                                                    class="quanti-invitati3" name="time_val" id="time_val_edit" autocomplete="off">
+                                                <!-- <ul class="input_spinner">
+                                                    <li class="quanti-invitati-op3" data-op="1"><img
+                                                            src="{% static 'images/icons/sort_up.svg'%}" alt="">
+                                                    </li>
+                                                    <li class="quanti-invitati-op3" data-op="-1"><img
+                                                            src="{% static 'images/icons/sort_down.svg'%}" alt="">
+                                                    </li>
+                                                </ul> -->
+                                            </div>
+                                            
+                                        </div>
+                                        <div class="rw_form_inputs rw_select2_inputs">
+                                            <div class="rw_custom_dropdown ">
+                                                <select name="time" class="rw_popup_cstm_dropdown" id="time_edit">
+                                                    <option value="minute" selected>Minute(s)</option>
+                                                    <option value="hours">Hour(s)</option>
+                                                    <option value="day">Day(s)</option>
+                                                </select>
+                                            </div>
+                                            
+                                        </div>
+                                    </div>
+
+                                    <!-- <div class="rw_form_inputs">
+                                        <div class="rw_input">
+                                            <div class="rw_dropdown">
+                                                <div class="select_dropdown">
+                                                    <select>
+                                                        <option value="after" selected>After</option>
+                                                        <option value="before">Before</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div> -->
+
+                                </div>
+                                <div class="form_error" id="edit_time_val_error"></div>
+                                <div class="form_error" id="time_error"></div>
+                                <div class="textmessage_footer">
+                                    <ul>
+                                        <li><a href="javascript:;" class="delete" id="time_delay_delete">delete</a></li>
+                                        <li><a href="javascript:;" class="popup_close" data-bs-dismiss="modal" aria-label="Close">cancel</a></li>
+                                        <li><a href="javascript:;" class="rw_btn" id="time_delay_edit_save">save</a></li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<!--End-->
+
+<!--Edit Tag Action Modal-->
+<div class="modal fade rw_modal campaign_modal add_contact rw_select2_modal edit_tag_action"
+    id="edit_tag_action_popup" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal_title">
+                    <h4>Select Tag Trigger</h4>
+                </div>
+                <a href="javascript:;" class="popup_close" data-bs-dismiss="modal" aria-label="Close"><img
+                        src="{% static 'images/icons/close.svg'%}" alt="close"></a>
+            </div>
+            <div class="modal-body">
+                <div class="campaigns_action_content">
+                    <form method="post" action="{% url 'campaign-action-edit' %}" id="tag_action_edit_form">
+                        {%csrf_token%}
+                        <input type="hidden" name="campaign_form_name" value="{{campaign.name}}">
+                        <input type="hidden" name="cam_action_id">
+                        <div class="campaigns_box camp_absolute trigger_select_tags_box ">
+                            <div class="textmessage_box_header">
+
+                                <div class="text_message_title">
+                                    <h5>Tag</h5>
+                                </div>
+                            </div>
+                            <div class="rw_form_inputs rw_select2_inputs">
+                                <label class="rw_form_label">Select Tags</label>
+                                <div class="rw_select2">
+                                    <div class="form-group">
+                                        <select id="tag_action_edit" name="tag_action"
+                                            class="form-control trigger_select_tags floating-control" multiple>
+                                            <option value=""></option>
+                                            {% for t in tags %}
+                                            <option value="{{t.id}}">{{t.name}}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="form_error" id="edit_action_error"></div>
+                            </div>
+                            <div class="textmessage_footer">
+                                <ul>
+                                    <li><a href="javascript:;" class="delete" id="tag_action_delete">delete</a>
+                                    </li>
+                                    <li><a href="javascript:;" class="popup_close" data-bs-dismiss="modal" aria-label="Close">cancel</a></li>
+                                    <li><a href="javascript:;" class="rw_btn tag_action_save"
+                                            id="tag_action_edit_save">Save</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!--End-->
+
+{% endblock %}
+
+{% block script %}
+<script src="{% static 'js/campaign_edit.js' %}"></script>
+{% endblock %}

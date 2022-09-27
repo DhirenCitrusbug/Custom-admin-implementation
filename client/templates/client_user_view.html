@@ -1,0 +1,702 @@
+{% extends 'client_base.html' %}
+{% load static %}
+{% load tz %}
+{% block title %}
+    <title>Client Users</title>
+{% endblock %}
+{% block page_content %}
+<div class="rw_inner_area rw_inner_form_area rw_modal_backdrop">
+    <div class="rw_tabs">
+        <ul class="nav rw_tab_ul" id="myTab" role="tablist">
+            
+            <li class="nav-item" role="presentation">
+                <a href="{% url 'client-settings' client.id %}" class="tab_link " id="business_settings_tab" >Business settings</a>
+            </li>
+            <li class="nav-item" role="presentation">
+                <a href="{% url 'client-user' client.id %}" class="tab_link active" id="campaign_user_tab" data-bs-toggle="tab"
+                    data-bs-target="#campaign_user" role="tab" aria-selected="false">Users</a>
+            </li>
+            <li class="nav-item" role="presentation">
+                <a href="{% url 'client-phone-view' client.id %}" class="tab_link" id="campaign_phone_numbers_tab" >Phone Numbers</a>
+            </li>
+            <li class="nav-item" role="presentation">
+                <a href="{% url 'add-custom-fields' client.id %}" class="tab_link" id="campaign_custom_fields_tab" >Custom fields</a>
+            </li>
+            <li class="nav-item" role="presentation">
+                <a href="{% url 'client-tag-view' client.id %}" class="tab_link " id="campaign_custom_tags_tab" >Tags</a>
+            </li>
+            
+
+
+
+
+        </ul>
+    </div>
+
+      {% if messages %}
+    {% for message in messages %}
+         {% if message.tags == 'error' %}
+             <div class="rw_suc_err_wrapper rw_error_toast active" style="padding-left: 50px; padding-top: 20px;">
+                <div class="rw_suc_err_block ">
+                    <img src="{% static 'images/icons/error.svg'%}" alt="error">
+                    <p>{{message}}</p>
+                    <a href="javascript:;" class="close error_close"><img src="{% static 'images/icons/close_white.svg'%}" alt="close"></a>
+                </div>
+            </div>
+        {% else %}
+        <div class="rw_suc_err_wrapper rw_success_toast active" style="padding-left: 50px; padding-top: 20px;">
+            <div class="rw_suc_err_block ">
+                <img src="{% static 'images/icons/check_white.svg' %}" alt="Done">
+                <p>{{message}}</p>
+                <a href="javascript:;" class="close success_close"><img src="{% static 'images/icons/close_white.svg' %}" alt="close"></a>
+            </div>
+        </div>
+        {% endif %}
+{% endfor %}
+{% endif %}
+    <div class="tab-content">
+       <div class="tab-pane active" id="campaign_user" role="tabpanel" >
+            <div class="rw_inner_tab_area user_tab_content">
+                <div class="admin_user_select">
+                    <div class="rw_selectbox tags">
+                        <select id="status_active">
+                            <option value="" selected>Status</option>
+                            <option value="1">Active</option>
+                            <option value="0">Inactive</option>
+                            <option value="">All</option>
+                        </select>
+                    </div>
+                <div class="search_icon_wrapper">
+                        <div class="rw_dashboard_btn">
+                            <a href="javascript:;" class="rw_btn" data-bs-toggle="modal" data-bs-target="#add_new_user">+New User</a>
+                        </div>
+                </div>
+                </div>
+                <div class="rw_table_wrapper">
+                    <div class="rw_table_inner rw_admin_user_table  rw_campaign_user_table" id="client_user">
+                        <table id="cm_user_tabl" class="table rw_pagination" >
+                            <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Email</th>
+                                    <th>Date</th>
+                                    <th class="sorting_none text-center">Status</th>
+                                    <th class="sorting_none text-center">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            <tr class="client_row">
+                                <td>{{client.first_name|title}} {{client.last_name|title}}</td>
+                                <td>{{client.email}}</td>
+                                <td data-order="{{today|date:'Y-m-d H:i'}}">Added on {{client.created_at|date:"j M, Y h:i A"}}</td>
+                                <td class="text-center">
+                                        <div class="rw_toggle_switch">
+                                            <form>
+                                            {% csrf_token %}
+                                            <div class="rw_switch" id="div_status-{{client.id}}" >
+
+                                            {% if client.is_active is True %}
+                                            <input type="checkbox" checked id="status"
+                                                onclick='activeclient("False","{{client.id}}")' id>
+                                            {% else %}
+                                            <input type="checkbox" id="status" onclick='activeclient("True","{{client.id}}")'>
+                                            {% endif %}
+                                            </div>
+                                            </form>
+                                        </div>
+                                    </td>
+                                <td class="text-center">
+                                    <div class="action_dropdown">
+                                    <ul class="drop_ul">
+                                        <li class="position-relative"><a href="javascript:;" class="action_btn"><img src="{% static 'images/icons/action.svg'%}" alt="action"></a>
+
+                                            <ul class="action_submenu">
+                                                <li><a href="#" data-bs-toggle="modal" data-bs-target="#edit_client_user"
+                                                    data-ta user-id="{{client.id}}" id="edit_btn"><img
+                                                        src="{% static 'images/icons/edit.svg' %}" alt="image">edit</a></li>
+                                                <!-- <li><a href="javascript:;" class="remove_action" data-bs-toggle="modal" data-bs-target="#delete_confirm_popup-{{i.id}}"><img src="{% static 'images/icons/delete.svg'%}" alt="image">delete</a></li>
+                                                <li><a href="javascript:;" class="remove_action" data-bs-toggle="modal" data-bs-target="#"><img src="{% static 'images/icons/colored_icon/campaing.svg'%}" alt="image">Send Broadcast</a></li> -->
+                                            </ul>
+                                        </li>
+                                    </ul>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% for i in client_user %}
+                            <tr>
+                                <td>{{i.first_name|title}} {{i.last_name|title}}</td>
+                                <td>{{i.email}}</td>
+                                <td data-order="{{i.created_at|date:'Y-m-d H:i'}}">Added on {{i.created_at|date:"j M, Y h:i A"}}</td>
+                                <td class="text-center">
+                                        <div class="rw_toggle_switch">
+                                            <form>
+                                            {% csrf_token %}
+                                            <div class="rw_switch" id="div_status-{{i.id}}" >
+
+                                            {% if i.is_active is True %}
+                                            <input type="checkbox" checked id="status"
+                                                onclick='activeuser("False","{{i.id}}")' id>
+                                            {% else %}
+                                            <input type="checkbox" id="status" onclick='activeuser("True","{{i.id}}")'>
+                                            {% endif %}
+                                            </div>
+                                            </form>
+                                        </div>
+                                    </td>
+                                <td class="text-center">
+                                    <div class="action_dropdown">
+                                    <ul class="drop_ul">
+                                        <li class="position-relative"><a href="javascript:;" class="action_btn"><img src="{% static 'images/icons/action.svg'%}" alt="action"></a>
+
+                                            <ul class="action_submenu">
+                                                <li><a href="#" data-bs-toggle="modal" data-bs-target="#edit_client_user"
+                                                    data-ta user-id="{{i.id}}" id="edit_btn"><img
+                                                        src="{% static 'images/icons/edit.svg' %}" alt="image">edit</a></li>
+                                                <li><a href="javascript:;" class="remove_action" data-bs-toggle="modal" data-bs-target="#delete_confirm_popup-{{i.id}}"><img src="{% static 'images/icons/delete.svg'%}" alt="image">delete</a></li>
+                                                <!-- <li><a href="javascript:;" class="remove_action" data-bs-toggle="modal" data-bs-target="#"><img src="{% static 'images/icons/colored_icon/campaing.svg'%}" alt="image">Send Broadcast</a></li> -->
+                                            </ul>
+                                        </li>
+                                    </ul>
+                                    </div>
+                                </td>
+                            </tr>
+                            <div class="modal fade rw_modal delete_popup" id="delete_confirm_popup-{{i.id}}" tabindex="-1"  aria-hidden="true">
+                            <div class="modal-dialog modal-dialog-centered">
+                              <div class="modal-content">
+                                <div class="modal-header">
+                                    <div class="modal_title">
+                                        <h4>Delete User</h4>
+                                    </div>
+                                  <a href="javascript:;" class="popup_close" data-bs-dismiss="modal" aria-label="Close"><img src="{% static 'images/icons/close.svg'%}" alt="close"></a>
+                                </div>
+                                <div class="modal-body">
+                                    <div class="delete_modal_body">
+                                        <img src="{% static 'images/delete_popup.svg'%}" alt="">
+                                        <h1>Delete User</h1>
+                                        <p>Are you sure you want to delete {{i.first_name|title}} {{i.last_name|title}}?</p>
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                 <ul class="modal_btns">
+                                     <li><a href="javascript:;" class="modal_btn cancel" data-bs-dismiss="modal">no</a></li>
+                                     <li><a href="{% url 'client-user-delete' i.id %}" id="contact_delete_id" class="modal_btn" >Yes</a></li>
+                                 </ul>
+                                </div>
+                              </div>
+                            </div>
+                        </div>
+                           {% endfor %}
+
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+       </div>
+    </div>
+
+     <!------ Add New user ------>
+        <div class="modal fade rw_modal add_contact" id="add_new_user" tabindex="-1"  aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <div class="modal_title">
+                        <h4>Add New User</h4>
+                    </div>
+                <a href="javascript:;" class="popup_close" data-bs-dismiss="modal" aria-label="Close"><img src="{% static 'images/icons/close.svg'%}" alt="close"></a>
+                </div>
+                <form>
+                    {% csrf_token %}
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="rw_form_inputs" id="div_first">
+                                <label  class="rw_form_label">First Name</label>
+                                <div class="rw_input">
+                                    <input type="text" placeholder="First Name" id="first_name" maxlength="15">
+                                </div>
+                                <div class="form_error"  id="first_error"></div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="rw_form_inputs" id="div_last">
+                                <label  class="rw_form_label">Last Name</label>
+                                <div class="rw_input">
+                                    <input type="text" placeholder="Last Name" id="last_name" maxlength="15">
+                                </div>
+                                <div class="form_error"  id="last_error"></div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-12">
+                            <div class="rw_form_inputs rw_date_input" id="div_email">
+                                <label  class="rw_form_label">Email Address</label>
+                                <div class="rw_input">
+                                    <input type="email" placeholder="Email" id="email">
+                                    <span class="input_icon email"></span>
+                                </div>
+                                <div class="form_error"  id="email_error"></div>
+                            </div>
+                        </div>
+<!--                        <div class="col-md-12">-->
+<!--                            <div class="rw_form_inputs rw_date_input" id="div_password">-->
+<!--                                <label  class="rw_form_label">Password</label>-->
+<!--                                <div class="rw_input">-->
+<!--                                    <input type="password" placeholder="Password" id="password">-->
+<!--                                    <span class="input_icon rw_eye"></span>-->
+<!--                                </div>-->
+<!--                                <div class="form_error"  id="password_error"></div>-->
+<!--                            </div>-->
+<!--                        </div>-->
+<!--                        <div class="col-md-12">-->
+<!--                            <div class="rw_form_inputs rw_date_input" id="div_confirm">-->
+<!--                                <label  class="rw_form_label">Confirm Password</label>-->
+<!--                                <div class="rw_input">-->
+<!--                                    <input type="password" placeholder="Password" id="confirm_password">-->
+<!--                                    <span class="input_icon rw_eye"></span>-->
+<!--                                </div>-->
+<!--                                <div class="form_error"  id="confirm_error"></div>-->
+<!--                            </div>-->
+<!--                        </div>-->
+                        <div class="col-md-12">
+                            <div class="rw_form_inputs rw_date_input" id="div_passcode">
+                                <label  class="rw_form_label">Server passcode</label>
+                                <div class="rw_input">
+                                    <input type="password" placeholder="Password" id="passcode">
+                                    <span class="input_icon rw_eye"></span>
+                                </div>
+                                <div class="form_error"  id="passcode_error"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form_error"  id="error"></div>
+                </div>
+                <div class="modal-footer">
+                <ul class="modal_btns">
+                    <li><a href="javascript:;" class="modal_btn cancel" data-bs-dismiss="modal">cancel</a></li>
+                    <li><input type="button" id="add_user" value="add" class="modal_btn" style="border:none;"></li>
+                </ul>
+                </div>
+                </form>
+            </div>
+            </div>
+        </div>
+
+         <!------ Edit New user ------>
+        <div class="modal fade rw_modal add_contact" id="edit_client_user" tabindex="-1"  aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <div class="modal_title">
+                        <h4>Edit User</h4>
+                    </div>
+                <a href="javascript:;" class="popup_close" data-bs-dismiss="modal" aria-label="Close"><img src="{% static 'images/icons/close.svg'%}" alt="close"></a>
+                </div>
+                <form>
+                    {% csrf_token %}
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="rw_form_inputs" id="div_first_edit">
+                                <label  class="rw_form_label">First Name</label>
+                                <div class="rw_input">
+                                    <input type="text" placeholder="First Name" id="first_name_edit" maxlength="15">
+                                </div>
+                                <div class="form_error"  id="first_error_edit"></div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="rw_form_inputs" id="div_last_edit">
+                                <label  class="rw_form_label">Last Name</label>
+                                <div class="rw_input">
+                                    <input type="text" placeholder="Last Name" id="last_name_edit" maxlength="15">
+                                </div>
+                                <div class="form_error"  id="last_error_edit"></div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-12">
+                            <div class="rw_form_inputs rw_date_input" id="div_email_edit">
+                                <label  class="rw_form_label">Email Address</label>
+                                <div class="rw_input">
+                                    <input type="email" placeholder="Email" id="email_edit" readonly style="opacity: 0.4;">
+                                    <span class="input_icon email"></span>
+                                </div>
+                                <div class="form_error"  id="email_error_edit"></div>
+                            </div>
+                        </div>
+                        <input type="hidden" id="user_id">
+                        <div class="col-md-12">
+                            <div class="rw_form_inputs rw_date_input" id="div_passcode_edit">
+                                <label  class="rw_form_label">Server passcode</label>
+                                <div class="rw_input">
+                                    <input type="password" placeholder="Password" id="passcode_edit">
+                                    <span class="input_icon rw_eye"></span>
+                                </div>
+                                <div class="form_error"  id="passcode_error_edit"></div>
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="form_error"  id="error_edit"></div>
+                </div>
+                <div class="modal-footer">
+                <ul class="modal_btns">
+                    <li><a href="javascript:;" class="modal_btn cancel" data-bs-dismiss="modal">cancel</a></li>
+                    <li><input type="button" id="edit_user" value="save" class="modal_btn" style="border:none;"></li>
+                </ul>
+                </div>
+                </form>
+            </div>
+            </div>
+        </div>
+{% endblock %}
+
+{% block script %}
+    <script>
+    $('#passcode').on('keypress', function (event) {
+    var regex = new RegExp("^[0-9]+$");
+    var key = String.fromCharCode(!event.charCode ? event.which : event.charCode);
+    if (!regex.test(key)) {
+       event.preventDefault();
+       return false;
+    }
+   });
+   $('#passcode_edit').on('keypress', function (event) {
+    var regex = new RegExp("^[0-9]+$");
+    var key = String.fromCharCode(!event.charCode ? event.which : event.charCode);
+    if (!regex.test(key)) {
+       event.preventDefault();
+       return false;
+    }
+   });
+function validEmail(email) {
+    var re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+    return re.test(email);
+};
+
+    $('#add_user').on('click', function (event) {
+        if ($("#first_name").val().length <= 0) {
+            $('#first_error').text('Please enter First Name')
+            $('#div_first').addClass('error')
+        }
+        if ($("#last_name").val().length <= 0) {
+            $('#last_error').text('Please enter Last Name')
+            $('#div_last').addClass('error')
+        }
+        if ($("#email").val().length <= 0) {
+            $('#email_error').text('Please enter Email')
+            $('#div_email').addClass('error')
+        }else{
+            if (!validEmail($("#email").val())) {
+                $('#email_error').text('Please enter proper Email')
+                $('#div_email').addClass('error')
+            }
+        }
+<!--        if ($("#password").val().length <= 0) {-->
+<!--            $('#password_error').text('Please enter Password')-->
+<!--            $('#div_password').addClass('error')-->
+<!--        }else{-->
+<!--             if(!$("#password").val().match(/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,20}$/)){-->
+<!--                    $("#div_password").addClass('error')-->
+
+<!--                    $('#password_error').text('Password should be of at least 6 char with 1 capital,1 small, 1 special char in it.')-->
+<!--                }-->
+<!--        }-->
+
+<!--        if ($("#confirm_password").val().length <= 0) {-->
+<!--            $('#confirm_error').text('Please enter Confirm Password')-->
+<!--            $('#div_confirm').addClass('error')-->
+<!--        }-->
+         if ($("#passcode").val().length <= 0) {
+            $('#passcode_error').text('Please enter Server Passcode')
+            $('#div_passcode').addClass('error')
+        }else if ($("#passcode").val().length < 4 || $("#passcode").val().length > 10) {
+            $('#passcode_error').text('Server Passcode should be between 4 to 10 digits')
+            $('#div_passcode').addClass('error')
+        }
+<!--        if ($("#confirm_password").val()!=$("#password").val()){-->
+<!--            console.log('asdasdasd')-->
+<!--            $('#confirm_error').text('Password and Confirm Password does not match')-->
+<!--            $('#div_confirm').addClass('error')-->
+<!--        }-->
+        if ($("#first_name").val().length > 0 && $("#last_name").val().length > 0 && $("#passcode").val().length > 0
+            && $("#email").val().length > 0
+            && $("#passcode").val().length >= 4 && $("#passcode").val().length <= 10 && validEmail($("#email").val())) {
+            $('#loader').removeClass('rw_loader_none')
+            link = "{% url 'client-user' client.id %}";
+            $.ajax({
+                type: 'POST',
+                url: link,
+                data: {
+                    first_name: $("#first_name").val(),
+                    last_name: $("#last_name"   ).val(),
+<!--                    password: $("#password").val(),-->
+                    email: $("#email").val(),
+                    passcode: $("#passcode").val(),
+                    csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val(),
+                },
+                success: function (response) {
+                $('#loader').addClass('rw_loader_none')
+                    if (response['status'] == false ) {
+                        $('#error').text(response['message'])
+                    } else {
+                        location.reload()
+                    }
+
+                }
+            });
+        }
+    });
+    $('#first_name').on('keyup change', function (event) {
+        if ($("#first_name").val().length > 0) {
+            $("#first_error").text('')
+            $('#div_first').removeClass('error')
+        }
+    });
+    $('#last_name').on('keyup change', function (event) {
+        if ($("#last_name").val().length > 0) {
+            $("#last_error").text('')
+            $('#div_last').removeClass('error')
+        }
+    });
+
+    $('#email').on('keyup change', function (event) {
+        if ($("#email").val().length > 0) {
+            $("#email_error").text('')
+            $('#div_email').removeClass('error')
+        }
+        if (validEmail($("#email").val())) {
+            $('#email_error').text('')
+            $('#div_email').removeClass('error')
+        } else {
+            $('#email_error').text('Please enter proper Email')
+            $('#div_email').addClass('error')
+
+        }
+    });
+    $('#password').on('keyup change', function (event) {
+        if ($("#password").val().length > 0) {
+            $("#password_error").text('')
+            $('#div_password').removeClass('error')
+        }
+    });
+    $('#confirm_password').on('keyup change', function (event) {
+        if ($("#confirm_password").val().length > 0) {
+            $("#confirm_error").text('')
+            $('#div_confirm').removeClass('error')
+        }
+    });
+    $('#passcode').on('keyup change', function (event) {
+        if ($("#passcode").val().length > 0) {
+            $("#passcode_error").text('')
+            $('#error').text('')
+            $('#div_passcode').removeClass('error')
+        }
+    });
+
+    $(document).on("click", "#edit_btn", function () {
+        console.log('aaA')
+        var user_id = $(this).attr('user-id');
+        link = "{% url 'client-user-edit' %}";
+        $.ajax({
+            type: 'GET',
+            url: link,
+            data: {
+                user_id: user_id,
+            },
+            success: function (response) {
+                console.log(response)
+                if (response['status'] == true) {
+                    console.log('sssssss')
+                    console.log(response['user']['first_name'])
+                    $('#first_name_edit').val(response['user']['first_name'])
+                    $('#last_name_edit').val(response['user']['last_name'])
+                    $('#email_edit').val(response['user']['email'])
+                    $('#passcode_edit').val(response['user']['server_passcode'])
+                    $('#user_id').val(response['user']['id'])
+                }
+            }
+        });
+    });
+
+    $('#edit_user').on('click', function (event) {
+        if ($("#first_name_edit").val().length <= 0) {
+            $('#first_error_edit').text('Please enter First Name')
+            $('#div_first_edit').addClass('error')
+        }
+        if ($("#last_name_edit").val().length <= 0) {
+            $('#last_error_edit').text('Please enter Last Name')
+            $('#div_last_edit').addClass('error')
+        }
+        if ($("#passcode_edit").val().length <= 0) {
+            $('#passcode_error_edit').text('Please enter Server Passcode')
+            $('#div_passcode_edit').addClass('error')
+        }else if ($("#passcode_edit").val().length < 4 || $("#passcode_edit").val().length > 10) {
+            $('#passcode_error_edit').text('Server Passcode should be between 4 to 10 digits')
+            $('#div_passcode_edit').addClass('error')
+        }
+
+         if ($("#first_name_edit").val().length > 0 && $("#last_name_edit").val().length > 0
+         && $("#passcode_edit").val().length >= 4 && $("#passcode_edit").val().length <= 10) {
+            $('#loader').removeClass('rw_loader_none')
+            link = "{% url 'client-user-edit' %}";
+            $.ajax({
+                type: 'POST',
+                url: link,
+                data: {
+                    first_name: $("#first_name_edit").val(),
+                    last_name: $("#last_name_edit").val(),
+                    user_id:$("#user_id").val(),
+                    passcode:$("#passcode_edit").val(),
+                    csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val(),
+                },
+                success: function (response) {
+                $('#loader').addClass('rw_loader_none')
+                    if (response['status'] == false) {
+                        $('#error_edit').text(response['message'])
+                    } else {
+                        location.reload()
+                    }
+
+                }
+            });
+        }
+    });
+    $('#first_name_edit').on('keyup change', function (event) {
+        if ($("#first_name_edit").val().length > 0) {
+            $("#first_error_edit").text('')
+            $('#div_first_edit').removeClass('error')
+        }
+    });
+    $('#last_name_edit').on('keyup change', function (event) {
+        if ($("#last_name_edit").val().length > 0) {
+            $("#last_error_edit").text('')
+            $('#div_last_edit').removeClass('error')
+        }
+    });
+    $('#passcode_edit').on('keyup change', function (event) {
+        if ($("#passcode_edit").val().length > 0) {
+            $("#passcode_error_edit").text('')
+            $('#error_edit').text('')
+            $('#div_passcode_edit').removeClass('error')
+        }
+    });
+
+    function activeuser(value, user) {
+        link = "{% url 'client-user-active' %}";
+        $.ajax({
+            type: 'POST',
+            url: link,
+            data: {
+                active: value,
+                user_id: user,
+                csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val()
+            },
+            success: function (response) {
+                console.log(response)
+               if (response['status']==true){
+                    $('#div_status-'+response['id']).empty()
+                    $('#div_status-'+response['id']).append("<input type='checkbox' id='status' onclick="+"activeuser('True',"+response['id']+")>")
+            }else{
+                $('#div_status-'+response['id']).empty()
+                $('#div_status-'+response['id']).append("<input type='checkbox' checked id='status' onclick="+"activeuser('False',"+response['id']+")>")
+            }
+            }
+        });
+    }
+
+    $('#status_active').on('change', function (event) {
+         $('#loader').removeClass('rw_loader_none')
+        link = "{% url 'client-user-status-filter' client.id %}";
+            $.ajax({
+                type: 'GET',
+                url: link,
+                data: {
+                    status: $("#status_active").val(),
+
+                },
+                success: function (response) {
+                    $('#loader').addClass('rw_loader_none')
+                    console.log($('.client_row').index(this));
+                    $("#client_user").html(response)
+                     $("#cm_user_tabl").dataTable({
+                        language: {
+                          search: "",
+                          searchPlaceholder: "Search users/email",
+                          paginate: {
+                            next: '<img src="/static/images/icons/chevron_right.svg" alt="image">',
+                            previous:
+                              '<img src="/static/images/icons/chevron_left.svg" alt="image">',
+                          },
+                        },
+                        bPaginate: true,
+                        bLengthChange: false,
+                        responsive: true,
+                        "order": [[ 2, "desc" ]],
+                        aoColumnDefs: [
+                              {
+                                 bSortable: true,
+                                 aTargets: [ -1 ]
+                              }
+                            ],
+                            "columns": [
+                                null,
+                                null,
+                                { "searchable": false },
+                                { "searchable": false },
+                                { "searchable": false }
+                                ],
+                        "oLanguage": {
+                            "sEmptyTable": "No Records Found"
+                        }
+                     });
+                    $(".action_btn").on("click", function (e) {
+                      e.stopPropagation();
+                      if ($(this).siblings(".action_submenu").hasClass("active")) {
+                        $(this).siblings(".action_submenu").removeClass("active");
+                      } else {
+                        $(".action_submenu.active").removeClass("active");
+                        $(this).siblings(".action_submenu").addClass("active");
+                      }
+                    });
+                }
+            });
+     });
+
+     $('#add_new_user').find('a').click(function(){
+        $('#add_new_user').find('form')[0].reset()
+        $('.form_error').empty()
+        $("#div_first").removeClass('error')    
+        $("#div_last").removeClass('error')    
+        $("#div_email").removeClass('error')    
+        $("#div_password").removeClass('error')    
+        $("#div_confirm").removeClass('error')    
+        $("#div_passcode").removeClass('error')    
+    })
+
+
+    function activeclient(value, user) {
+        link = "{% url 'client-active' %}";
+        $.ajax({
+            type: 'POST',
+            url: link,
+            data: {
+                active: value,
+                user_id: user,
+                csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val()
+            },
+            success: function (response) {
+                console.log(response)
+               if (response['status']==true){
+                    $('#div_status-'+response['id']).empty()
+                    $('#div_status-'+response['id']).append("<input type='checkbox' id='status' onclick="+"activeclient('True',"+response['id']+")>")
+            }else{
+                $('#div_status-'+response['id']).empty()
+                $('#div_status-'+response['id']).append("<input type='checkbox' checked id='status' onclick="+"activeclient('False',"+response['id']+")>")
+            }
+            }
+        });
+    }
+    </script>
+{% endblock %}

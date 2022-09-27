@@ -1,0 +1,129 @@
+.input_icon {
+  opacity: 0.2;
+}
+.business {
+  background: url(../images/icons/business.svg);
+  width: 23.94px;
+  height: 24px;
+}
+.email {
+  background: url(../images/icons/email.svg);
+  width: 23.94px;
+  height: 24px;
+}
+.phone {
+  background: url(../images/icons/call.svg);
+  width: 23.94px;
+  height: 24px;
+}
+.link {
+  background: url(../images/icons/link.svg);
+  width: 23.94px;
+  height: 24px;
+}
+.location {
+  background: url(../images/icons/location.svg);
+  width: 23.94px;
+  height: 24px;
+}
+.rw_eye {
+  background: url(../images/icons/eye_dark.svg);
+  width: 23.94px;
+  height: 24px;
+  cursor: pointer;
+}
+.rw_eyeclose {
+  background: url(../images/icons/visibility_off.svg);
+  width: 23.94px;
+  height: 24px;
+  cursor: pointer;
+}
+.copy {
+  background: url(../images/icons/copy.svg);
+  width: 24px;
+  height: 24px;
+}
+.percentage {
+  background: url(../images/icons/percentage.svg);
+  width: 24px;
+  height: 24px;
+}
+.number {
+  background: url(../images/icons/number.svg);
+  width: 24px;
+  height: 34px;
+}
+.date {
+  background: url(../images/icons/date.svg);
+  width: 23.94px;
+  height: 24px;
+}
+.caret {
+  background: url(../images/icons/caret_light.svg);
+  width: 9.97px;
+  height: 5px;
+}
+.send {
+  background: url(../images/icons/colored_icon/send.svg);
+  width: 19.46px;
+  height: 16.97px;
+}
+.dollor {
+  background: url(../images/icons/dollor_dark.svg);
+  width: 23.94px;
+  height: 24px;
+}
+.calendar {
+  background: url(../images/icons/calendar.svg);
+  width: 24px;
+  height: 24px;
+  pointer-events: none;
+}
+/*On focus*/
+/* .rw_eye.active{
+    opacity: 1;
+} */
+.rw_inp_focus {
+  .business {
+    background: url(../images/icons/colored_icon/business.svg);
+    background-repeat: no-repeat;
+  }
+  .email {
+    background: url(../images/icons/colored_icon/email.svg);
+    background-repeat: no-repeat;
+  }
+  .phone {
+    background: url(../images/icons/colored_icon/phone.svg);
+    background-repeat: no-repeat;
+  }
+  .link {
+    background: url(../images/icons/colored_icon/link.svg);
+    background-repeat: no-repeat;
+  }
+  .location {
+    background: url(../images/icons/colored_icon/location.svg);
+    background-repeat: no-repeat;
+  }
+  .copy {
+    background: url(../images/icons/colored_icon/copy.svg);
+    background-repeat: no-repeat;
+  }
+  .rw_eye {
+    background: url(../images/icons/colored_icon/eye.svg);
+    background-repeat: no-repeat;
+  }
+  .number {
+    display: none;
+  }
+  .calendar {
+    background: url(../images/icons/colored_icon/calendar.svg);
+  }
+  input[type="date"] {
+    &::-webkit-calendar-picker-indicator {
+      background: url(../images/icons/colored_icon/date.svg) !important;
+      background-repeat: no-repeat !important;
+      width: 23.94px;
+      height: 24px;
+    }
+  }
+}

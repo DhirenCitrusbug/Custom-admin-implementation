@@ -1,0 +1,1221 @@
+{% extends 'client_base.html' %}
+{% load static %}
+
+{% block title %}
+    <title>Client Settings</title>
+{% endblock %}
+{% block page_content %}
+        <div class="rw_inner_area rw_inner_form_area rw_modal_backdrop">
+            <div class="rw_tabs">
+                <ul class="nav rw_tab_ul" id="myTab" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <a href="javascript:;" class="active tab_link" id="business_settings_tab" data-bs-toggle="tab" data-bs-target="#business_settings" role="tab"  aria-selected="true">Business settings</a>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <a href="{% url 'client-user' client.id %}" class="tab_link" id="campaign_user_tab"  aria-selected="false">Users</a>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <a href="{% url 'client-phone-view' client.id %}" class="tab_link" id="campaign_phone_numbers_tab" aria-selected="false">Phone Numbers</a>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <a href="{% url 'add-custom-fields' client.id %}" class="tab_link" id="campaign_custom_fields_tab"  aria-selected="false">Custom fields</a>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <a href="{% url 'client-tag-view' client.id %}" class="tab_link" aria-selected="false">Tags</a>
+                    </li>
+                    {% if not agency %}
+                    <li class="nav-item" role="presentation">
+                        <a href="{% url 'client-account-setting' %}" class="tab_link" aria-selected="false">Account setting</a>
+                    </li >
+                    {% endif %}
+
+                </ul>
+  {% if messages %}
+    {% for message in messages %}
+         {% if message.tags == 'error' %}
+             <div class="rw_suc_err_wrapper rw_error_toast active" style="padding-left: 50px; padding-top: 20px;">
+                <div class="rw_suc_err_block ">
+                    <img src="{% static 'images/icons/error.svg'%}" alt="error">
+                    <p>There was a problem saving your changes</p>
+                    <a href="javascript:;" class="close error_close"><img src="{% static 'images/icons/close_white.svg'%}" alt="close"></a>
+                </div>
+            </div>
+        {% else %}
+        <div class="rw_suc_err_wrapper rw_success_toast active" style="padding-left: 50px; padding-top: 20px;">
+            <div class="rw_suc_err_block ">
+                <img src="{% static 'images/icons/check_white.svg' %}" alt="Done">
+                <p>{{message}}</p>
+                <a href="javascript:;" class="close success_close"><img src="{% static 'images/icons/close_white.svg' %}" alt="close"></a>
+            </div>
+        </div>
+        {% endif %}
+{% endfor %}
+{% endif %}
+
+                <!-- Tab panes -->
+                <div class="tab-content">
+                    <div class="tab-pane active" id="business_settings" role="tabpanel" >
+                        <form method="post" action="{% url 'client-settings' client.id %}">
+                            {% csrf_token %}
+                        <div class="rw_inner_form_inner_area">
+                            <div class="rw_inn_form_box">
+                                <div class="row">
+                                    <div class="col-lg-4 col-md-6">
+                                        <div class="rw_form_inputs">
+                                            <label  class="rw_form_label">Business Name</label>
+                                            <div class="rw_input">
+                                                {{client_form.business_name}}
+                                                 <span class="input_icon business"></span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-4 col-md-6">
+                                        <div class="rw_form_inputs">
+                                            <label  class="rw_form_label">Business Email</label>
+                                            <div class="rw_input">
+                                                {{client_form.business_email}}
+                                                 <span class="input_icon email"></span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-4 col-md-6">
+                                        <div class="rw_form_inputs">
+                                            <label  class="rw_form_label">Business Phone</label>
+                                            <div class="rw_input">
+                                               {{client_form.business_phone_no}}
+                                                <span class="input_icon phone"></span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-4 col-md-6">
+                                        <div class="rw_form_inputs">
+                                            <label  class="rw_form_label">Email</label>
+                                            <div class="rw_input">
+                                                {{client_form.email}}
+                                                 <span class="input_icon email"></span>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="form_error">{{ client_form.non_field_errors }}</div>
+                                    </div>
+                                    <div class="col-lg-4 col-md-6">
+                                       <div class="rw_form_inputs">
+                                    <label class="rw_form_label">Time Zone</label>
+                                    <div class="rw_custom_dropdown">
+
+                                            {{client_form.time_zone}}
+
+                                    </div>
+                                </div>
+                                    </div>
+                                </div>
+                            </div>
+                             <div class="rw_inn_form_box">
+                        <div class="row">
+                            <div class="col-lg-8 col-md-12">
+                                <div class="rw_form_inputs">
+                                    <label class="rw_form_label">address</label>
+                                    <div class="rw_input">
+                                        {{add_form.address }}
+                                        <span class="input_icon location"></span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-4 col-md-6">
+                                <div class="rw_form_inputs">
+                                    <label class="rw_form_label">Country</label>
+                                    <div class="rw_custom_dropdown">
+
+                                            {{add_form.country}}
+
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-4 col-md-6">
+                                <div class="rw_form_inputs">
+                                    <label class="rw_form_label">State</label>
+                                     <div class="rw_custom_dropdown">
+
+                                            {{add_form.state}}
+
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-4 col-md-6">
+                                <div class="rw_form_inputs">
+                                    <label class="rw_form_label">City</label>
+                                    <div class="rw_input">
+                                        {{ add_form.city }}
+                                        <span class="input_icon"></span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-4 col-md-6">
+                                <div class="rw_form_inputs">
+                                    <label class="rw_form_label">Zip</label>
+                                    <div class="rw_input">
+                                        {{add_form.zip_code }}
+                                        <span class="input_icon"></span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                                <div class="rw_save_btn">
+                                    <input type="submit" class="rw_btn" id="submit_btn" value="save" style="border:none;">
+                                </div>
+                        </div>
+                        </form>
+                    </div>
+                    <div class="tab-pane" id="campaign_user" role="tabpanel" >
+                        <div class="rw_inner_tab_area user_tab_content">
+                            <div class="admin_user_select">  
+                                <div class="rw_selectbox tags">
+                                    <select  >
+                                        <option value="">Status</option>
+                                        <option value="">1</option>
+                                        <option value="">2</option>
+                                        <option value="">3</option>
+                                    </select>
+                                </div>
+                            <div class="search_icon_wrapper">                          
+                                    <div class="rw_dashboard_btn">
+                                        <a href="javascript:;" class="rw_btn" data-bs-toggle="modal" data-bs-target="#add_new_user">+New User</a>
+                                    </div>
+                            </div>
+                            </div> 
+                            <div class="rw_table_wrapper">
+                                <div class="rw_table_inner rw_admin_user_table  rw_campaign_user_table">                
+                                    <table id="cm_user_tabl" class="table rw_pagination" >
+                                        <thead>
+                                            <tr>
+                                                <th>Name</th>
+                                                <th>Email</th>
+                                                <th>Date</th>
+                                                <th class="sorting_none text-center">Status</th>
+                                                <th class="sorting_none text-center">Actions</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>                    
+                                        <tr>
+                                            <td>John Doe</td>
+                                            <td>johndoe@gmail.com</td>
+                                            <td>Added on 3 Dec, 2021  03:00 PM</td>
+                                            <td class="text-center">
+                                                    <div class="rw_toggle_switch">
+                                                    <div class="rw_switch">
+                                                        <input type="checkbox"  checked>
+                                                    </div>
+                                                    </div>
+                                                </td>
+                                            <td class="text-center">
+                                                <div class="action_dropdown">
+                                                <ul class="drop_ul">
+                                                    <li class="position-relative"><a href="javascript:;" class="action_btn"><img src="../assets/images/icons/action.svg" alt="action"></a>
+                                                        <ul class="action_submenu">                                             
+                                                            <li><a href="javascript:;" class="remove_action" data-bs-toggle="modal" data-bs-target="#"><img src="../assets/images/icons/edit.svg" alt="image">Edit</a></li>
+                                                            <li><a href="javascript:;" class="remove_action" data-bs-toggle="modal" data-bs-target="#delete_popup"><img src="../assets/images/icons/delete.svg" alt="image">delete</a></li>
+                                                            <li><a href="javascript:;" class="remove_action" data-bs-toggle="modal" data-bs-target="#"><img src="../assets/images/icons/colored_icon/campaing.svg" alt="image">Send Broadcast</a></li>
+                                                        </ul>
+                                                    </li>
+                                                </ul>                                    
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>John Doe</td>
+                                            <td>johndoe@gmail.com</td>
+                                            <td>Added on 3 Dec, 2021  03:00 PM</td>
+                                            <td class="text-center">
+                                                    <div class="rw_toggle_switch">
+                                                    <div class="rw_switch">
+                                                        <input type="checkbox"  checked>
+                                                    </div>
+                                                    </div>
+                                                </td>
+                                            <td class="text-center">
+                                                <div class="action_dropdown">
+                                                <ul class="drop_ul">
+                                                    <li class="position-relative"><a href="javascript:;" class="action_btn"><img src="../assets/images/icons/action.svg" alt="action"></a>
+                                                        <ul class="action_submenu">                                             
+                                                            <li><a href="javascript:;" class="remove_action" data-bs-toggle="modal" data-bs-target="#"><img src="../assets/images/icons/edit.svg" alt="image">Edit</a></li>
+                                                            <li><a href="javascript:;" class="remove_action" data-bs-toggle="modal" data-bs-target="#delete_popup"><img src="../assets/images/icons/delete.svg" alt="image">delete</a></li>
+                                                            <li><a href="javascript:;" class="remove_action" data-bs-toggle="modal" data-bs-target="#"><img src="../assets/images/icons/colored_icon/campaing.svg" alt="image">Send Broadcast</a></li>
+                                                        </ul>
+                                                    </li>
+                                                </ul>                                    
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>John Doe</td>
+                                            <td>johndoe@gmail.com</td>
+                                            <td>Added on 3 Dec, 2021  03:00 PM</td>
+                                            <td class="text-center">
+                                                    <div class="rw_toggle_switch">
+                                                    <div class="rw_switch">
+                                                        <input type="checkbox"  checked>
+                                                    </div>
+                                                    </div>
+                                                </td>
+                                            <td class="text-center">
+                                                <div class="action_dropdown">
+                                                <ul class="drop_ul">
+                                                    <li class="position-relative"><a href="javascript:;" class="action_btn"><img src="../assets/images/icons/action.svg" alt="action"></a>
+                                                        <ul class="action_submenu">                                             
+                                                            <li><a href="javascript:;" class="remove_action" data-bs-toggle="modal" data-bs-target="#"><img src="../assets/images/icons/edit.svg" alt="image">Edit</a></li>
+                                                            <li><a href="javascript:;" class="remove_action" data-bs-toggle="modal" data-bs-target="#delete_popup"><img src="../assets/images/icons/delete.svg" alt="image">delete</a></li>
+                                                            <li><a href="javascript:;" class="remove_action" data-bs-toggle="modal" data-bs-target="#"><img src="../assets/images/icons/colored_icon/campaing.svg" alt="image">Send Broadcast</a></li>
+                                                        </ul>
+                                                    </li>
+                                                </ul>                                    
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>John Doe</td>
+                                            <td>johndoe@gmail.com</td>
+                                            <td>Added on 3 Dec, 2021  03:00 PM</td>
+                                            <td class="text-center">
+                                                    <div class="rw_toggle_switch">
+                                                    <div class="rw_switch">
+                                                        <input type="checkbox"  checked>
+                                                    </div>
+                                                    </div>
+                                                </td>
+                                            <td class="text-center">
+                                                <div class="action_dropdown">
+                                                <ul class="drop_ul">
+                                                    <li class="position-relative"><a href="javascript:;" class="action_btn"><img src="../assets/images/icons/action.svg" alt="action"></a>
+                                                        <ul class="action_submenu">                                             
+                                                            <li><a href="javascript:;" class="remove_action" data-bs-toggle="modal" data-bs-target="#"><img src="../assets/images/icons/edit.svg" alt="image">Edit</a></li>
+                                                            <li><a href="javascript:;" class="remove_action" data-bs-toggle="modal" data-bs-target="#delete_popup"><img src="../assets/images/icons/delete.svg" alt="image">delete</a></li>
+                                                            <li><a href="javascript:;" class="remove_action" data-bs-toggle="modal" data-bs-target="#"><img src="../assets/images/icons/colored_icon/campaing.svg" alt="image">Send Broadcast</a></li>
+                                                        </ul>
+                                                    </li>
+                                                </ul>                                    
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>John Doe</td>
+                                            <td>johndoe@gmail.com</td>
+                                            <td>Added on 3 Dec, 2021  03:00 PM</td>
+                                            <td class="text-center">
+                                                    <div class="rw_toggle_switch">
+                                                    <div class="rw_switch">
+                                                        <input type="checkbox"  checked>
+                                                    </div>
+                                                    </div>
+                                                </td>
+                                            <td class="text-center">
+                                                <div class="action_dropdown">
+                                                <ul class="drop_ul">
+                                                    <li class="position-relative"><a href="javascript:;" class="action_btn"><img src="../assets/images/icons/action.svg" alt="action"></a>
+                                                        <ul class="action_submenu">                                             
+                                                            <li><a href="javascript:;" class="remove_action" data-bs-toggle="modal" data-bs-target="#"><img src="../assets/images/icons/edit.svg" alt="image">Edit</a></li>
+                                                            <li><a href="javascript:;" class="remove_action" data-bs-toggle="modal" data-bs-target="#delete_popup"><img src="../assets/images/icons/delete.svg" alt="image">delete</a></li>
+                                                            <li><a href="javascript:;" class="remove_action" data-bs-toggle="modal" data-bs-target="#"><img src="../assets/images/icons/colored_icon/campaing.svg" alt="image">Send Broadcast</a></li>
+                                                        </ul>
+                                                    </li>
+                                                </ul>                                    
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>John Doe</td>
+                                            <td>johndoe@gmail.com</td>
+                                            <td>Added on 3 Dec, 2021  03:00 PM</td>
+                                            <td class="text-center">
+                                                    <div class="rw_toggle_switch">
+                                                    <div class="rw_switch">
+                                                        <input type="checkbox"  checked>
+                                                    </div>
+                                                    </div>
+                                                </td>
+                                            <td class="text-center">
+                                                <div class="action_dropdown">
+                                                <ul class="drop_ul">
+                                                    <li class="position-relative"><a href="javascript:;" class="action_btn"><img src="../assets/images/icons/action.svg" alt="action"></a>
+                                                        <ul class="action_submenu">                                             
+                                                            <li><a href="javascript:;" class="remove_action" data-bs-toggle="modal" data-bs-target="#"><img src="../assets/images/icons/edit.svg" alt="image">Edit</a></li>
+                                                            <li><a href="javascript:;" class="remove_action" data-bs-toggle="modal" data-bs-target="#delete_popup"><img src="../assets/images/icons/delete.svg" alt="image">delete</a></li>
+                                                            <li><a href="javascript:;" class="remove_action" data-bs-toggle="modal" data-bs-target="#"><img src="../assets/images/icons/colored_icon/campaing.svg" alt="image">Send Broadcast</a></li>
+                                                        </ul>
+                                                    </li>
+                                                </ul>                                    
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>John Doe</td>
+                                            <td>johndoe@gmail.com</td>
+                                            <td>Added on 3 Dec, 2021  03:00 PM</td>
+                                            <td class="text-center">
+                                                    <div class="rw_toggle_switch">
+                                                    <div class="rw_switch">
+                                                        <input type="checkbox"  checked>
+                                                    </div>
+                                                    </div>
+                                                </td>
+                                            <td class="text-center">
+                                                <div class="action_dropdown">
+                                                <ul class="drop_ul">
+                                                    <li class="position-relative"><a href="javascript:;" class="action_btn"><img src="../assets/images/icons/action.svg" alt="action"></a>
+                                                        <ul class="action_submenu">                                             
+                                                            <li><a href="javascript:;" class="remove_action" data-bs-toggle="modal" data-bs-target="#"><img src="../assets/images/icons/edit.svg" alt="image">Edit</a></li>
+                                                            <li><a href="javascript:;" class="remove_action" data-bs-toggle="modal" data-bs-target="#delete_popup"><img src="../assets/images/icons/delete.svg" alt="image">delete</a></li>
+                                                            <li><a href="javascript:;" class="remove_action" data-bs-toggle="modal" data-bs-target="#"><img src="../assets/images/icons/colored_icon/campaing.svg" alt="image">Send Broadcast</a></li>
+                                                        </ul>
+                                                    </li>
+                                                </ul>                                    
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>John Doe</td>
+                                            <td>johndoe@gmail.com</td>
+                                            <td>Added on 3 Dec, 2021  03:00 PM</td>
+                                            <td class="text-center">
+                                                    <div class="rw_toggle_switch">
+                                                    <div class="rw_switch">
+                                                        <input type="checkbox"  checked>
+                                                    </div>
+                                                    </div>
+                                                </td>
+                                            <td class="text-center">
+                                                <div class="action_dropdown">
+                                                <ul class="drop_ul">
+                                                    <li class="position-relative"><a href="javascript:;" class="action_btn"><img src="../assets/images/icons/action.svg" alt="action"></a>
+                                                        <ul class="action_submenu">                                             
+                                                            <li><a href="javascript:;" class="remove_action" data-bs-toggle="modal" data-bs-target="#"><img src="../assets/images/icons/edit.svg" alt="image">Edit</a></li>
+                                                            <li><a href="javascript:;" class="remove_action" data-bs-toggle="modal" data-bs-target="#delete_popup"><img src="../assets/images/icons/delete.svg" alt="image">delete</a></li>
+                                                            <li><a href="javascript:;" class="remove_action" data-bs-toggle="modal" data-bs-target="#"><img src="../assets/images/icons/colored_icon/campaing.svg" alt="image">Send Broadcast</a></li>
+                                                        </ul>
+                                                    </li>
+                                                </ul>                                    
+                                                </div>
+                                            </td>
+                                        </tr>
+
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>  
+                        </div>                    
+                    </div>
+                    <div class="tab-pane" id="campaign_phone_numbers" role="tabpanel" >
+                        <div class="rw_inner_tab_area campaign_phone_content">
+                            <div class="admin_user_select">  
+                                <div class="rw_selectbox tags">
+                                    <select  >
+                                        <option value="">Type</option>
+                                        <option value="">1</option>
+                                        <option value="">2</option>
+                                        <option value="">3</option>
+                                    </select>
+                                </div>
+                            <div class="search_icon_wrapper">                          
+                                    <div class="rw_dashboard_btn">
+                                        <a href="javascript:;" class="rw_btn" data-bs-toggle="modal" data-bs-target="#add_new_number">+New Number</a>
+                                    </div>
+                            </div>
+                            </div> 
+                            <div class="rw_table_wrapper">
+                                <div class="rw_table_inner rw_admin_user_table campaign_phone_table">                
+                                    <table id="rw_cl_contact_table" class="table rw_pagination" >
+                                        <thead>
+                                            <tr>
+                                                <th>Phone Number</th>
+                                                <th>Name</th>
+                                                <th>Date</th>
+                                                <th class="sorting_none">Type</th>
+                                                <th class="sorting_none text-center">Actions</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>                    
+                                        <tr>
+                                            <td>
+                                                <div class="d-flex">
+                                                    919999999999 <div class="default_label"><img src="../assets/images/icons/make_default.svg" alt="image"><span>Default</span></div>
+                                                    </div>
+                                                </td>
+                                            <td>Main Number</td>
+                                            <td>Added on 3 Dec, 2021  03:00 PM</td>
+                                            <td>Local</td>
+                                            <td class="text-center">
+                                                <div class="action_dropdown">
+                                                <ul class="drop_ul">
+                                                    <li class="position-relative"><a href="javascript:;" class="action_btn"><img src="../assets/images/icons/action.svg" alt="action"></a>
+                                                        <ul class="action_submenu">                                             
+                                                            <li><a href="javascript:;" class="remove_action" data-bs-toggle="modal" data-bs-target="#"><img src="../assets/images/icons/edit.svg" alt="image">Edit</a></li>
+                                                            <li><a href="javascript:;" class="remove_action" data-bs-toggle="modal" data-bs-target="#"><img src="../assets/images/icons/delete.svg" alt="image">delete</a></li>
+                                                            <li><a href="javascript:;" class="remove_action" data-bs-toggle="modal" data-bs-target="#"><img src="../assets/images/icons/colored_icon/campaing.svg" alt="image">Send Broadcast</a></li>
+                                                        </ul>
+                                                    </li>
+                                                </ul>                                    
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>919999999999</td>
+                                            <td>Main Number</td>
+                                            <td>Added on 3 Dec, 2021  03:00 PM</td>
+                                            <td>Local</td>
+                                            <td class="text-center">
+                                            <div class="action_dropdown">
+                                            <ul class="drop_ul">
+                                                <li class="position-relative"><a href="javascript:;" class="action_btn"><img src="../assets/images/icons/action.svg" alt="action"></a>
+                                                    <ul class="action_submenu">                                             
+                                                        <li><a href="javascript:;" class="remove_action" data-bs-toggle="modal" data-bs-target="#"><img src="../assets/images/icons/edit.svg" alt="image">Edit</a></li>
+                                                        <li><a href="javascript:;" class="remove_action" data-bs-toggle="modal" data-bs-target="#"><img src="../assets/images/icons/delete.svg" alt="image">delete</a></li>
+                                                        <li><a href="javascript:;" class="remove_action" data-bs-toggle="modal" data-bs-target="#"><img src="../assets/images/icons/colored_icon/campaing.svg" alt="image">Send Broadcast</a></li>
+                                                    </ul>
+                                                </li>
+                                            </ul>                                    
+                                            </div>
+                                        </td>
+                                        </tr>
+                                        <tr>
+                                            <td>919999999999</td>
+                                            <td>Main Number</td>
+                                            <td>Added on 3 Dec, 2021  03:00 PM</td>
+                                            <td>Local</td>
+                                            <td class="text-center">
+                                            <div class="action_dropdown">
+                                            <ul class="drop_ul">
+                                                <li class="position-relative"><a href="javascript:;" class="action_btn"><img src="../assets/images/icons/action.svg" alt="action"></a>
+                                                    <ul class="action_submenu">                                             
+                                                        <li><a href="javascript:;" class="remove_action" data-bs-toggle="modal" data-bs-target="#"><img src="../assets/images/icons/edit.svg" alt="image">Edit</a></li>
+                                                        <li><a href="javascript:;" class="remove_action" data-bs-toggle="modal" data-bs-target="#"><img src="../assets/images/icons/delete.svg" alt="image">delete</a></li>
+                                                        <li><a href="javascript:;" class="remove_action" data-bs-toggle="modal" data-bs-target="#"><img src="../assets/images/icons/colored_icon/campaing.svg" alt="image">Send Broadcast</a></li>
+                                                    </ul>
+                                                </li>
+                                            </ul>                                    
+                                            </div>
+                                        </td>
+                                        </tr>
+                                        <tr>
+                                            <td>919999999999</td>
+                                            <td>Main Number</td>
+                                            <td>Added on 3 Dec, 2021  03:00 PM</td>
+                                            <td>Local</td>
+                                            <td class="text-center">
+                                            <div class="action_dropdown">
+                                            <ul class="drop_ul">
+                                                <li class="position-relative"><a href="javascript:;" class="action_btn"><img src="../assets/images/icons/action.svg" alt="action"></a>
+                                                    <ul class="action_submenu">                                             
+                                                        <li><a href="javascript:;" class="remove_action" data-bs-toggle="modal" data-bs-target="#"><img src="../assets/images/icons/edit.svg" alt="image">Edit</a></li>
+                                                        <li><a href="javascript:;" class="remove_action" data-bs-toggle="modal" data-bs-target="#"><img src="../assets/images/icons/delete.svg" alt="image">delete</a></li>
+                                                        <li><a href="javascript:;" class="remove_action" data-bs-toggle="modal" data-bs-target="#"><img src="../assets/images/icons/colored_icon/campaing.svg" alt="image">Send Broadcast</a></li>
+                                                    </ul>
+                                                </li>
+                                            </ul>                                    
+                                            </div>
+                                        </td>
+                                        </tr>
+                                        <tr>
+                                            <td>919999999999</td>
+                                            <td>Main Number</td>
+                                            <td>Added on 3 Dec, 2021  03:00 PM</td>
+                                            <td>Local</td>
+                                            <td class="text-center">
+                                            <div class="action_dropdown">
+                                            <ul class="drop_ul">
+                                                <li class="position-relative"><a href="javascript:;" class="action_btn"><img src="../assets/images/icons/action.svg" alt="action"></a>
+                                                    <ul class="action_submenu">                                             
+                                                        <li><a href="javascript:;" class="remove_action" data-bs-toggle="modal" data-bs-target="#"><img src="../assets/images/icons/edit.svg" alt="image">Edit</a></li>
+                                                        <li><a href="javascript:;" class="remove_action" data-bs-toggle="modal" data-bs-target="#"><img src="../assets/images/icons/delete.svg" alt="image">delete</a></li>
+                                                        <li><a href="javascript:;" class="remove_action" data-bs-toggle="modal" data-bs-target="#"><img src="../assets/images/icons/colored_icon/campaing.svg" alt="image">Send Broadcast</a></li>
+                                                    </ul>
+                                                </li>
+                                            </ul>                                    
+                                            </div>
+                                        </td>
+                                        </tr>
+                                        <tr>
+                                            <td>919999999999</td>
+                                            <td>Main Number</td>
+                                            <td>Added on 3 Dec, 2021  03:00 PM</td>
+                                            <td>Local</td>
+                                            <td class="text-center">
+                                            <div class="action_dropdown">
+                                            <ul class="drop_ul">
+                                                <li class="position-relative"><a href="javascript:;" class="action_btn"><img src="../assets/images/icons/action.svg" alt="action"></a>
+                                                    <ul class="action_submenu">                                             
+                                                        <li><a href="javascript:;" class="remove_action" data-bs-toggle="modal" data-bs-target="#"><img src="../assets/images/icons/edit.svg" alt="image">Edit</a></li>
+                                                        <li><a href="javascript:;" class="remove_action" data-bs-toggle="modal" data-bs-target="#"><img src="../assets/images/icons/delete.svg" alt="image">delete</a></li>
+                                                        <li><a href="javascript:;" class="remove_action" data-bs-toggle="modal" data-bs-target="#"><img src="../assets/images/icons/colored_icon/campaing.svg" alt="image">Send Broadcast</a></li>
+                                                    </ul>
+                                                </li>
+                                            </ul>                                    
+                                            </div>
+                                        </td>
+                                        </tr>
+                                        <tr>
+                                            <td>919999999999</td>
+                                            <td>Main Number</td>
+                                            <td>Added on 3 Dec, 2021  03:00 PM</td>
+                                            <td>Local</td>
+                                            <td class="text-center">
+                                            <div class="action_dropdown">
+                                            <ul class="drop_ul">
+                                                <li class="position-relative"><a href="javascript:;" class="action_btn"><img src="../assets/images/icons/action.svg" alt="action"></a>
+                                                    <ul class="action_submenu">                                             
+                                                        <li><a href="javascript:;" class="remove_action" data-bs-toggle="modal" data-bs-target="#"><img src="../assets/images/icons/edit.svg" alt="image">Edit</a></li>
+                                                        <li><a href="javascript:;" class="remove_action" data-bs-toggle="modal" data-bs-target="#"><img src="../assets/images/icons/delete.svg" alt="image">delete</a></li>
+                                                        <li><a href="javascript:;" class="remove_action" data-bs-toggle="modal" data-bs-target="#"><img src="../assets/images/icons/colored_icon/campaing.svg" alt="image">Send Broadcast</a></li>
+                                                    </ul>
+                                                </li>
+                                            </ul>                                    
+                                            </div>
+                                        </td>
+                                        </tr>
+                                        <tr>
+                                            <td>919999999999</td>
+                                            <td>Main Number</td>
+                                            <td>Added on 3 Dec, 2021  03:00 PM</td>
+                                            <td>Local</td>
+                                            <td class="text-center">
+                                            <div class="action_dropdown">
+                                            <ul class="drop_ul">
+                                                <li class="position-relative"><a href="javascript:;" class="action_btn"><img src="../assets/images/icons/action.svg" alt="action"></a>
+                                                    <ul class="action_submenu">                                             
+                                                        <li><a href="javascript:;" class="remove_action" data-bs-toggle="modal" data-bs-target="#"><img src="../assets/images/icons/edit.svg" alt="image">Edit</a></li>
+                                                        <li><a href="javascript:;" class="remove_action" data-bs-toggle="modal" data-bs-target="#"><img src="../assets/images/icons/delete.svg" alt="image">delete</a></li>
+                                                        <li><a href="javascript:;" class="remove_action" data-bs-toggle="modal" data-bs-target="#"><img src="../assets/images/icons/colored_icon/campaing.svg" alt="image">Send Broadcast</a></li>
+                                                    </ul>
+                                                </li>
+                                            </ul>                                    
+                                            </div>
+                                        </td>
+                                        </tr>
+                                        <tr>
+                                            <td>919999999999</td>
+                                            <td>Main Number</td>
+                                            <td>Added on 3 Dec, 2021  03:00 PM</td>
+                                            <td>Local</td>
+                                            <td class="text-center">
+                                            <div class="action_dropdown">
+                                            <ul class="drop_ul">
+                                                <li class="position-relative"><a href="javascript:;" class="action_btn"><img src="../assets/images/icons/action.svg" alt="action"></a>
+                                                    <ul class="action_submenu">                                             
+                                                        <li><a href="javascript:;" class="remove_action" data-bs-toggle="modal" data-bs-target="#"><img src="../assets/images/icons/edit.svg" alt="image">Edit</a></li>
+                                                        <li><a href="javascript:;" class="remove_action" data-bs-toggle="modal" data-bs-target="#"><img src="../assets/images/icons/delete.svg" alt="image">delete</a></li>
+                                                        <li><a href="javascript:;" class="remove_action" data-bs-toggle="modal" data-bs-target="#"><img src="../assets/images/icons/colored_icon/campaing.svg" alt="image">Send Broadcast</a></li>
+                                                    </ul>
+                                                </li>
+                                            </ul>                                    
+                                            </div>
+                                        </td>
+                                        </tr>
+
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>  
+                        </div>
+                    </div>
+                    <div class="tab-pane" id="campaign_custom_fields" role="tabpanel" >
+                        <div class="rw_inner_tab_area user_tab_content ">
+                            <div class="admin_user_select">  
+                                <div class="rw_selectbox tags">
+                                    <select  >
+                                        <option value="">Type</option>
+                                        <option value="">1</option>
+                                        <option value="">2</option>
+                                        <option value="">3</option>
+                                    </select>
+                                </div>
+                            <div class="search_icon_wrapper">                          
+                                    <div class="rw_dashboard_btn">
+                                        <a href="javascript:;" class="rw_btn" data-bs-toggle="modal" data-bs-target="#add_custom_field">+Add field</a>
+                                    </div>
+                            </div>
+                            </div> 
+                            <div class="rw_table_wrapper">
+                                <div class="rw_table_inner rw_admin_user_table  rw_custom_field_table ">                
+                                    <table id="compaign_custom_field" class="table rw_pagination" >
+                                        <thead>
+                                            <tr>
+                                                <th>Custom Field</th>
+                                                <th>Type</th>
+                                                <th class="sorting_none text-center">Placeholder</th>
+                                                <th>Date</th>
+                                                <th class="sorting_none text-center">actions</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>                    
+                                        <tr>
+                                            <td>
+                                                Webinar
+                                                </td>
+                                            <td>Date</td>
+                                                <td><div class="default_label"><span>webinar</span></div></td>
+                                            <td>Added on 3 Dec, 2021  03:00 PM</td>
+                                            <td class="text-center">
+                                                <div class="action_dropdown">
+                                                <ul class="drop_ul">
+                                                    <li class="position-relative"><a href="javascript:;" class="action_btn"><img src="../assets/images/icons/action.svg" alt="action"></a>
+                                                        <ul class="action_submenu">                                             
+                                                            <li><a href="javascript:;" class="remove_action" data-bs-toggle="modal" data-bs-target="#"><img src="../assets/images/icons/edit.svg" alt="image">Edit</a></li>
+                                                            <li><a href="javascript:;" class="remove_action" data-bs-toggle="modal" data-bs-target="#"><img src="../assets/images/icons/delete.svg" alt="image">delete</a></li>
+                                                            <li><a href="javascript:;" class="remove_action" data-bs-toggle="modal" data-bs-target="#"><img src="../assets/images/icons/colored_icon/campaing.svg" alt="image">Send Broadcast</a></li>
+                                                        </ul>
+                                                    </li>
+                                                </ul>                                    
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                Webinar
+                                                </td>
+                                            <td>Date</td>
+                                                <td><div class="default_label"><span>webinar</span></div></td>
+                                            <td>Added on 3 Dec, 2021  03:00 PM</td>
+                                            <td class="text-center">
+                                                <div class="action_dropdown">
+                                                <ul class="drop_ul">
+                                                    <li class="position-relative"><a href="javascript:;" class="action_btn"><img src="../assets/images/icons/action.svg" alt="action"></a>
+                                                        <ul class="action_submenu">                                             
+                                                            <li><a href="javascript:;" class="remove_action" data-bs-toggle="modal" data-bs-target="#"><img src="../assets/images/icons/edit.svg" alt="image">Edit</a></li>
+                                                            <li><a href="javascript:;" class="remove_action" data-bs-toggle="modal" data-bs-target="#"><img src="../assets/images/icons/delete.svg" alt="image">delete</a></li>
+                                                            <li><a href="javascript:;" class="remove_action" data-bs-toggle="modal" data-bs-target="#"><img src="../assets/images/icons/colored_icon/campaing.svg" alt="image">Send Broadcast</a></li>
+                                                        </ul>
+                                                    </li>
+                                                </ul>                                    
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                Webinar
+                                                </td>
+                                            <td>Date</td>
+                                                <td><div class="default_label"><span>webinar</span></div></td>
+                                            <td>Added on 3 Dec, 2021  03:00 PM</td>
+                                            <td class="text-center">
+                                                <div class="action_dropdown">
+                                                <ul class="drop_ul">
+                                                    <li class="position-relative"><a href="javascript:;" class="action_btn"><img src="../assets/images/icons/action.svg" alt="action"></a>
+                                                        <ul class="action_submenu">                                             
+                                                            <li><a href="javascript:;" class="remove_action" data-bs-toggle="modal" data-bs-target="#"><img src="../assets/images/icons/edit.svg" alt="image">Edit</a></li>
+                                                            <li><a href="javascript:;" class="remove_action" data-bs-toggle="modal" data-bs-target="#"><img src="../assets/images/icons/delete.svg" alt="image">delete</a></li>
+                                                            <li><a href="javascript:;" class="remove_action" data-bs-toggle="modal" data-bs-target="#"><img src="../assets/images/icons/colored_icon/campaing.svg" alt="image">Send Broadcast</a></li>
+                                                        </ul>
+                                                    </li>
+                                                </ul>                                    
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                Webinar
+                                                </td>
+                                            <td>Date</td>
+                                                <td><div class="default_label"><span>webinar</span></div></td>
+                                            <td>Added on 3 Dec, 2021  03:00 PM</td>
+                                            <td class="text-center">
+                                                <div class="action_dropdown">
+                                                <ul class="drop_ul">
+                                                    <li class="position-relative"><a href="javascript:;" class="action_btn"><img src="../assets/images/icons/action.svg" alt="action"></a>
+                                                        <ul class="action_submenu">                                             
+                                                            <li><a href="javascript:;" class="remove_action" data-bs-toggle="modal" data-bs-target="#"><img src="../assets/images/icons/edit.svg" alt="image">Edit</a></li>
+                                                            <li><a href="javascript:;" class="remove_action" data-bs-toggle="modal" data-bs-target="#"><img src="../assets/images/icons/delete.svg" alt="image">delete</a></li>
+                                                            <li><a href="javascript:;" class="remove_action" data-bs-toggle="modal" data-bs-target="#"><img src="../assets/images/icons/colored_icon/campaing.svg" alt="image">Send Broadcast</a></li>
+                                                        </ul>
+                                                    </li>
+                                                </ul>                                    
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                Webinar
+                                                </td>
+                                            <td>Date</td>
+                                                <td><div class="default_label"><span>webinar</span></div></td>
+                                            <td>Added on 3 Dec, 2021  03:00 PM</td>
+                                            <td class="text-center">
+                                                <div class="action_dropdown">
+                                                <ul class="drop_ul">
+                                                    <li class="position-relative"><a href="javascript:;" class="action_btn"><img src="../assets/images/icons/action.svg" alt="action"></a>
+                                                        <ul class="action_submenu">                                             
+                                                            <li><a href="javascript:;" class="remove_action" data-bs-toggle="modal" data-bs-target="#"><img src="../assets/images/icons/edit.svg" alt="image">Edit</a></li>
+                                                            <li><a href="javascript:;" class="remove_action" data-bs-toggle="modal" data-bs-target="#"><img src="../assets/images/icons/delete.svg" alt="image">delete</a></li>
+                                                            <li><a href="javascript:;" class="remove_action" data-bs-toggle="modal" data-bs-target="#"><img src="../assets/images/icons/colored_icon/campaing.svg" alt="image">Send Broadcast</a></li>
+                                                        </ul>
+                                                    </li>
+                                                </ul>                                    
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                Webinar
+                                                </td>
+                                            <td>Date</td>
+                                                <td><div class="default_label"><span>webinar</span></div></td>
+                                            <td>Added on 3 Dec, 2021  03:00 PM</td>
+                                            <td class="text-center">
+                                                <div class="action_dropdown">
+                                                <ul class="drop_ul">
+                                                    <li class="position-relative"><a href="javascript:;" class="action_btn"><img src="../assets/images/icons/action.svg" alt="action"></a>
+                                                        <ul class="action_submenu">                                             
+                                                            <li><a href="javascript:;" class="remove_action" data-bs-toggle="modal" data-bs-target="#"><img src="../assets/images/icons/edit.svg" alt="image">Edit</a></li>
+                                                            <li><a href="javascript:;" class="remove_action" data-bs-toggle="modal" data-bs-target="#"><img src="../assets/images/icons/delete.svg" alt="image">delete</a></li>
+                                                            <li><a href="javascript:;" class="remove_action" data-bs-toggle="modal" data-bs-target="#"><img src="../assets/images/icons/colored_icon/campaing.svg" alt="image">Send Broadcast</a></li>
+                                                        </ul>
+                                                    </li>
+                                                </ul>                                    
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                Webinar
+                                                </td>
+                                            <td>Date</td>
+                                                <td><div class="default_label"><span>webinar</span></div></td>
+                                            <td>Added on 3 Dec, 2021  03:00 PM</td>
+                                            <td class="text-center">
+                                                <div class="action_dropdown">
+                                                <ul class="drop_ul">
+                                                    <li class="position-relative"><a href="javascript:;" class="action_btn"><img src="../assets/images/icons/action.svg" alt="action"></a>
+                                                        <ul class="action_submenu">                                             
+                                                            <li><a href="javascript:;" class="remove_action" data-bs-toggle="modal" data-bs-target="#"><img src="../assets/images/icons/edit.svg" alt="image">Edit</a></li>
+                                                            <li><a href="javascript:;" class="remove_action" data-bs-toggle="modal" data-bs-target="#"><img src="../assets/images/icons/delete.svg" alt="image">delete</a></li>
+                                                            <li><a href="javascript:;" class="remove_action" data-bs-toggle="modal" data-bs-target="#"><img src="../assets/images/icons/colored_icon/campaing.svg" alt="image">Send Broadcast</a></li>
+                                                        </ul>
+                                                    </li>
+                                                </ul>                                    
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                Webinar
+                                                </td>
+                                            <td>Date</td>
+                                                <td><div class="default_label"><span>webinar</span></div></td>
+                                            <td>Added on 3 Dec, 2021  03:00 PM</td>
+                                            <td class="text-center">
+                                                <div class="action_dropdown">
+                                                <ul class="drop_ul">
+                                                    <li class="position-relative"><a href="javascript:;" class="action_btn"><img src="../assets/images/icons/action.svg" alt="action"></a>
+                                                        <ul class="action_submenu">                                             
+                                                            <li><a href="javascript:;" class="remove_action" data-bs-toggle="modal" data-bs-target="#"><img src="../assets/images/icons/edit.svg" alt="image">Edit</a></li>
+                                                            <li><a href="javascript:;" class="remove_action" data-bs-toggle="modal" data-bs-target="#"><img src="../assets/images/icons/delete.svg" alt="image">delete</a></li>
+                                                            <li><a href="javascript:;" class="remove_action" data-bs-toggle="modal" data-bs-target="#"><img src="../assets/images/icons/colored_icon/campaing.svg" alt="image">Send Broadcast</a></li>
+                                                        </ul>
+                                                    </li>
+                                                </ul>                                    
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                Webinar
+                                                </td>
+                                            <td>Date</td>
+                                                <td><div class="default_label"><span>webinar</span></div></td>
+                                            <td>Added on 3 Dec, 2021  03:00 PM</td>
+                                            <td class="text-center">
+                                                <div class="action_dropdown">
+                                                <ul class="drop_ul">
+                                                    <li class="position-relative"><a href="javascript:;" class="action_btn"><img src="../assets/images/icons/action.svg" alt="action"></a>
+                                                        <ul class="action_submenu">                                             
+                                                            <li><a href="javascript:;" class="remove_action" data-bs-toggle="modal" data-bs-target="#"><img src="../assets/images/icons/edit.svg" alt="image">Edit</a></li>
+                                                            <li><a href="javascript:;" class="remove_action" data-bs-toggle="modal" data-bs-target="#"><img src="../assets/images/icons/delete.svg" alt="image">delete</a></li>
+                                                            <li><a href="javascript:;" class="remove_action" data-bs-toggle="modal" data-bs-target="#"><img src="../assets/images/icons/colored_icon/campaing.svg" alt="image">Send Broadcast</a></li>
+                                                        </ul>
+                                                    </li>
+                                                </ul>                                    
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>  
+                        </div>
+                    </div>
+                </div>
+
+            <!-- </div>
+        </div> -->
+    <!------ Add New user ------>
+        <div class="modal fade rw_modal add_contact" id="add_new_user" tabindex="-1"  aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <div class="modal_title">
+                        <h4>Add New User</h4>
+                    </div>
+                <a href="javascript:;" class="popup_close" data-bs-dismiss="modal" aria-label="Close"><img src="../assets/images/icons/close.svg" alt="close"></a>
+                </div>
+                <div class="modal-body">
+                    <div class="row">                    
+                        <div class="col-md-6">
+                            <div class="rw_form_inputs">
+                                <label  class="rw_form_label">First Name</label>
+                                <div class="rw_input">
+                                    <input type="text" placeholder="First Name" value="john">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="rw_form_inputs">
+                                <label  class="rw_form_label">Last Name</label>
+                                <div class="rw_input">
+                                    <input type="text" placeholder="Last Name" value="due">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-12">
+                            <div class="rw_form_inputs rw_date_input">
+                                <label  class="rw_form_label">Email Address</label>
+                                <div class="rw_input">
+                                    <input type="email" placeholder="Email" value="johndoe@gmail.com">
+                                    <span class="input_icon email"></span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-12">
+                            <div class="rw_form_inputs rw_date_input">
+                                <label  class="rw_form_label">Password</label>
+                                <div class="rw_input">
+                                    <input type="password" placeholder="Password" value="">
+                                    <span class="input_icon rw_eye"></span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-12">
+                            <div class="rw_form_inputs rw_date_input">
+                                <label  class="rw_form_label">Confirm Password</label>
+                                <div class="rw_input">
+                                    <input type="password" placeholder="Password" value="">
+                                    <span class="input_icon rw_eye"></span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-12">
+                            <div class="rw_form_inputs rw_date_input">
+                                <label  class="rw_form_label">Server passcode</label>
+                                <div class="rw_input">
+                                    <input type="password" placeholder="Password" value="">
+                                    <span class="input_icon rw_eye"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                <ul class="modal_btns">
+                    <li><a href="javascript:;" class="modal_btn cancel" data-bs-dismiss="modal">cancel</a></li>
+                    <li><a href="javascript:;" class="modal_btn" >add</a></li>
+                </ul>
+                </div>
+            </div>
+            </div>
+        </div>
+    <!------ Add New Number ------>
+        <div class="modal fade rw_modal add_new_number" id="add_new_number" tabindex="-1" >
+            <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <div class="modal_title">
+                        <h4>Add New Number</h4>
+                    </div>
+                <a href="javascript:;" class="popup_close" data-bs-dismiss="modal" aria-label="Close"><img src="../assets/images/icons/close.svg" alt="close"></a>
+                </div>
+                <div class="rw_fieldset_wrapper">
+                    <fieldset>
+                        <div class="modal-body">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="rw_form_inputs">
+                                        <label  class="rw_form_label">Number Type</label>                            
+                                    </div>
+                                    <ul class="add_number_check">
+                                        <li>
+                                            <div class="rw_radio_btns">
+                                                <input type="radio" name="radio" id="Local" checked>
+                                                <label for="Local">Local</label>
+                                            </div>
+                                        </li>
+                                        <li>
+                                            <div class="rw_radio_btns">
+                                                <input type="radio" name="radio" id="mobile" >
+                                                <label for="mobile">Mobile</label>
+                                            </div>
+                                        </li>
+                                        <li>
+                                            <div class="rw_radio_btns">
+                                                <input type="radio" name="radio" id="Toll-free" >
+                                                <label for="Toll-free">Toll-free</label>
+                                            </div>
+                                        </li>
+                                    </ul>
+                                </div>                  
+                                <div class="col-md-12">
+                                    <div class="rw_form_inputs">
+                                        <label  class="rw_form_label">Name</label>
+                                        <div class="rw_input">
+                                            <input type="text" placeholder="Enter name/title for your number" value="">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-12">
+                                    <div class="rw_form_inputs">
+                                        <label class="rw_form_label">Country</label>
+                                        <div class="rw_bootstrap_drop_down">
+                                            <div class="dropdown">
+                                                <button class="btn  dropdown-toggle" type="button"  data-bs-toggle="dropdown" aria-expanded="false">
+                                                Select Country
+                                                </button>
+                                                <ul class="dropdown-menu" >
+                                                <li><a class="dropdown-item" href="#">Ind</a></li>
+                                                <li><a class="dropdown-item" href="#">Pak</a></li>
+                                                <li><a class="dropdown-item" href="#">Pak</a></li>
+                                                <li><a class="dropdown-item" href="#">Pak</a></li>
+                                                <li><a class="dropdown-item" href="#">Pak</a></li>
+                                                <li><a class="dropdown-item" href="#">Eng</a></li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-12">
+                                    <div class="rw_form_inputs">
+                                        <label  class="rw_form_label">Area Code</label>
+                                        <div class="rw_input">
+                                            <input type="text" placeholder="Area Code" >
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                        <ul class="modal_btns">
+                            <li><a href="javascript:;" class="modal_btn cancel" data-bs-dismiss="modal">cancel</a></li>
+                            <li><a href="javascript:;" class="modal_btn rw_next" >Next</a></li>
+                        </ul>
+                        </div>
+                    </fieldset>
+                    <fieldset>                       
+                        <div class="cnl_head">
+                            <a href="javascript:;" class="rw_prev"><img src="../assets/images/icons/colored_icon/order-arrow-right.svg" alt="">Back</a>
+                        </div>
+                        <div class="modal-body">           
+                            <div class="col-md-12">
+                                <div class="rw_form_inputs">
+                                    <label  class="rw_form_label">Available Numbers</label>                                       
+                                </div>
+                                <ul class="number_checkbox">
+                                    <li>
+                                        <input type="checkbox" id="number1">
+                                        <label for="number1">+99 1234 1234 12</label>
+                                    </li>
+                                    <li>
+                                        <input type="checkbox" id="number2">
+                                        <label for="number2">+99 1234 1234 12</label>
+                                    </li>                    
+                                    <li>
+                                        <div>
+                                            <input type="checkbox" id="number3" checked>
+                                            <label for="number3">+99 9999 9999 99</label>
+                                        </div>
+                                    </li>
+                                    <li>
+                                        <input type="checkbox" id="number4">
+                                        <label for="number4">+99 1234 1234 12</label>
+                                    </li>
+                                    <li>
+                                        <div>
+                                            <input type="checkbox" id="number5">
+                                            <label for="number5">+99 9999 9999 99</label>
+                                        </div>
+                                    </li>
+                                    <li>
+                                        <input type="checkbox" id="number6">
+                                        <label for="number6">+99 1234 1234 12</label>
+                                    </li>
+                                    <li>
+                                        <input type="checkbox" id="number7">
+                                        <label for="number7">+99 1234 1234 12</label>
+                                    </li>
+                                    <li>
+                                        <input type="checkbox" id="number8">
+                                        <label for="number8">+99 1234 1234 12</label>
+                                    </li>
+                                </ul> 
+                                <div class="rw_checkbox ">
+                                    <input type="checkbox" id="checkbox" class="check_input">
+                                    <label for="checkbox">I agree with the <a href="javascript:;">Terms & Conditions</a></label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <ul class="modal_btns">
+                                <li><a href="javascript:;" class="modal_btn cancel" data-bs-dismiss="modal">cancel</a></li>
+                                <li><a href="javascript:;" class="modal_btn purchase_btn" >purchase</a></li>
+                            </ul>
+                        </div>
+                    </fieldset>
+                </div>
+                
+            </div>
+            </div>
+        </div>  
+    <!-- Create new list Popup -->
+    <div class="modal fade rw_modal client_list_modal" id="add_custom_field" tabindex="-1"  aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal_title">
+                    <h4>Add Custom Field</h4>
+                </div>
+            <a href="javascript:;" class="popup_close" data-bs-dismiss="modal" aria-label="Close"><img src="../assets/images/icons/close.svg" alt="close"></a>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="rw_form_inputs">
+                            <label  class="rw_form_label">Field Name</label>
+                            <div class="rw_input">
+                                <input type="text" name="field_name" placeholder="eg: Event, Notes, Budget, Gender" value="">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-12">
+                        <div class="rw_form_inputs">
+                            <label  class="rw_form_label">Choose Field Type </label>
+                            <ul class="list_type">
+                                <li>
+                                    <div class="rw_radio_btns">
+                                        <input type="radio" name="radio" id="text" value="text" checked="">
+                                        <label for="text">Text</label>
+                                    </div>
+                                </li>
+                                <li>
+                                    <div class="rw_radio_btns">
+                                        <input type="radio" name="radio" id="large_text" value="textarea">
+                                        <label for="large_text">Large Text</label>
+                                    </div>
+                                </li>
+                                <li>
+                                    <div class="rw_radio_btns">
+                                        <input type="radio" name="radio" id="Date" value="data">
+                                        <label for="Date">Date</label>
+                                    </div>
+                                </li>
+                                <li>
+                                    <div class="rw_radio_btns">
+                                        <input type="radio" name="radio" id="Numerical" value="number">
+                                        <label for="Numerical">Numerical</label>
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+            <input type="hidden" name="client_id" value="{{client.id}}">
+            <ul class="modal_btns">
+                <li><a href="javascript:;" class="modal_btn cancel" data-bs-dismiss="modal">cancel</a></li>
+                <li><a href="javascript:;" class="modal_btn" id="add_new_field">Add</a></li>
+            </ul>
+            </div>
+        </div>
+        </div>
+    </div> 
+    </div> 
+{% endblock %}
+
+{% block script %}
+<script>
+    $(document).ready(function(){
+        var state_value = $('#id_state').val()
+        console.log(state_value);
+        if ($("#id_country").val() != 0){
+            
+                console.log('aaaaaa')
+                link = "{% url 'country-state' %}";
+                $.ajax({
+                    type: 'GET',
+                    url: link,
+                    data: {
+                        id: $("#id_country").val(),
+                    },
+                    success: function (response) {
+                        if (response['status'] == true) {
+                            $('#id_state').empty()
+                            $('#id_state').append("<option value='' selected>Select State/Region</option>")
+                            for (let i = 0; i < response['state'].length; i++) {
+                                $('#id_state').append("<option value=" + response['state'][i]['id'] + ">" + response['state'][i]['name'] + "</option>")
+                            }
+
+                        }
+                        $('#id_state').val(state_value).change()
+                    }
+                });
+            
+        }else{
+            $('#id_state').empty()
+            $('#id_state').append("<option value='' selected>Select State/Region</option>")
+        }
+    });
+     $('#id_country').change(function () {
+        console.log('aaaaaa')
+        link = "{% url 'country-state' %}";
+        $.ajax({
+            type: 'GET',
+            url: link,
+            data: {
+                id: $("#id_country").val(),
+            },
+            success: function (response) {
+                if (response['status'] == true) {
+                    $('#id_state').empty()
+                    $('#id_state').append("<option value='' selected>Select State/Region</option>")
+                    for (let i = 0; i < response['state'].length; i++) {
+                        $('#id_state').append("<option value=" + response['state'][i]['id'] + ">" + response['state'][i]['name'] + "</option>")
+                    }
+
+                }
+            }
+        });
+    });
+    $('#submit_btn').click(function () {
+        console.log($("#loader").removeClass('rw_loader_none'))
+        $("#loader").removeClass('rw_loader_none')
+    });
+
+    // $('#add_new_field').on('click', function(){
+    //     // $('#loader').removeClass('rw_loader_none')
+    //     console.log($("input[name='client_id']").val()+" Cilent ID")
+    //     console.log($("input[name='field_name']").val()+" Fiels Name")
+    //     console.log($("input[name='radio']:checked").val()+" Fiels Type")
+    //     $.ajax({
+    //         type: 'POST',
+    //         url: "",
+    //         data: {
+    //             client_id: $("input[name='client_id']").val(),
+    //             field_name: $("input[name='field_name']").val(),
+    //             field_type: $("input[name='radio']:checked").val(),
+    //             csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val(),
+    //         },
+    //         success: function(response){
+    //             // $('#loader').addClass('rw_loader_none')
+    //             console.log(response)
+    //             location.reload()
+    //         }
+    //     });
+    // });
+
+</script>
+{% endblock %}

@@ -1,0 +1,97 @@
+@import "common";
+.campaigns_page{
+    
+    .rw_inner_area{
+        padding: 31px 48px 34px;
+    }
+    .agency_header_title{
+        h3{
+            &::after{
+                top: 43%;
+                right: -73px;
+            }
+        }
+    }
+}
+.rw_campaigns_table{
+    .dataTables_filter{
+        display: block;
+    }
+    .dataTables_paginate {
+        display: block;
+        margin-top: 20px !important;
+    }
+    table{        
+        tr{
+            td{
+                &:nth-child(1){
+                    width: 20%;
+                }
+                &:nth-child(2){
+                    width: 18%;
+                }  
+                &:nth-child(3){
+                    width: 15%;
+                } 
+                &:nth-child(4){
+                    width: 15%;
+                }       
+                 &:nth-child(5){
+                    width: 14%;
+                }
+               &:nth-child(6){
+                    width: 10%;
+                }
+                &:nth-child(7){
+                    width: 5%;
+                    min-width: 60px;
+                } 
+            }
+        }
+    }
+}
+
+
+/* Responsive CSS */
+@media (max-width:1024px){
+    .rw_campaigns_table{
+        width: 100%;
+            overflow: hidden;
+            overflow-x: auto;
+            table{        
+                tr{
+                    td{
+                        &:nth-child(1){
+                            min-width: 150px;
+                        }
+                        &:nth-child(2){
+                            min-width: 150px;
+                        }  
+                        &:nth-child(3){
+                            min-width: 60px;
+                        } 
+                        &:nth-child(4){
+                            min-width: 100px;
+                        }       
+                         &:nth-child(5){
+                            min-width: 60px;
+                        }
+                       &:nth-child(6){
+                            min-width: 60px;
+                        }
+                        &:nth-child(7){
+                            width: 5%;
+                            min-width: 60px;
+                        } 
+                    }
+                }
+            }
+    }
+}
+@media (max-width:767px){
+    .campaigns_page{
+        .rw_inner_area{
+            padding: 27px 15px;
+        }
+}
+}

@@ -1,0 +1,38 @@
+{% load static %}
+{% load tz %}
+
+<table id="add_tolist_id" class="table rw_pagination" >
+    <thead>
+        <tr>
+            <th class="sorting_none">
+                <div class="rw_checkbox ">
+                    <input type="checkbox" id="Number2" class="check_input all_list_check_input">
+                    <label for="Number2"></label>
+                </div>
+            </th>
+            <th>List Name</th>
+            <th>Date</th>
+        </tr>
+    </thead>
+    <tbody>
+    {% for i in list %}                        
+    <tr>
+        <td>
+            <div class="rw_checkbox ">
+                <input type="checkbox" name="radio" id="checkbox12-{{i.id}}" class="check_input all_list_check_input" value="{{i.id}}">
+                <label for="checkbox12-{{i.id}}"></label>
+            </div>
+        </td>
+        <td>{% if i.name %}{{i.name}}{% else %}N/A{% endif %}</td>
+        {% if request.user.time_zone %}
+        {% timezone request.user.time_zone.value %}
+        <td data-order="{{i.created_at|date:'Y-m-d H:i'}}">Added on {{i.created_at | date:"j M, Y h:i A"}}</td>
+        {% endtimezone %}
+        {% else %}
+        <td data-order="{{i.created_at|date:'Y-m-d H:i'}}">Added on {{i.created_at | date:"j M, Y h:i A"}}</td>
+        {% endif %}
+    </tr>
+    {% endfor %}
+
+    </tbody>
+</table>

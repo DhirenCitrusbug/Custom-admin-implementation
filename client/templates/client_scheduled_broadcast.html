@@ -1,0 +1,693 @@
+{% extends 'client_base.html' %}
+{% load static %}
+{% load tz %}
+{% load tag_filter %}
+{% block title %}
+<title>Client Broadcast</title>
+{% endblock %}
+{% block head %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js" crossorigin="anonymous"></script>
+{% endblock %}
+
+{% block page_content %}
+<div class="trigger_overlays"></div>
+<input type="hidden" id="client_business_name" value="{{client.business_name}}">
+<div class="rw_inner_area rw_inner_form_area rw_modal_backdrop">
+    <div class="rw_tabs">
+        <ul class="nav rw_tab_ul" id="myTab" role="tablist">
+            <li class="nav-item" role="presentation">
+                <a href="{% url 'client-sch-broadcast' client.id %}" class="active tab_link">Send Broadcast</a>
+            </li>
+            <li class="nav-item" role="presentation">
+                <a href="{% url 'broadcast-schedule-listing' client.id %}" class="tab_link">Scheduled</a>
+            </li>
+            <li class="nav-item" role="presentation">
+                <a href="{% url 'broadcast-sent-listing' client.id %}" class="tab_link">Sent</a>
+            </li>
+        </ul>
+
+        {% if messages %}
+        {% for message in messages %}
+        {% if message.tags == 'error' %}
+        <div class="rw_suc_err_wrapper rw_error_toast active">
+            <div class="rw_suc_err_block ">
+                <img src="{% static 'images/icons/error.svg'%}" alt="error">
+                <p>{{message}}</p>
+                <a href="javascript:;" class="close error_close"><img src="{% static 'images/icons/close_white.svg'%}"
+                        alt="close"></a>
+            </div>
+        </div>
+        {% else %}
+        <div class="rw_suc_err_wrapper rw_success_toast active">
+            <div class="rw_suc_err_block ">
+                <img src="{% static 'images/icons/check_white.svg' %}" alt="Done">
+                <p>{{message}}</p>
+                <a href="javascript:;" class="close success_close"><img
+                        src="{% static 'images/icons/close_white.svg' %}" alt="close"></a>
+            </div>
+        </div>
+        {% endif %}
+        {% endfor %}
+        {% endif %}
+        <!-- <div class="rw_suc_err_wrapper rw_error_toast" id="mes_error" style="padding-left: 50px; padding-top: 20px;">
+            <div class="rw_suc_err_block ">
+                <img src="{% static 'images/icons/error.svg'%}" alt="error">
+                <p id="e_mes"></p>
+                <a href="javascript:;" class="close error_close"><img src="{% static 'images/icons/close_white.svg'%}"
+                        alt="close"></a>
+            </div>
+        </div>
+
+        <div class="rw_suc_err_wrapper rw_success_toast" id="mes_success"
+            style="padding-left: 50px; padding-top: 20px;">
+            <div class="rw_suc_err_block ">
+                <img src="{% static 'images/icons/check_white.svg' %}" alt="Done">
+                <p id="s_mes"></p>
+                <a href="javascript:;" class="close success_close"><img
+                        src="{% static 'images/icons/close_white.svg' %}" alt="close"></a>
+            </div>
+        </div> -->
+
+
+        <!-- Tab panes -->
+        {% csrf_token %}
+        <div class="tab-content">
+            <div class="tab-pane active" id="send_broadcast" role="tabpanel">
+                <div class="rw_inner_form_inner_area">
+                    <div class="rw_broadcast_wrapper">
+                        <div class="rw_broadcast_inner">
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <div class="broadcast_left">
+                                        <div class="broadcast_head">
+                                            <span>1</span>
+                                            <div class="title">
+                                                <h4>Message</h4>
+                                                <p>Enter your message text here</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-8">
+                                    <div class="broadcast_right" id="div_message">
+                                        <div class="broadcast_title">
+                                            <h3>Message Text</h3>
+                                        </div>
+                                        <div class="text_input_box">
+                                            <textarea id="message"></textarea>
+                                            <div class="text_input_box_content">
+                                                <div class="input_total_word">
+                                                    <p id="char">0/160 characters</p>
+                                                </div>
+                                                <div class="input_icons">
+                                                    <ul>
+                                                        <!--                                                                <li><a href="javascript:;" title="Link"><img src="{% static 'images/icons/link_gradient.svg'%}" alt="image"></a></li>-->
+                                                        <li><a href="javascript:;" title="Referral" class="add_tag"
+                                                            id="add_referral_camp"><img
+                                                                src="{% static 'images/icons/colored_icon/new_referral_color_logo.svg'%}"
+                                                                alt="image"></a>
+                                                            <ul class="input_submenu" id="ul_referral_camp">
+                                                                {% if referral_camp %}
+                                                                {% for rc in referral_camp %}
+                                                                <li><a href="javascript:;" class="referral_name"
+                                                                        referral-code="{{rc.ref_camp_name}}">{{rc.ref_camp_name}}</a>
+                                                                </li>
+                                                                {% endfor %}
+                                                                {% else %}
+                                                                <li><a href="javascript:;" class="referral_name"
+                                                                        coupon-code="">No Coupons Found</a> </li>
+                                                                {% endif %}
+                                                            </ul>
+                                                            <input type="hidden" id="referral_code" value="">
+                                                        </li>
+                                                        <li><a href="javascript:;" title="Coupon" class="add_tag"
+                                                                id="add_coupon"><img
+                                                                    src="{% static 'images/icons/colored_icon/coupon.svg'%}"
+                                                                    alt="image"></a>
+                                                            <ul class="input_submenu" id="ul_coupon">
+                                                                {% if coupon %}
+                                                                {% for k in coupon %}
+                                                                <li><a href="javascript:;" class="coupon_name"
+                                                                        coupon-code="{{k.coupon_name}}">{{k.coupon_name}}</a>
+                                                                </li>
+                                                                {% endfor %}
+                                                                {% else %}
+                                                                <li><a href="javascript:;" class="coupon_name"
+                                                                        coupon-code="">No Coupons Found</a> </li>
+                                                                {% endif %}
+                                                            </ul>
+                                                            <input type="hidden" id="coupon_code" value="">
+                                                        </li>
+                                                        <li>
+                                                            <a href="javascript:;" title="Add Tag" class="add_tag"
+                                                                id="add_tag"><img
+                                                                    src="{% static 'images/icons/add_box.svg'%}"
+                                                                    alt="image"></a>
+                                                            <ul class="input_submenu" id="ul_tag">
+                                                                <li><a href="javascript:;" class="click_1"
+                                                                        id="click_1">First Name</a></li>
+                                                                <li><a href="javascript:;" class="click_1"
+                                                                        id="click_2">Last Name</a></li>
+                                                                <li><a href="javascript:;" class="click_1"
+                                                                        id="click_3">Birthdate</a></li>
+                                                                <li><a href="javascript:;" class="click_1"
+                                                                        id="click_4">Anniversary</a></li>
+                                                                {% for i in custom_fields %}
+                                                                <li><a href="javascript:;" class="click_1 click_custom_field"
+                                                                    id="click_custom_field_{{i.id}}" custom-field-id="{{i.id}}">{{i.field_name}}</a></li>
+                                                                {% endfor %}
+                                                            </ul>
+                                                        </li>
+                                                        <!--                                                                <li><a href="javascript:;" title="Emoji"><img src="{% static 'images/icons/sentiment_satisfied.svg'%}" alt="image"></a></li>-->
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="form_error" id="message_error"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="rw_broadcast_inner">
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <div class="broadcast_left">
+                                        <div class="broadcast_head">
+                                            <span>2</span>
+                                            <div class="title">
+                                                <h4>Recipients</h4>
+                                                <p>Choose your message recipients</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-8">
+                                    <div class="broadcast_right">
+                                        <div class="broadcast_title">
+                                            <h3>Choose Recipients</h3>
+                                        </div>
+                                        <ul class="">
+                                            <li>
+                                                <div class="rw_radio_btns">
+                                                    <input type="radio" name="choose_recipents" id="all_contact"
+                                                        value="1" checked>
+                                                    <label for="all_contact">Send to all Contacts
+                                                        ({{contact_count}})</label>
+                                                </div>
+                                            </li>
+                                            <li>
+                                                <div class="rw_radio_btns">
+                                                    {% if list %}
+                                                    <input type="radio" name="choose_recipents" value="2"
+                                                        id="send_list" checked>
+                                                    <label for="send_list">Send to List</label>
+                                                    {% else %}
+                                                    <input type="radio" name="choose_recipents" value="2"
+                                                        id="send_list">
+                                                    <label for="send_list">Send to List</label>
+                                                    {% endif %}
+                                                </div>
+                                            </li>
+                                        </ul>
+                                        <div style="display:none;" id="div_list_show">
+                                            <div class="rw_form_inputs">
+                                                <label class="rw_form_label">List Name</label>
+                                                <div class="rw_select2">
+                                                    <span class="input_icon caret"></span>
+                                                    <select id="multiple" class="form-control" multiple>
+                                                        {% for i in client_list%}
+                                                        {% if i == list %}
+                                                        <option value="{{i.id}}" selected>{{i.name}}</option>
+                                                        {% else %}
+                                                        <option value="{{i.id}}">{{i.name}}</option>
+                                                        {% endif %}
+                                                        {% endfor %}
+                                                    </select>
+                                                </div>
+                                                <div class="form_error" id="list_error"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="rw_broadcast_inner">
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <div class="broadcast_left schedule_left">
+                                        <div class="broadcast_head">
+                                            <span>3</span>
+                                            <div class="title">
+                                                <h4>Schedule</h4>
+                                                <p>Choose when to send your message</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-8">
+                                    <div class="broadcast_right">
+                                        <div class="broadcast_title">
+                                            <h3>Schedule Options</h3>
+                                        </div>
+                                        <ul class="">
+                                            <li>
+                                                <div class="rw_radio_btns">
+                                                    <input type="radio" name="schedule_options" id="send_now" value="1"
+                                                        checked>
+                                                    <label for="send_now">Send Now</label>
+                                                </div>
+                                            </li>
+                                            <li>
+                                                <div class="rw_radio_btns">
+                                                    <input type="radio" name="schedule_options" id="date_time"
+                                                        value="2">
+                                                    <label for="date_time">Choose Date and Time</label>
+                                                </div>
+                                            </li>
+                                        </ul>
+                                        <div style="display:none;" id="div_date_show">
+                                            <div class="rw_form_inputs date_input" id="div_date">
+                                                <label class="rw_form_label">Date</label>
+                                                <div class="rw_input">
+                                                    <input type="text" placeholder="dd/mm/yyyy" id="datepicker">
+                                                    <span class="input_icon calendar"></span>
+                                                </div>
+                                                <div class="form_error" id="date_error"></div>
+                                            </div>
+                                            <div class="rw_form_inputs" id="div_time">
+                                                <label class="rw_form_label">time</label>
+                                                <div class="choose_time">
+                                                    <div class="rw_input">
+                                                        <div class="rw_dropdown">
+                                                            <div class="select_dropdown">
+                                                                <select id="hour">
+                                                                    <option value="">Hours</option>
+                                                                    {% for i in hours %}
+                                                                    <option value="{{i}}">{{i|twodigit}}</option>
+                                                                    {% endfor %}
+                                                                </select>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="form_error" id="hour_error"></div>
+                                                    <span>:</span>
+                                                    <div class="rw_input">
+                                                        <div class="rw_dropdown">
+                                                            <div class="select_dropdown">
+                                                                <select id="minute">
+                                                                    <option value="">Minutes</option>
+                                                                    {% for i in minute %}
+                                                                    <option value="{{i}}">{{i|twodigit}}</option>
+                                                                    {% endfor %}
+                                                                </select>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="form_error" id="minute_error"></div>
+                                                    <span>:</span>
+                                                    <div class="rw_input">
+                                                        <div class="rw_dropdown am_pm_drop">
+                                                            <div class="select_dropdown">
+                                                                <select id="time_am">
+                                                                    <option value="AM">AM</option>
+                                                                    <option value="PM">PM</option>
+                                                                </select>
+                                                            </div>
+                                                        </div>
+                                                        <!-- <ul class="input_spinner am_pm">
+                                                                    <li ><img src="../assets/images/icons/sort_up.svg" alt=""></li>
+                                                                    <li><img src="../assets/images/icons/sort_down.svg" alt=""></li>
+                                                                </ul>  -->
+                                                    </div>
+                                                </div>
+                                                <div class="form_error" id="time_error"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="rw_save_btn">
+                            <!--                                    <a href="javascript:;" class="rw_btn" data-bs-toggle="modal" id="send_broad"></a>-->
+                            <input type="button" id="send_broad" value="Send Broadcast" class="rw_btn"
+                                style="border:none;">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+</div>
+<!-- </div> -->
+<!-- Delete Popup -->
+<div class="modal fade rw_modal delete_popup" id="delete_confirm_popup" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal_title">
+                    <h4>Delete Contacts</h4>
+                </div>
+                <a href="javascript:;" class="popup_close" data-bs-dismiss="modal" aria-label="Close"><img
+                        src="../assets/images/icons/close.svg" alt="close"></a>
+            </div>
+            <div class="modal-body">
+                <div class="delete_modal_body">
+                    <img src="../assets/images/delete_popup.svg" alt="">
+                    <h1>Delete 1,239 Contacts</h1>
+                    <p>Are you sure you want to delete 1239 contacts?</p>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <ul class="modal_btns">
+                    <li><a href="javascript:;" class="modal_btn cancel" data-bs-dismiss="modal">no</a></li>
+                    <li><a href="javascript:;" class="modal_btn">yes</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Send Broadcast Popup-->
+<div class="modal fade rw_modal delete_popup send_broadcast_modal" id="send_broadcast_popoup" tabindex="-1"
+    aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal_title">
+                    <h4>Send Broadcast</h4>
+                </div>
+                <a href="javascript:;" class="popup_close" data-bs-dismiss="modal" aria-label="Close"><img
+                        src="{% static 'images/icons/close.svg'%}" alt="close"></a>
+            </div>
+            <div class="modal-body">
+                <div class="delete_modal_body">
+                    <img src="{% static 'images/broadcast-email.svg'%}" alt="broadcast-email">
+                    <h1>Send Broadcast</h1>
+                    <p id="send_message">Send broadcast to list <span>‘The list name’</span> on<span> 26 december</span>
+                        at <span>12:00 AM</span></p>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <ul class="modal_btns">
+                    <li><a href="javascript:;" class="modal_btn cancel" data-bs-dismiss="modal">Cancel</a></li>
+                    <li><a href="javascript:;" class="modal_btn" id="send_sch">Send</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Send Broadcast Popup 2 (Send Now)-->
+<div class="modal fade rw_modal delete_popup send_broadcast_modal" id="send_broadcast_popoup2" tabindex="-1"
+    aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal_title">
+                    <h4>Send Broadcast</h4>
+                </div>
+                <a href="javascript:;" class="popup_close" data-bs-dismiss="modal" aria-label="Close"><img
+                        src="{% static 'images/icons/close.svg'%}" alt="close"></a>
+            </div>
+            <div class="modal-body">
+                <div class="delete_modal_body">
+                    <img src="{% static 'images/broadcast-email.svg'%}" alt="broadcast-email">
+                    <h1>Send Broadcast</h1>
+                    <p id="send_message2">Send broadcast to list <span>‘The list name’</span> on<span> 26 december</span>
+                        at <span>12:00 AM</span></p>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <ul class="modal_btns">
+                    <li><a href="javascript:;" class="modal_btn cancel" data-bs-dismiss="modal">Cancel</a></li>
+                    <li><a href="javascript:;" class="modal_btn" id="send_n">Send</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block script %}
+<script>
+    $(document).ready(function(){
+        $('#message').text('')
+        $('#message').text($('#client_business_name').val()+':')
+    })
+    $("#message").on('keyup', function () {
+        $("#char").text($("#message").val().length + "/160 characters")
+        $("#div_message").removeClass('error')
+        $('#message_error').text('')
+    });
+    $("#hour").on('click', function () {
+        $('#time_error').text('')
+    });
+    $("#minute").on('click', function () {
+        $('#time_error').text('')
+    });
+    $("#datepicker").on('click', function () {
+        $('#div_date').removeClass('error')
+        $('#date_error').text('')
+    });
+
+    if ($("input[name='choose_recipents']:checked").val() == "2") {
+            $("#div_list_show").attr('style', 'display:block;');
+    }
+    $("input[name='choose_recipents']").on('change', function () {
+        console.log('asdasdasdasdas')
+        if ($("input[name='choose_recipents']:checked").val() == "1") {
+            $("#div_list_show").attr('style', 'display:none;');
+        } else if ($("input[name='choose_recipents']:checked").val() == "2") {
+            $("#div_list_show").attr('style', 'display:block;');
+        }
+    });
+
+    $("#add_coupon").on("click", function (e) {
+
+        console.log($('#coupon_code').val())
+
+        if ($('#coupon_code').val().length <= 0) {
+            e.stopPropagation();
+            $(".trigger_overlays").addClass("active");
+            $("#ul_coupon").addClass("active");
+        } else {
+            var message = $('#message').val()
+            var coupon = $('#coupon_code').val()
+            console.log(message.search(coupon))
+            if (message.search(coupon) <= -1) {
+                e.stopPropagation();
+                $(".trigger_overlays").addClass("active");
+                $("#ul_coupon").addClass("active");
+            } else {
+                console.log('else condition')
+                $(".trigger_overlays").removeClass("active");
+            }
+        }
+
+
+    });
+
+    $("#add_referral_camp").on("click", function (e) {
+        console.log($('#referral_code').val())
+        if ($('#referral_code').val().length <= 0) {
+            e.stopPropagation();
+            $(".trigger_overlays").addClass("active");
+            $("#ul_referral_camp").addClass("active");
+        } else {
+            var message = $('#message').val()
+            var referral_camp = $('#referral_code').val()
+            console.log(message.search(referral_camp))
+            if (message.search(referral_camp) <= -1) {
+                e.stopPropagation();
+                $(".trigger_overlays").addClass("active");
+                $("#ul_referral_camp").addClass("active");
+            } else {
+                console.log('else condition')
+                $(".trigger_overlays").removeClass("active");
+            }
+        }
+    });
+
+    $("#add_tag").on("click", function (e) {
+        e.stopPropagation();
+        $(".trigger_overlays").addClass("active");
+        $("#ul_tag").addClass("active");
+    });
+
+    $("input[name='schedule_options']").on('change', function () {
+        console.log('asdasdasdasdas')
+        if ($("input[name='schedule_options']:checked").val() == "1") {
+            $("#div_date_show").attr('style', 'display:none;');
+        } else if ($("input[name='schedule_options']:checked").val() == "2") {
+            $("#div_date_show").attr('style', 'display:block;');
+        }
+    });
+    $('body').on('click', '.coupon_name', function () {
+        var abc = $(this).attr('coupon-code')
+        console.log(abc)
+        $(".trigger_overlays").removeClass("active");
+        $("#coupon_code").val(abc);
+        $("#message").val($("#message").val() + "{{" + abc)
+        $("#message").val($("#message").val() + "}}")
+    });
+    $('body').on('click', '.referral_name', function () {
+        var referral_code = $(this).attr('referral-code')
+        console.log(referral_code)
+        $(".trigger_overlays").removeClass("active");
+        $("#referral_code").val(referral_code);
+        $("#message").val($("#message").val() + "{{" + referral_code)
+        $("#message").val($("#message").val() + "}}")
+    });
+    $('body').on('click', '#click_1', function () {
+        console.log($('#click_1').text())
+        $(".trigger_overlays").removeClass("active");
+        $("#message").val($("#message").val() + "{{" + $('#click_1').text())
+        $("#message").val($("#message").val() + "}}")
+    });
+    $('body').on('click', '#click_2', function () {
+        console.log($('#click_1').text())
+        $(".trigger_overlays").removeClass("active");
+        $("#message").val($("#message").val() + "{{" + $('#click_2').text())
+        $("#message").val($("#message").val() + "}}")
+    });
+    $('body').on('click', '#click_3', function () {
+        console.log($('#click_1').text())
+        $(".trigger_overlays").removeClass("active");
+        $("#message").val($("#message").val() + "{{" + $('#click_3').text())
+        $("#message").val($("#message").val() + "}}")
+    });
+    $('body').on('click', '#click_4', function () {
+        console.log($('#click_1').text())
+        $(".trigger_overlays").removeClass("active");
+        $("#message").val($("#message").val() + "{{" + $('#click_4').text())
+        $("#message").val($("#message").val() + "}}")
+    });
+    $('body').on('click', '.click_custom_field', function () {
+        var custom_field_id = $(this).attr('custom-field-id')
+        console.log(custom_field_id);
+        $(".trigger_overlays").removeClass("active");
+        $("#message").val($("#message").val() + "{{" + $('#click_custom_field_'+custom_field_id).text())
+        $("#message").val($("#message").val() + "}}")
+    });
+
+    $('body').on('click', '#send_broad', function () {
+        console.log('ddasdasd')
+        if ($("#message").val().trim().length <= 0) {
+            $("#div_message").addClass('error')
+            $('#message_error').text('Please enter Message')
+        } else if ($("input[name='schedule_options']:checked").val() == "1") {
+            if ($("input[name='choose_recipents']:checked").val() == "1") {
+                $('#send_message2').empty()
+                $('#send_message2').append("<p>Send broadcast to <span>‘All Contacts’</span> </p>")
+                $('#send_broadcast_popoup2').modal('show');
+
+            } else if ($("input[name='choose_recipents']:checked").val() == "2") {
+                console.log('ashgdfasghdgyasxd')
+                if ($('#multiple').val().length <= 0) {
+                    $('#list_error').text('Please select any List')
+                } else {
+                    var features = $('#multiple option:selected').map(function (idx, elem) {
+                        return $(elem).text();
+                    }).get();
+                    $('#send_message2').empty()
+                    $('#send_message2').append("<p>Send broadcast to lists <span>" + features + "</span> </p>")
+                    $('#send_broadcast_popoup2').modal('show');
+                }
+            }
+        } else if ($("input[name='schedule_options']:checked").val() == "2") {
+            console.log($('#hour').val(), 'hour')
+            console.log($('#minute').val(), 'minute')
+            if ($('#datepicker').val().length <= 0) {
+                $('#div_date').addClass('error')
+                $('#date_error').text('Please select Date')
+            } else if ($('#hour').val().length <= 0) {
+                console.log($('#hour').val(), 'hour')
+                $('#div_time').addClass('error')
+                $('#time_error').text('Please enter Hour')
+            } else if ($('#minute').val().length <= 0) {
+                $('#div_time').addClass('error')
+                $('#time_error').text('Please enter Minute')
+            } else if ($("input[name='choose_recipents']:checked").val() == "1") {
+                var oneDate = moment($('#datepicker').val(), 'DD/MM/YYYY');
+                $('#send_message').empty()
+                $('#send_message').append("<p>Send broadcast to <span>‘All Contacts’</span> on<span>  " + oneDate.format('DD MMMM') + "</span> at <span> " + $('#hour').val() + ":" + $('#minute').val() + " " + $('#time_am').val() + "</span></p>")
+                $('#send_broadcast_popoup').modal('show');
+
+            } else if ($("input[name='choose_recipents']:checked").val() == "2") {
+                if ($('#multiple').val().length <= 0) {
+                    $('#list_error').text('Please select any List')
+                } else {
+                    var oneDate = moment($('#datepicker').val(), 'DD/MM/YYYY');
+                    console.log($('#multiple option:selected').text())
+                    var features = $('#multiple option:selected').map(function (idx, elem) {
+                        return $(elem).text();
+                    }).get();
+                    $('#send_message').empty()
+                    $('#send_message').append("<p>Send broadcast to lists <span>" + features + "</span> on<span>  " + oneDate.format('DD MMMM') + "</span> at <span> " + $('#hour').val() + ":" + $('#minute').val() + " " + $('#time_am').val() + "</span></p>")
+                    $('#send_broadcast_popoup').modal('show');
+                }
+            }
+        }
+    });
+    $('body').on('click', '#send_sch', function () {
+        $('#loader').removeClass('rw_loader_none')
+        link = "{% url 'client-sch-broadcast' client.id %}";
+        console.log($('#datepicker').val() + " " + $('#hour').val() + ":" + $('#minute').val() + " " + $('#time_am').val())
+        $.ajax({
+            type: 'POST',
+            url: link,
+            data: {
+                list: $('#multiple').val(),
+                recipents: $("input[name='choose_recipents']:checked").val(),
+                schdule: $("input[name='schedule_options']:checked").val(),
+                message: $("#message").val(),
+                csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val(),
+                sch_date: $('#datepicker').val() + " " + $('#hour').val() + ":" + $('#minute').val() + $('#time_am').val()
+            },
+            success: function (response) {
+                $('#loader').addClass('rw_loader_none')
+                console.log(response)
+                if (response['status'] == false) {
+                    $('#send_broadcast_popoup').modal('hide');
+                    $('#mes_error').addClass('active').delay(8000)
+                    $('#e_mes').text(response['msg']).delay(8000)
+                    setTimeout(function () { $('#mes_error').removeClass('active'); }, 4000);
+
+                } else {
+                    location.reload()
+                }
+            }
+        });
+
+    });
+
+    $('body').on('click', '#send_n', function () {
+        $('#loader').removeClass('rw_loader_none')
+        link = "{% url 'client-sch-broadcast' client.id %}";
+        $.ajax({
+            type: 'POST',
+            url: link,
+            data: {
+                list: $('#multiple').val(),
+                recipents: $("input[name='choose_recipents']:checked").val(),
+                schdule: $("input[name='schedule_options']:checked").val(),
+                message: $("#message").val(),
+                csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val(),
+
+            },
+            success: function (response) {
+                $('#loader').addClass('rw_loader_none')
+                console.log(response)
+                location.reload()
+            }
+        });
+
+    });
+
+
+</script>
+
+{% endblock %}

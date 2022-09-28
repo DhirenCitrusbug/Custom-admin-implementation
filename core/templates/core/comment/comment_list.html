@@ -1,0 +1,314 @@
+{% extends 'core/change_list.html' %}
+{% load static %}
+{% load admin_extras %}
+{% load misc_filters %}
+{% load i18n %}
+
+
+{% block page_content %}
+    <style>
+        td.show_description ol {
+            padding: revert;
+        }
+        .action_btn{
+            width: 30px;
+            text-align: center;
+        }
+    </style>
+    {% csrf_token %}
+
+    {# include "core/includes/list_header_card.html" with title="Create a new review" subtitle="You can add a new review details by clicking this button." #}
+
+    <div class="ibox float-e-margins">
+        <div class="ibox-content">
+            <div class="row">
+                <div class="mb-2 col-3" style="padding-left: 15px;">
+                    <select class="form-control" id="comment_data" name="comment_data" onchange="change_comment_data()">
+                        <option value="all" selected>All</option>
+                        <option value="approved">Approved</option>
+                        <option value="disapproved">Disapproved</option>
+                        <option value="spam">Spam</option>
+                    </select>
+                </div>
+                <div class="mb-2 col-9 empty_button" style="padding-left: 15px; display:none;">
+                    <button class="btn btn-outline-primary" onclick="empty_spam()">Empty Spam</button>
+                </div>
+            </div>
+            <div class="table-responsive">
+                <table class="table table-bordered table-hover" id="{{ opts.model_name }}-table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Author</th>
+                            <th>Comment</th>
+                            <th>In response to</th>
+                            <th>Submitted on</th>
+                            <th>Is Approve</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tfoot>
+                        <tr>
+                            <th>ID</th>
+                            <th>Author</th>
+                            <th>Comment</th>
+                            <th>In response to</th>
+                            <th>Submitted on</th>
+                            <th>Is Approve</th>
+                            <th>Actions</th>
+                        </tr>
+                    </tfoot>
+                    <tbody>
+
+                    </tbody>
+                </table>
+
+            <!-- Modal -->
+            <div class="modal fade bd-example-modal-lg" id="replyModel" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
+              <div class="modal-dialog modal-lg" >
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLongTitle">Reply on comment</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                      <span aria-hidden="true">&times;</span>
+                    </button>
+                  </div>
+
+                  <form id="comments-form" action="/customadmin/comments/create/" method="post" enctype="multipart/form-data" autocomplete="off">
+                      {% csrf_token %}
+                      <div class="modal-body">
+                        <div class="row">
+                            <div class="col-12">
+                                <div id="div_id_description" class="control-group">
+                                    <input type="hidden" id="parent_id" name="parent_id">
+                                    <input type="hidden" id="ip" name="ip">
+                                    <label for="id_description" class="control-label requiredField"> Description <span class="asteriskField">*</span></label>
+                                    <div class="controls">
+                                        <textarea class="form-control" id="id_description" name="description" rows="10" required></textarea>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                      </div>
+                      <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <button class="btn btn-primary" onclick="myPageLoader()" type="submit" id="form_submit">Save</button>
+                      </div>
+                  </form>
+                </div>
+              </div>
+            </div>
+
+           </div>
+        </div>
+    </div>
+
+
+
+{% endblock %}
+
+
+{% block js %}
+    {{ block.super }}
+    <script src="{% static 'core/js/ajax_processing.js' %}"></script>
+    <script src="https://cdn.jsdelivr.net/jquery.validation/1.16.0/additional-methods.js"></script>
+    <script>
+        $('#replyModel').on('hidden.bs.modal', function(e){
+            $('#parent_id').val('');
+            $('#ip_address').val('');
+            $('#id_description-error').css('display', 'none');
+            $('#id_description').html('');
+            $('#comments-form')[0].reset();
+        });
+
+        var pagination_url = "{% url opts|admin_urlname:'list-ajax' %}";
+
+        function approve_disapprove(comment_id, status){
+            $('.page-loader').show();
+            $.ajax({
+              method: "POST",
+              url: "/customadmin/comments/approve_disapprove",
+              data: {
+                'comment_id': comment_id,
+                'status': status
+              },
+              dataType: 'json',
+              async: true,
+              success: function (res) {
+                console.log(res);
+                if(res['status'] === true){
+                    $('#comments-table').DataTable().draw();
+                }else{
+                    alert('This comment is not found.')
+                }
+              },
+              complete: function(){
+                $('.page-loader').hide();
+              }
+             });
+        }
+
+        var editor = CKEDITOR.replace("id_description", {
+            // Define the toolbar groups as it is a more accessible solution.
+            toolbar: [
+                {
+                    name: 'basicstyles',
+                    items: [ 'Bold', 'Italic', 'Underline', 'Strike', '-' ]
+                },
+                {
+                    name: 'links',
+                    items: [ 'Link']
+                },
+                {
+                    name: 'paragraph',
+                    items: [ 'NumberedList', 'BulletedList']
+                },
+		        {
+		            name: 'styles',
+		            items: ['Format']
+		        },
+		        {
+		            name: 'document',
+		            items: [ 'Source' ]
+		        },
+            ]
+        });
+
+        function reply_comment(parent_comment_id){
+            $('#parent_id').val(parent_comment_id);
+            $('#ip').val(GetUserIP());
+            $('#replyModel').modal('show');
+        }
+
+        function GetUserIP(){
+          var ret_ip;
+          $.ajaxSetup({async: false});
+          $.get('https://api.ipify.org/?format=json', function(r){
+            ret_ip = r.ip;
+          });
+          return ret_ip;
+        }
+
+        $(document).ready(function () {
+            jQuery.validator.addMethod(
+                "noSpace",
+                function (value, element) {
+                    return value == "" || value.trim().length != 0;
+                },
+                "This field is required."
+            );
+
+            //Have to build custom method to check ckeditor
+            jQuery.validator.addMethod(
+                "ckeditor",
+                function (value, element) {
+                    var textData = editor.getData();
+                    if (textData.length > 0) return true;
+                    return false;
+                },
+                "No data in editor"
+            );
+
+
+
+            $("#comments-form").validate({
+                ignore: [],
+                rules: {
+                    description: {
+
+                        noSpace: true,
+                        ckeditor: true,
+                    },
+                },
+
+                messages: {
+                    description: {
+                        required: "This field is required.",
+                    },
+                },
+                errorPlacement: function (error, element) {
+                    if (element.attr("name") == "description") {
+                        error.insertBefore("textarea#id_description");
+                    } else {
+                        error.insertBefore(element);
+                    }
+                },
+            });
+        });
+
+        $("#comments-form").on("submit", function () {
+            if ($("#comments-form").valid() == true) {
+                    console.log("zdfjlskhfozxhfgzxhcgjklxch");
+                    $(".page-loader").show();
+                    return true;
+                    // return false
+                } else {
+                    console.log("Form is not validate!");
+                    //$("#review-form").valid();
+                    //$(".page-loader").hide();
+                    return false;
+                }
+        });
+
+        CKEDITOR.config.basicEntities = false;
+        CKEDITOR.config.entities = false;
+        CKEDITOR.config.entities_greek = false;
+        CKEDITOR.config.entities_latin = false;
+        CKEDITOR.config.htmlEncodeOutput = false;
+        CKEDITOR.config.entities_processNumerical = false;
+
+        function change_comment_data(){
+            if ($('#comment_data').val() == 'spam'){
+                $('.empty_button').css('display', 'block');
+            }else{
+                $('.empty_button').css('display', 'none');
+            }
+            $('#comments-table').DataTable().draw();
+        }
+
+        function spam_unspam(comment_id, status){
+            $('.page-loader').show();
+            $.ajax({
+              method: "POST",
+              url: "/customadmin/comments/spam_unspam",
+              data: {
+                'comment_id': comment_id,
+                'status': status
+              },
+              dataType: 'json',
+              async: true,
+              success: function (res) {
+                console.log(res);
+                if(res['status'] === true){
+                    $('#comments-table').DataTable().draw();
+                }else{
+                    alert('This comment is not found.')
+                }
+              },
+              complete: function(){
+                $('.page-loader').hide();
+              }
+             });
+        }
+
+        function empty_spam(){
+            $('.page-loader').show();
+            $.ajax({
+              method: "GET",
+              url: "/customadmin/comments/empty_spam",
+              async: true,
+              success: function (res) {
+                if(res['status'] === true){
+                    console.log(res['message'])
+                    $('#comments-table').DataTable().draw();
+                }else{
+                    console.log("Something wrong on server.")
+                }
+              },
+              complete: function(){
+                $('.page-loader').hide();
+              }
+             });
+        }
+    </script>
+{% endblock %}

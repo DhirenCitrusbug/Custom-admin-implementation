@@ -1,0 +1,36 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+
+<head>
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link rel="icon" type="image/x-icon" href="{% static 'img/favicons/favicon.ico' %}" />
+
+    <title>{% block title %}{% endblock %} | {{ PROJECT_TITLE }}</title>
+
+    <link href="{% static 'core/css/bootstrap.min.css' %}" rel="stylesheet">
+    <link href="{% static 'core/css/animate.css' %}" rel="stylesheet">
+    <link href="{% static 'core/css/style.css' %}" rel="stylesheet">
+    <link href="{% static 'core/css/custom-style.css' %}" rel="stylesheet">
+
+    {% block css %}{% endblock%}
+    {% block js_head %}{% endblock%}
+
+</head>
+
+<body class="gray-bg">
+
+    {% block content %}{% endblock%}
+
+    {% block js %}
+    <!-- Mainly scripts -->
+    <script src="{% static 'core/js/jquery-3.1.1.min.js' %}"></script>
+    <script src="{% static 'core/js/bootstrap.min.js' %}"></script>
+    {% endblock%}
+</body>
+
+</html>
+

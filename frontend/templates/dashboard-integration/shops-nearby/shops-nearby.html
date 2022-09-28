@@ -1,0 +1,51 @@
+<!-- Stylesheet for this widget  -->
+<link rel="stylesheet" href="https://electricbikereview.website/dashboard-integration/shops-nearby/app.min.css" />
+<!-- Font Awesome icons -->
+<link rel="stylesheet" href="https://electricbikereview.website/fa-assets/css/all.min.css" />
+
+<!-- PT Sans Fonts  -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=PT+Sans:wght@400;700&display=swap" rel="stylesheet">
+
+<!-- API endpoints used by this widget -->
+<script type="text/javascript">
+     Parent_URL = 'electricbikereview.website';
+   
+	DASHBOARD_GEOLOCATE_ENDPOINT = 'https://partner-dashboard.' + Parent_URL + '/api/geolocate';
+	DASHBOARD_SHOPS_NEARBY_ENDPOINT = 'https://partner-dashboard.' + Parent_URL + '/api/shops/nearby';
+	DASHBOARD_SHOPS_TILES_ENDPOINT = 'https://staticosm.' + Parent_URL;
+	DASHBOARD_SHOPS_PIN_URL = 'https://' + Parent_URL + '/dashboard-integration/shops-osm/images/marker-icon-2x.png';
+
+// 	DASHBOARD_GEOLOCATE_ENDPOINT = 'https://partner-dashboard.' + window.parent.location.hostname + '/api/geolocate';
+// 	DASHBOARD_SHOPS_NEARBY_ENDPOINT = 'https://partner-dashboard.' + window.parent.location.hostname + '/api/shops/nearby';
+// 	DASHBOARD_SHOPS_TILES_ENDPOINT = 'https://staticosm.' + window.parent.location.hostname;
+// 	DASHBOARD_SHOPS_PIN_URL = 'https://' + window.parent.location.hostname + '/dashboard-integration/shops-osm/images/marker-icon-2x.png';
+</script>
+
+<!-- The main script for this widget  -->
+<script onload="initShopsNearby();" src="https://electricbikereview.com/dashboard-integration/shops-nearby/app.min.js" defer></script>
+
+<!-- HTML structure for this widget
+Static elements are here. Dynamic content is generated and injected via Javascript  -->
+<div class="shops-nearby-wrapper">
+	<div class="title-wrapper">
+		<div class="title">Ebike Shops Near You</div>
+		<div class="location-search-wrapper">
+			<div style="position: relative;">
+				<i class="location-search-icon fas fa-search"</i></i>
+				<input type="text" id="nearby-location-search" class="location-search-input" placeholder="Search Location">
+			</div>
+		</div>
+	</div>
+
+	<div class="splide" role="group" aria-label="Ebike Shops Near You" style="height: 91%; margin-right: auto; margin-left: auto;">
+		<div class="splide__track">
+				<div class="splide__list" id="shops-nearby-slider">
+					<div class="splide__slide">Slide 01</div>
+					<div class="splide__slide">Slide 02</div>
+					<div class="splide__slide">Slide 03</div>
+				</div>
+		</div>
+	</div>
+</div>

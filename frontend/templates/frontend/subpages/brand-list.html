@@ -1,0 +1,80 @@
+
+{% extends 'frontend/subpages/base.html'%}
+{% load static %}
+
+{% block title %}
+Best Electric Bike Brands | ElectricBikeReview.com
+{% endblock %}
+
+{% block seoTag %}
+    <meta name="theme-color" content="#80b600">
+	<meta name="apple-mobile-web-app-status-bar-style" content="#80b600">
+	<meta name="msapplication-navbutton-color" content="#80b600">
+    <meta property='og:url' content='https://electricbikereview.com/' />
+    <meta property="fb:app_id" content="462030500496873" />
+
+    <meta property="og:locale" content="en_us" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Best Electric Bike Brands | ElectricBikeReview.com" />
+    <meta property="og:description" content="Prices, Specs, Videos, Photos" />
+    <meta property="og:site_name" content="ElectricBikeReview.com" />
+    <meta property="og:image" content="http://54.213.76.238/static/assets/images/EBRlogo.png" />
+	<meta name="twitter:card" content="summary" />
+    <meta name="twitter:description" content="Prices, Specs, Videos, Photos" />
+    <meta name="twitter:title" content="Best Electric Bike Brands | ElectricBikeReview.com" />
+    <meta name="twitter:image" content="http://54.213.76.238/static/assets/images/EBRlogo.png" />
+    <meta name="twitter:site" content="@ebikereview" />
+{% endblock %}
+
+{% block body %}
+        <section class="middle_area">
+            <div class="breadcrumb">
+                <a href="/">Home</a>
+                <span class="slash">/</span>
+                <a href="javascript:void(0);" class="active">Electric Bike Brands</a>
+            </div>
+            <div class="main-content">
+                <div class="row m-0">
+                    <div class="col-lg-8 col-xl-9 col-md-6 col-sm-6 p-0">
+                        <div class="left-side-content">
+                            <h3 class="section-title">Electric Bike Brands</h3>
+                            <p class="desc_p brand-desc-p">Listed alphabetically below. You can jump to a section by clicking a letter:
+                                {% for bradn_key in bike_brands %}
+                                <a href="#{{bradn_key|lower}}">{{bradn_key}}</a>
+                                {% endfor %}
+                                <!-- <a href="##">#</a> -->
+                            </p>
+                            {% for bradn_key, brand_val in bike_brands.items %}
+                            <div class="brandlist-typebox" id="{{bradn_key|lower}}">
+                                <h4>{{bradn_key}}</h4>
+                                <div class="brandlist-typeitem">
+                                    {% for brand in brand_val %}
+                                    <div class="brand-item">
+                                        <img src="https://ebr-dev-bucket.s3.amazonaws.com/{{ brand.brand_image_grayscale_web }}" class="brand-img" alt="{{brand.name}}"/>
+                                        <div class="brand-links">
+                                            <a href="\brand\{{brand.slug}}">
+                                                {{brand.name}}
+                                                <!-- Box Bike Collective Reviews -->
+                                            </a>
+                                            <a href="https://electricbikereview.com/forums/forum/{{brand.slug}}/">
+                                                {{brand.name}}
+                                                <!-- Box Bike Collective Forums -->
+                                            </a>
+                                        </div>
+                                    </div>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+
+                    {% include 'frontend/include/discussion.html' %}
+                </div>
+            </div>
+        </section>
+{% endblock %}
+
+{% block script %}
+
+{% endblock %}

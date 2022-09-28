@@ -1,0 +1,81 @@
+{% extends 'core/change_form.html' %}
+{% load static %}
+{% load widget_tweaks %}
+{% load admin_extras %}
+{% load misc_filters %}
+{% load crispy_forms_tags %}
+{% load i18n %}
+
+
+{% block page_content %}
+    <form id="{{ opts.model_name }}-form" action="" method="post" enctype="multipart/form-data" autocomplete="off">
+        {{ form.media }}
+        {% include "core/partials/form_hidden_fields.html" %}
+
+        <div class="ibox float-e-margins">
+            {% include "core/partials/ibox_title.html" with ibox_title="Comment Details" icon_class="fas fa-info-circle" only %}
+            <div class="ibox-content">
+                <div class="row">
+                    <div class="col-sm-6 mt-2">
+                        {{ form.name|as_crispy_field }}
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-6 mt-2">
+                        {{ form.email|as_crispy_field }}
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-6 mt-2">
+                        {{ form.description|as_crispy_field }}
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-6 mt-2">
+                        {{ form.is_approved|as_crispy_field }}
+                    </div>
+                </div>
+            </div>
+            <!-- /ibox-content -->
+        </div>
+        <!-- /ibox -->
+        {% include "core/partials/form_footer.html" %}
+    </form>
+
+{% endblock %}
+
+
+{% block js %}
+    {{ block.super }}
+    var editor = CKEDITOR.replace("id_description", {
+        // Define the toolbar groups as it is a more accessible solution.
+        toolbar: [
+            {
+                name: 'basicstyles',
+                items: [ 'Bold', 'Italic', '-', 'RemoveFormat' ]
+            },
+            {
+                name: 'links',
+                items: [ 'Link']
+            },
+            {
+                name: 'paragraph',
+                items: [ 'NumberedList', 'BulletedList']
+            },
+            {
+                name: 'styles',
+                items: ['Format']
+            },
+            {
+                name: 'document',
+                items: [ 'Source' ]
+            },
+        ]
+    });
+    CKEDITOR.config.basicEntities = false;
+    CKEDITOR.config.entities = false;
+    CKEDITOR.config.entities_greek = false;
+    CKEDITOR.config.entities_latin = false;
+    CKEDITOR.config.htmlEncodeOutput = false;
+    CKEDITOR.config.entities_processNumerical = false;
+{% endblock %}

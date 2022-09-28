@@ -1,0 +1,515 @@
+{% extends 'core/change_form.html' %}
+{% load static %}
+{% load widget_tweaks %}
+{% load admin_extras %}
+{% load misc_filters %}
+{% load crispy_forms_tags %}
+{% load i18n %}
+
+
+{% block page_content %}
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-tagsinput/0.8.0/bootstrap-tagsinput.css" integrity="sha512-xmGTNt20S0t62wHLmQec2DauG9T+owP9e6VU8GigI0anN7OXLip9i7IwEhelasml2osdxX71XcYm6BQunTQeQg==" crossorigin="anonymous" />
+    <style>
+        .select2-container--default .select2-search--inline .select2-search__field{
+            padding: 0px 5px;
+            width: 100% !important;
+        }
+        .bootstrap-tagsinput{
+            width: 100%;
+        }
+        .label-info{
+            background-color: #0066CC;
+
+        }
+        .label {
+            display: inline-block;
+            padding: .25em .4em;
+            font-size: 12px !important;
+            font-weight: 700;
+            line-height: 1;
+            text-align: center;
+            white-space: nowrap;
+            vertical-align: baseline;
+            border-radius: .25rem;
+            transition: color .15s ease-in-out,background-color .15s ease-in-out,
+            border-color .15s ease-in-out,box-shadow .15s ease-in-out;
+        }
+        .ui-datepicker-calendar, .ui-datepicker-month, .ui-datepicker-prev, .ui-datepicker-next  {
+            display: none;
+        }
+
+        .ui-priority-secondary, .ui-widget-content .ui-priority-secondary, .ui-widget-header .ui-priority-secondary{
+            opacity: 1;
+        }
+    </style>
+    <form id="{{ opts.model_name }}-form" action="" method="post" enctype="multipart/form-data" autocomplete="off">
+        {{ form.media }}
+        {% include "core/partials/form_hidden_fields.html" %}
+
+        <div class="ibox float-e-margins">
+            {% include "core/partials/ibox_title.html" with ibox_title="Pages Details" icon_class="fas fa-info-circle" only %}
+            <div class="ibox-content">
+                <div class="row">
+                    <div class="col-sm-6 mt-2">
+                        {{ form.page_title|as_crispy_field }}
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-6 mt-2">
+                        {{ form.slug | as_crispy_field }}
+                    </div>
+                </div>
+
+                {% if form.slug.value %}
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label>Permalink</label>
+                                <input type="text" id="permalink" class="form-control" value="http://54.213.76.238/{{ form.slug.value }}/" readonly>
+                            </div>
+                        </div>
+                    </div>
+                {% endif %}
+                <div class="row">
+                    <div class="col-sm-6 mt-2">
+                        {{ form.meta_title|as_crispy_field }}
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-6 mt-2">
+                        {{ form.description | as_crispy_field }}
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-7 mt-2">
+                        <per>
+                            <b>Instruction:</b><br>
+                            <p style="margin:0px;">Insert review card using this tag <small style="font-weight: bold;">[review_snippet id="review id" badge="badge value"]</small></p>
+                        </per>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-sm-6 mt-2">
+                        {{ form.status | as_crispy_field }}
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-sm-6 mt-3">
+                        {{ form.is_filter }}
+                        <label for="{{ form.is_filter.id_for_label }}">
+                                {{ form.is_filter.label }}
+                            </label>
+                    </div>
+                </div>
+
+                <div class="filter_value_section">
+                    <div class="row">
+                        <div class="col-sm-6 mt-2">
+                            <label>{{ form.filter_type.label }}</label><br>
+                            <ul style="list-style: NONE;display: flex;align-items: center;">
+                                {% for radio in form.filter_type %}
+                                    <li style="margin-right: 10px;font-size: 14px;">
+                                        <span class="radio">{{ radio.tag }}</span>
+                                        <label for="{{ radio.id_for_label }}">
+                                            {{ radio.choice_label }}
+                                        </label>
+                                    </li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="row basic_search_div">
+                        <div class="col-sm-6 mt-2">
+                            {{ form.search_text | as_crispy_field }}
+                        </div>
+                    </div>
+
+                    <div class="advance_search_div">
+                        <div class="row">
+                            <div class="col-sm-3 mt-2">
+                                {{ form.min_year | as_crispy_field }}
+                            </div>
+                            <div class="col-sm-3 mt-2">
+                                {{ form.max_year | as_crispy_field }}
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-sm-6 mt-2">
+                                {{ form.brands |as_crispy_field }}
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-sm-6 mt-2">
+                                {{ form.categories | as_crispy_field }}
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-sm-6 mt-2">
+                                {{ form.model_name |as_crispy_field }}
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-sm-6 mt-2">
+                                {{ form.trim |as_crispy_field }}
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-sm-3 mt-2">
+                                {{ form.min_price | as_crispy_field }}
+                            </div>
+                            <div class="col-sm-3 mt-2">
+                                {{ form.max_price | as_crispy_field }}
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-sm-6 mt-2">
+                                {{ form.suspension |as_crispy_field }}
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-sm-6 mt-2">
+                                {{ form.accessories |as_crispy_field }}
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-sm-6 mt-2">
+                                {{ form.motor_type | as_crispy_field }}
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-sm-3 mt-2">
+                                {{ form.min_battery_capacity | as_crispy_field }}
+                            </div>
+                            <div class="col-sm-3 mt-2">
+                                {{ form.max_battery_capacity | as_crispy_field }}
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-sm-3 mt-2">
+                                {{ form.min_weight | as_crispy_field }}
+                            </div>
+                            <div class="col-sm-3 mt-2">
+                                {{ form.max_weight | as_crispy_field }}
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-sm-6 mt-2">
+                                {{ form.bike_class |as_crispy_field }}
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-sm-6 mt-2">
+                                {{ form.keyword |as_crispy_field }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- /ibox-content -->
+        </div>
+        <!-- /ibox -->
+        {% include "core/partials/form_footer.html" %}
+    </form>
+
+{% endblock %}
+
+
+{% block js %}
+    {{ block.super }}
+    <script src="{% static 'core/js/select2.min.js' %}"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-tagsinput/0.8.0/bootstrap-tagsinput.js" integrity="sha512-VvWznBcyBJK71YKEKDMpZ0pCVxjNuKwApp4zLF3ul+CiflQi6aIJR+aZCP/qWsoFBA28avL5T5HA+RE+zrGQYg==" crossorigin="anonymous"></script>
+    <script>
+        $('input[name=filter_type]').on('change', function(){
+            console.log($(this).val())
+            if($(this).val() === 'True'){
+                BasicRequiredField()
+                // AdvanceUnrequiredField()
+            }else{
+                BasicUnrequiredField()
+                // AdvanceRequiredField()
+
+            }
+        });
+
+        $(document).ready(function(){
+            console.log($('#id_is_filter').prop('checked'))
+            if($('#id_is_filter').prop('checked') === true){
+                $('.filter_value_section').css('display', 'block');
+                if($('input[name=filter_type]').prop('checked') === true){
+                    BasicRequiredField()
+                    // AdvanceUnrequiredField()
+                }else{
+                    BasicUnrequiredField()
+                    // AdvanceRequiredField()
+                }
+            }else{
+                $('.filter_value_section').css('display', 'none');
+                BasicUnrequiredField()
+                // AdvanceUnrequiredField()
+            }
+        });
+
+        $("#id_categories").select2({
+            placeholder: "Select categories",
+            allowClear: true,
+            multiple: true,
+            tags: false,
+        });
+
+        $("#id_brands").select2({
+            placeholder: "Select brand",
+            allowClear: true,
+            multiple: true,
+            tags: false,
+        });
+
+        $("#id_accessories").select2({
+            placeholder: "Select accessories",
+            allowClear: true,
+            multiple: true,
+            tags: false,
+        });
+
+
+        $('#id_is_filter').on('change', function(){
+            if($(this).prop('checked') === true){
+                $('.filter_value_section').css('display', 'block');
+                if($('input[name=filter_type]').prop('checked') === true){
+                    BasicRequiredField()
+                    // AdvanceUnrequiredField()
+                }else{
+                    BasicUnrequiredField()
+                    // AdvanceRequiredField()
+                }
+            }else{
+                $('.filter_value_section').css('display', 'none');
+                BasicUnrequiredField()
+                // AdvanceUnrequiredField()
+            }
+        });
+
+        function AdvanceUnrequiredField(){
+            $('#id_min_year').attr('required', false);
+                $('#id_max_year').attr('required', false);
+                $('#id_brands').attr('required', false);
+                $('#id_categories').attr('required', false);
+                $('#id_min_price').attr('required', false);
+                $('#id_max_price').attr('required', false);
+                $('#id_suspension').attr('required', false);
+                $('#id_motor_type').attr('required', false);
+                $('#id_min_battery_capacity').attr('required', false);
+                $('#id_max_battery_capacity').attr('required', false);
+                $('#id_min_weight').attr('required', false);
+                $('#id_max_weight').attr('required', false);
+                $('#id_bike_class').attr('required', false);
+                $('#id_model_name').attr('required', false);
+                $('#id_trim').attr('required', false);
+
+                $('#id_min_year').val('');
+                $('#id_max_year').val('');
+                $('#id_brands').select2("val", "");
+                $('#id_categories').select2("val", "");
+                $('#id_min_price').val('');
+                $('#id_max_price').val('');
+                $('#id_suspension').val('');
+                $('#id_motor_type').val('');
+                $('#id_min_battery_capacity').val('');
+                $('#id_max_battery_capacity').val('');
+                $('#id_min_weight').val('');
+                $('#id_max_weight').val('');
+                $('#id_bike_class').val('');
+                $('#id_model_name').val('');
+                $('#id_trim').val('');
+
+                $('label[for=id_min_year]').text('Min Year');
+                $('label[for=id_max_year]').text('Max Year');
+                $('label[for=id_brands]').text('Brands');
+                $('label[for=id_categories]').text('Categories');
+                $('label[for=id_min_price]').text('Min Price');
+                $('label[for=id_max_price]').text('Max Price');
+                $('label[for=id_suspension]').text('Suspension');
+                $('label[for=id_motor_type]').text('Motor Type');
+                $('label[for=id_min_battery_capacity]').text('Min Battery Capacity');
+                $('label[for=id_max_battery_capacity]').text('Max Battery Capacity');
+                $('label[for=id_min_weight]').text('Min Weight');
+                $('label[for=id_max_weight]').text('Max Weight');
+                $('label[for=id_bike_class]').text('Bike Class');
+                $('label[for=id_model_name]').text('Model Name');
+                $('label[for=id_trim]').text('Trim');
+        }
+
+        function AdvanceRequiredField(){
+            $('#id_min_year').attr('required', true);
+            $('#id_max_year').attr('required', true);
+            $('#id_brands').attr('required', true);
+            $('#id_categories').attr('required', true);
+            $('#id_min_price').attr('required', true);
+            $('#id_max_price').attr('required', true);
+            $('#id_suspension').attr('required', true);
+            $('#id_motor_type').attr('required', true);
+            $('#id_min_battery_capacity').attr('required', true);
+            $('#id_max_battery_capacity').attr('required', true);
+            $('#id_min_weight').attr('required', true);
+            $('#id_max_weight').attr('required', true);
+            $('#id_bike_class').attr('required', true);
+            $('#id_model_name').attr('required', true);
+            $('#id_trim').attr('required', true);
+
+            $('label[for=id_min_year]').text('Min Year*');
+            $('label[for=id_max_year]').text('Max Year*');
+            $('label[for=id_brands]').text('Brands*');
+            $('label[for=id_categories]').text('Categories*');
+            $('label[for=id_min_price]').text('Min Price*');
+            $('label[for=id_max_price]').text('Max Price*');
+            $('label[for=id_suspension]').text('Suspension*');
+            $('label[for=id_motor_type]').text('Motor Type*');
+            $('label[for=id_min_battery_capacity]').text('Min Battery Capacity*');
+            $('label[for=id_max_battery_capacity]').text('Max Battery Capacity*');
+            $('label[for=id_min_weight]').text('Min Weight*');
+            $('label[for=id_max_weight]').text('Max Weight*');
+            $('label[for=id_bike_class]').text('Bike Class*');
+            $('label[for=id_model_name]').text('Model Name*');
+            $('label[for=id_trim]').text('Trim*');
+        }
+
+        function BasicRequiredField(){
+            $('#id_search_text').attr('required', true);
+            $('label[for=id_search_text]').empty();
+            $('label[for=id_search_text]').text('Basic Text Search*');
+            $('.advance_search_div').css('display','none');
+            $('.basic_search_div').css('display','block');
+        }
+
+        function BasicUnrequiredField(){
+            $('#id_search_text').attr('required', false);
+            $('label[for=id_search_text]').empty();
+            $('label[for=id_search_text]').text('Basic Text Search');
+            $('#id_search_text').val('');
+            $('.basic_search_div').css('display','none');
+            $('.advance_search_div').css('display','block');
+        }
+
+        $('#id_slug').on('keyup', function(){
+            link = $('#permalink').val();
+            myArray = link.split('/');
+            myArray[myArray.length - 2] = $('#id_slug').val();
+            let new_link = myArray.join('/');
+            $('#permalink').val(new_link);
+        });
+
+        function titleCase(str) {
+          str.toLowerCase();
+          var strAr = str.split(" ");
+          for(var i=0;i<strAr.length;i++)
+          {
+             strAr[i] = strAr[i].charAt(0).toUpperCase() + strAr[i].substring(1).toLowerCase();
+          }
+          str = strAr.join(" ");
+          return str;
+        }
+
+        $('#id_page_title').on('keyup', function(){
+            static_meta = ' | ElectricBikeReview.com';
+            name = $(this).val();
+            link = $('#id_meta_title').val(titleCase(name)+static_meta);
+        });
+
+        $('#id_meta_title').on('dblclick', function(){
+            $('#id_meta_title').attr('readonly', false)
+        });
+
+        $("#id_model_name").select2({
+            placeholder: "Select multiple model name.",
+            allowClear: true,
+            multiple: true,
+            tags: false,
+        });
+
+        $("#id_trim").select2({
+            placeholder: "Select multiple trim.",
+            allowClear: true,
+            multiple: true,
+            tags: false,
+        });
+
+        $('#id_min_year').datepicker({
+            yearRange: "c-100:c",
+            changeMonth: false,
+            changeYear: true,
+            showButtonPanel: true,
+            closeText:'Select',
+            currentText: 'Last year',
+            onClose: function(dateText, inst) {
+              var year = $("#ui-datepicker-div .ui-datepicker-year :selected").val();
+              $(this).val($.datepicker.formatDate("yy", new Date(year, 0, 1)));
+            },
+            beforeShow: function(input, inst){
+              if ($(this).val()!=''){
+                var tmpyear = $(this).val();
+                $(this).datepicker('option','defaultDate',new Date(tmpyear, 0, 1));
+              }
+            }
+          }).focus(function () {
+            $("#ui-datepicker-div").position({
+              my: "left top",
+              at: "left bottom",
+              of: $(this)
+            });
+          }).attr("readonly", false);
+
+        $.datepicker._gotoToday = function(id) {
+            var date = new Date();
+            if(id == '#id_min_year'){
+                date.setFullYear( date.getFullYear() - 1 );
+                $(id).datepicker('setDate', date).datepicker('hide').blur();
+            }else{
+                $(id).datepicker('setDate', date).datepicker('hide').blur();
+            }
+        };
+
+
+        $('#id_max_year').datepicker({
+            yearRange: "c-100:c",
+            changeMonth: false,
+            changeYear: true,
+            showButtonPanel: true,
+            closeText:'Select',
+            minViewMode: "years",
+            updateViewDate: true,
+            currentText: 'This year',
+            onClose: function(dateText, inst) {
+              var year = $("#ui-datepicker-div .ui-datepicker-year :selected").val();
+              $(this).val($.datepicker.formatDate("yy", new Date(year, 0, 1)));
+            },
+            beforeShow: function(input, inst){
+              if ($(this).val()!=''){
+                var tmpyear = $(this).val();
+                $(this).datepicker('option','defaultDate',new Date(tmpyear, 0, 1));
+              }
+            }
+        })
+        .focus(function () {
+            $("#ui-datepicker-div").position({
+              my: "left top",
+              at: "left bottom",
+              of: $(this)
+            });
+        }).attr("readonly", false);
+
+    </script>
+{% endblock %}

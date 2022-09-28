@@ -1,0 +1,552 @@
+{% extends 'frontend/subpages/base.html'%}
+{% load static %}
+{% block title %}
+    Electric Bike Reviews and Forums | ElectricBikeReview.com
+{% endblock %}
+
+{% block body %}
+<style>
+    table, th, td {
+        border: 1px solid black;
+        border-collapse: collapse;
+        }
+        th, td {
+        padding: 5px;
+        text-align: left;
+        }
+</style>
+        <!-- Header -->
+        <!-- Middle Area -->
+        <section class="middle_area">
+            <div class="filter-selected-options">
+                <button class="btn filter-selected-databtn">
+                    <img src="{% static '/assets/images/up-arrow.png' %}" alt="arrow" />
+                    <span>Use Filters to Find Your Perfect Bike</span>
+                </button>
+            </div>
+            <div class="main-content">
+                <div class="row m-0">
+                    <div class="col-lg-8 col-xl-9 col-md-6 col-sm-6 p-0">
+                        <div class="left-side-content">
+                            <h3 class="section-title">{{review.name}}</h3>
+                            <img src="https://ebr-dev-bucket.s3.amazonaws.com/{{review.featured_image_thumbnail}}" alt="" class="h-75 w-75 rounded mx-auto d-block">
+                            <div class="d-block">   
+                                <img src="https://ebr-dev-bucket.s3.amazonaws.com/{{review.featured_image_thumbnail}}" alt="" class="h-25 w-25">
+                                {% for image in review.review_galley_review.all %}
+                                    <img src="https://ebr-dev-bucket.s3.amazonaws.com/image-gallery/{{image.image}}" alt="" class="h-25 w-25">
+                                {% endfor %}
+                            </div>
+                            <div class="mt-5">
+                                {% for video in videos %}
+                                    <iframe class="clearfix embed-responsive-item" src="//youtube.com/embed/{{video}}?autoplay=0" allowfullscreen=""></iframe>
+                                {% endfor %}
+                            </div>
+                            <div class="highlights mt-5">
+
+                            </div>
+                            <div style="height: 550px; width: 1000px;" class="mx-3">
+                                <iframe class="clearfix embed-responsive-item h-100 w-100" src="//youtube.com/embed/{{videos.0}}?autoplay=0" allowfullscreen=""></iframe>
+                            </div>
+                            <!-- Local Shop iframe -->
+                            <div class="review-generel mt-5">
+                                <h4 class="section-title">Generel</h4>
+                                <table class="w-100 border border-secondary">
+                                    <tr>
+                                        <th>Model Year</th>
+                                        <td>{{review_generel.review.model_year}}</td>
+                                        {% comment %} <td>{% if review_generel.review.model_year == "" %} None {% else %} {{review_generel.review.model_year}} {% endif %}</td> {% endcomment %}
+                                    </tr>
+                                    <tr>
+                                        <th>Brand</th>
+                                        <td>{% for brand in review_generel.review.brands.all %} {{brand}} {% if not forloop.last %},{% endif %} {% endfor %}</td>
+                                        {% comment %} <td>{% for brand in review_generel.review.brands.all %} {{brand}} {% if not forloop.last %},{% endif %} {% empty %} None {% endfor %}</td> {% endcomment %}
+                                    </tr>
+                                    <tr>
+                                        <th>Model</th>
+                                        <td>{{review_generel.review.model_name}}</td>
+                                        {% comment %} <td>{% if review_generel.review.model_name == "" %} None {% else %} {{review_generel.review.model_name}} {% endif %}</td> {% endcomment %}
+                                    </tr>
+                                    <tr>
+                                        <th>Trim</th>
+                                        <td>{{review_generel.review.trim}}</td>
+                                        {% comment %} <td>{% if review_generel.review.trim == "" %} None {% else %} {{review_generel.review.trim}} {% endif %}</td> {% endcomment %}
+                                    </tr>
+                                    <tr>
+                                        <th>MSRP</th>
+                                        <td>{{review_generel.msrp}}</td>
+                                        {% comment %} <td>{% if review_generel.msrp == "" %} None {% else %} {{review_generel.msrp}} {% endif %}</td> {% endcomment %}
+                                    </tr>
+                                    <tr>
+                                        <th>Category</th>
+                                        <td>{% for category in review_generel.review.categories.all %} {{category}} {% if not forloop.last %},{% endif %} {% endfor %}</td>
+                                        {% comment %} <td>{% for category in review_generel.review.categories.all %} {{category}} {% if not forloop.last %},{% endif %} {% empty %} None {% endfor %}</td> {% endcomment %}
+                                    </tr>
+                                    <tr>
+                                        <th>Class</th>
+                                        <td>{% for class in review_generel.demo_bike_class.all %} {{class}} {% if not forloop.last %},{% endif %} {% endfor %}</td>
+                                        {% comment %} <td>{% for class in review_generel.demo_bike_class.all %} {{class}} {% if not forloop.last %},{% endif %} {% empty %} None {% endfor %}</td> {% endcomment %}
+                                    </tr>
+                                    <tr>
+                                        <th>Frame Type</th>
+                                        <td>{% for frame_type in review_generel.demo_frame_type.all %} {{frame_type}} {% if not forloop.last %},{% endif %} {% endfor %}</td>
+                                        {% comment %} <td>{% for frame_type in review_generel.demo_frame_type.all %} {{frame_type}} {% if not forloop.last %},{% endif %} {% empty %} None {% endfor %}</td> {% endcomment %}
+                                    </tr>
+                                    <tr>
+                                        <th>Suspension</th>
+                                        {% comment %} <td>{{review_generel.suspension}}</td> {% endcomment %}
+                                        <td>{% if review_generel.suspension == "" %} None {% else %} {{review_generel.suspension}} {% endif %}</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Wheel Size</th>
+                                        <td>{% for wheel_size in review_generel.demo_wheel_size.all %} {{wheel_size}} {% if not forloop.last %},{% endif %} {% endfor %}</td>
+                                        {% comment %} <td>{% for wheel_size in review_generel.demo_wheel_size.all %} {{wheel_size}} {% if not forloop.last %},{% endif %} {% empty %} None {% endfor %}</td> {% endcomment %}
+                                    </tr>
+                                    <tr>
+                                        <th>Gears</th>
+                                        <td>{% if review_generel.gears %} {{review_generel.gears}} {% endif %}</td>
+                                        {% comment %} <td>{{review_generel.gears}}</td> {% endcomment %}
+                                        {% comment %} <td>{% if review_generel.gears == "" %} None {% else %} {{review_generel.gears}} {% endif %}</td> {% endcomment %}
+                                    </tr>
+                                    <tr>
+                                        <th>Brake Type</th>
+                                        <td>{% for brake_type in review_generel.demo_brake_type.all %} {{brake_type}} {% if not forloop.last %},{% endif %} {% endfor %}</td>
+                                        {% comment %} <td>{% for brake_type in review_generel.demo_brake_type.all %} {{brake_type}} {% if not forloop.last %},{% endif %} {% empty %} None {% endfor %}</td> {% endcomment %}
+                                    </tr>
+                                    <tr>
+                                        <th>Motor Type</th>
+                                        <td>{{review_generel.motor_type}}</td>
+                                        {% comment %} <td>{% if review_generel.motor_type == "" %} None {% else %} {{review_generel.motor_type}} {% endif %}</td> {% endcomment %}
+                                    </tr>
+                                    <tr>
+                                        <th>Motor Nominal Output</th>
+                                        <td>{% if review_generel.motor_nominal_output %} {{review_generel.motor_nominal_output}} {% endif %}</td>
+                                        {% comment %} <td>{% if review_generel.motor_nominal_output == "" %} None {% else %} {{review_generel.motor_nominal_output}} {% endif %}</td> {% endcomment %}
+                                    </tr>
+                                    <tr>
+                                        <th>Battery Watt Hours</th>
+                                        <td>{% if review_generel.battery_watt_hours %} {{review_generel.battery_watt_hours}} {% endif %}</td>
+                                        {% comment %} <td>{% if review_generel.battery_watt_hours == "" %} None {% else %} {{review_generel.battery_watt_hours}} {% endif %}</td> {% endcomment %}
+                                    </tr>
+                                    <tr>
+                                        <th>Weight</th>
+                                        <td>{% if review_generel.weight %} {{review_generel.weight}} {% endif %}</td>
+                                        {% comment %} <td>{% if review_generel.weight == "" %} None {% else %} {{review_generel.weight}} {% endif %}</td> {% endcomment %}
+                                    </tr>
+                                </table>
+                            </div>
+                            <div class="review-frameset mt-5">
+                                <h4 class="section-title">Frameset</h4>
+                                <table class="w-100 border border-secondary">
+                                    <tr>
+                                        <th>Frameset Frame Type</th>
+                                        <td>{% for frameset_frame_type in review_frameset.demo_frameset_frame_type.all %} {{frameset_frame_type}} {% if not forloop.last %},{% endif %} {% endfor %}</td>
+                                        {% comment %} <td>{% for frameset_frame_type in review_frameset.demo_frameset_frame_type.all %} {{frameset_frame_type}} {% if not forloop.last %},{% endif %} {% empty %} None {% endfor %}</td> {% endcomment %}
+                                    </tr>
+                                    <tr>
+                                        <th>Frameset Weight</th>
+                                        <td>{% if review_frameset.frameset_weight %} {{review_frameset.frameset_weight}} {% endif %}</td>
+                                        {% comment %} <td>{% if review_frameset.frameset_weight == "" %} None {% else %} {{review_frameset.frameset_weight}} {% endif %}</td> {% endcomment %}
+                                    </tr>
+                                    <tr>
+                                        <th>Load Capacity</th>
+                                        <td>{{review_frameset.load_capacity}}</td>
+                                        {% comment %} <td>{% if review_frameset.load_capacity == "" %} None {% else %} {{review_frameset.load_capacity}} {% endif %}</td> {% endcomment %}
+                                    </tr>
+                                    <tr>
+                                        <th>Frameset Suspension</th>
+                                        <td>{{review_frameset.frameset_suspension}}</td>
+                                        {% comment %} <td>{% if review_frameset.frameset_suspension == "" %} None {% else %} {{review_frameset.frameset_suspension}} {% endif %}</td> {% endcomment %}
+                                    </tr>
+                                    <tr>
+                                        <th>Suspension Travel</th>
+                                        <td>{% if review_frameset.suspension_travel %} {{review_frameset.suspension_travel}} {% endif %}</td>
+                                        {% comment %} <td>{{review_frameset.suspension_travel}}</td> {% endcomment %}
+                                        {% comment %} <td>{% if review_frameset.suspension_travel == "" %} None {% else %} {{review_frameset.suspension_travel}} {% endif %}</td> {% endcomment %}
+                                    </tr>
+                                    <tr>
+                                        <th>Rear Shock</th>
+                                        <td>{{review_frameset.rear_shock}}</td>
+                                        {% comment %} <td>{% if review_frameset.rear_shock == "" %} None {% else %} {{review_frameset.rear_shock}} {% endif %}</td> {% endcomment %}
+                                    </tr>
+                                    <tr>
+                                        <th>Fork</th>
+                                        <td>{{review_frameset.fork}}</td>
+                                        {% comment %} <td>{% if review_frameset.fork == "" %} None {% else %} {{review_frameset.fork}} {% endif %}</td> {% endcomment %}
+                                    </tr>
+                                    <tr>
+                                        <th>Frameset Wheel Size</th>
+                                        <td>{% for frameset_wheel_size in review_frameset.demo_frameset_wheel_size.all %} {{frameset_wheel_size}} {% if not forloop.last %},{% endif %} {% endfor %}</td>
+                                        {% comment %} <td>{% for frameset_wheel_size in review_frameset.demo_frameset_wheel_size.all %} {{frameset_wheel_size}} {% if not forloop.last %},{% endif %} {% empty %} None {% endfor %}</td> {% endcomment %}
+                                    </tr>
+                                    <tr>
+                                        <th>Front Wheel</th>
+                                        <td>{{review_frameset.front_wheel}}</td>
+                                        {% comment %} <td>{% if review_frameset.front_wheel == "" %} None {% else %} {{review_frameset.front_wheel}} {% endif %}</td> {% endcomment %}
+                                    </tr>
+                                    <tr>
+                                        <th>Rear Wheel</th>
+                                        <td>{{review_frameset.rear_wheel}}</td>
+                                        {% comment %} <td>{% if review_frameset.rear_wheel == "" %} None {% else %} {{review_frameset.rear_wheel}} {% endif %}</td> {% endcomment %}
+                                    </tr>
+                                    <tr>
+                                        <th>Front Hub</th>
+                                        <td>{{review_frameset.front_hub}}</td>
+                                        {% comment %} <td>{% if review_frameset.front_hub == "" %} None {% else %} {{review_frameset.front_hub}} {% endif %}</td> {% endcomment %}
+                                    </tr>
+                                    <tr>
+                                        <th>Rear Hub</th>
+                                        <td>{{review_frameset.rear_hub}}</td>
+                                        {% comment %} <td>{% if review_frameset.rear_hub == "" %} None {% else %} {{review_frameset.rear_hub}} {% endif %}</td> {% endcomment %}
+                                    </tr>
+                                    <tr>
+                                        <th>Tires</th>
+                                        <td>{{review_frameset.tires}}</td>
+                                        {% comment %} <td>{% if review_frameset.tires == "" %} None {% else %} {{review_frameset.tires}} {% endif %}</td> {% endcomment %}
+                                    </tr>
+                                </table>
+                            </div>
+                            <div class="review-drivetrain mt-5">
+                                <h4 class="section-title">Drivetrain</h4>
+                                <table class="w-100 border border-secondary">
+                                    <tr>
+                                        <th>Drivetrain Gears</th>
+                                        <td>{% if review_drivetrain.drivetrain_gears %} {{review_drivetrain.drivetrain_gears}} {% endif %}</td>
+                                        {% comment %} <td>{% if review_drivetrain.drivetrain_gears == "" %} None {% else %} {{review_drivetrain.drivetrain_gears}} {% endif %}</td> {% endcomment %}
+                                    </tr>
+                                    <tr>
+                                        <th>Shift Levers</th>
+                                        <td>{{review_drivetrain.shift_levers}}</td>
+                                        {% comment %} <td>{% if review_drivetrain.shift_levers == "" %} None {% else %} {{review_drivetrain.shift_levers}} {% endif %}</td> {% endcomment %}
+                                    </tr>
+                                    <tr>
+                                        <th>Front Derailleur</th>
+                                        <td>{{review_drivetrain.front_derailleur}}</td>
+                                        {% comment %} <td>{% if review_drivetrain.front_derailleur == "" %} None {% else %} {{review_drivetrain.front_derailleur}} {% endif %}</td> {% endcomment %}
+                                    </tr>
+                                    <tr>
+                                        <th>Crankset</th>
+                                        <td>{{review_drivetrain.crankset}}</td>
+                                        {% comment %} <td>{% if review_drivetrain.crankset == "" %} None {% else %} {{review_drivetrain.crankset}} {% endif %}</td> {% endcomment %}
+                                    </tr>
+                                    <tr>
+                                        <th>Rear Derailleur</th>
+                                        <td>{{review_drivetrain.rear_derailleur}}</td>
+                                        {% comment %} <td>{% if review_drivetrain.rear_derailleur == "" %} None {% else %} {{review_drivetrain.rear_derailleur}} {% endif %}</td> {% endcomment %}
+                                    </tr>
+                                    <tr>
+                                        <th>Wireless Components</th>
+                                        {% comment %} <th>Electronic Shifting</th> {% endcomment %}
+                                        <td>{{review_drivetrain.electronic_shifting}}</td>
+                                        {% comment %} <td>{% if review_drivetrain.electronic_shifting == "" %} None {% else %} {{review_drivetrain.electronic_shifting}} {% endif %}</td> {% endcomment %}
+                                    </tr>
+                                    <tr>
+                                        <th>Internally Geared Hub</th>
+                                        <td>{{review_drivetrain.internally_geared_hub}}</td>
+                                        {% comment %} <td>{% if review_drivetrain.internally_geared_hub == "" %} None {% else %} {{review_drivetrain.internally_geared_hub}} {% endif %}</td> {% endcomment %}
+                                    </tr>
+                                    <tr>
+                                        <th>Continually Variable Transmission</th>
+                                        <td>{{review_drivetrain.continually_variable_transmission}}</td>
+                                        {% comment %} <td>{% if review_drivetrain.front_derailleur == "" %} None {% else %} {{review_drivetrain.continually_variable_transmission}} {% endif %}</td> {% endcomment %}
+                                    </tr>
+                                    <tr>
+                                        <th>Cassette</th>
+                                        <td>{{review_drivetrain.cassette}}</td>
+                                        {% comment %} <td>{% if review_drivetrain.cassette == "" %} None {% else %} {{review_drivetrain.cassette}} {% endif %}</td> {% endcomment %}
+                                    </tr>
+                                    <tr>
+                                        <th>Chainring</th>
+                                        <td>{{review_drivetrain.chainring}}</td>
+                                        {% comment %} <td>{% if review_drivetrain.chainring == "" %} None {% else %} {{review_drivetrain.chainring}} {% endif %}</td> {% endcomment %}
+                                    </tr>
+                                    <tr>
+                                        <th>Belt Drive</th>
+                                        <td>{{review_drivetrain.belt_drive}}</td>
+                                        {% comment %} <td>{% if review_drivetrain.belt_drive == "" %} None {% else %} {{review_drivetrain.belt_drive}} {% endif %}</td> {% endcomment %}
+                                    </tr>
+                                </table>
+                            </div>
+                            <div class="review-components mt-5">
+                                <h4 class="section-title">Components</h4>
+                                <table class="w-100 border border-secondary">
+                                    <tr>
+                                        <th>Headset</th>
+                                        <td>{{review_components.headset}}</td>
+                                        {% comment %} <td>{% if review_components.headset == "" %} None {% else %} {{review_components.headset}} {% endif %}</td> {% endcomment %}
+                                    </tr>
+                                    <tr>
+                                        <th>Stem</th>
+                                        <td>{{review_components.stem}}</td>
+                                        {% comment %} <td>{% if review_components.stem == "" %} None {% else %} {{review_components.stem}} {% endif %}</td> {% endcomment %}
+                                    </tr>
+                                    <tr>
+                                        <th>Handlebar</th>
+                                        <td>{{review_components.handlebar}}</td>
+                                        {% comment %} <td>{% if review_components.handlebar == "" %} None {% else %} {{review_components.handlebar}} {% endif %}</td> {% endcomment %}
+                                    </tr>
+                                    <tr>
+                                        <th>Grips</th>
+                                        <td>{{review_components.grips}}</td>
+                                        {% comment %} <td>{% if review_components.grips == "" %} None {% else %} {{review_components.grips}} {% endif %}</td> {% endcomment %}
+                                    </tr>
+                                    <tr>
+                                        <th>Seatpost</th>
+                                        <td>{{review_components.seatpost}}</td>
+                                        {% comment %} <td>{% if review_components.seatpost == "" %} None {% else %} {{review_components.seatpost}} {% endif %}</td> {% endcomment %}
+                                    </tr>
+                                    <tr>
+                                        <th>Seatpost Diameter</th>
+                                        <td>{% if review_components.seatpost_diameter %} {{review_components.seatpost_diameter}} {% endif %}</td>
+                                        {% comment %} <td>{% if review_components.seatpost_diameter == "" %} None {% else %} {{review_components.seatpost_diameter}} {% endif %}</td> {% endcomment %}
+                                    </tr>
+                                    <tr>
+                                        <th>Saddle</th>
+                                        <td>{{review_components.saddle}}</td>
+                                        {% comment %} <td>{% if review_components.saddle == "" %} None {% else %} {{review_components.saddle}} {% endif %}</td> {% endcomment %}
+                                    </tr>
+                                    <tr>
+                                        <th>Pedals</th>
+                                        <td>{{review_components.pedals}}</td>
+                                        {% comment %} <td>{% if review_components.pedals == "" %} None {% else %} {{review_components.pedals}} {% endif %}</td> {% endcomment %}
+                                    </tr>
+                                    <tr>
+                                        <th>Components Brake Type</th>
+                                        <td>{% for brake_type in review_components.demo_components_brake_type.all %} {{brake_type}} {% if not forloop.last %},{% endif %} {% endfor %}</td>
+                                        {% comment %} <td>{% for brake_type in review_components.demo_components_brake_type.all %} {{brake_type}} {% if not forloop.last %},{% endif %} {% empty %} None {% endfor %}</td> {% endcomment %}
+                                    </tr>
+                                    <tr>
+                                        <th>Front Brake</th>
+                                        <td>{{review_components.front_brake}}</td>
+                                        {% comment %} <td>{% if review_components.front_brake == "" %} None {% else %} {{review_components.front_brake}} {% endif %}</td> {% endcomment %}
+                                    </tr>
+                                    <tr>
+                                        <th>Rear Brake</th>
+                                        <td>{{review_components.rear_brake}}</td>
+                                        {% comment %} <td>{% if review_components.rear_brake == "" %} None {% else %} {{review_components.rear_brake}} {% endif %}</td> {% endcomment %}
+                                    </tr>
+                                </table>
+                            </div>
+                            <div class="review-ebikeSystems mt-5">
+                                <h4 class="section-title">Ebike Systems</h4>
+                                <table class="w-100 border border-secondary">
+                                    <tr>
+                                        <th>Systems Bike Class</th>
+                                        <td>{% for brake_type in review_ebikeSystems.demo_systems_bike_class.all %} {{brake_type}} {% if not forloop.last %},{% endif %}{% endfor %}</td>
+                                        {% comment %} <td>{% for brake_type in review_ebikeSystems.demo_systems_bike_class.all %} {{brake_type}} {% if not forloop.last %},{% endif %} {% empty %} None {% endfor %}</td> {% endcomment %}
+                                    </tr>
+                                    <tr>
+                                        <th>Systems Motor Type</th>
+                                        <td>{{review_ebikeSystems.systems_motor_type}}</td>
+                                        {% comment %} <td>{% if review_ebikeSystems.systems_motor_type == "" %} None {% else %} {{review_ebikeSystems.systems_motor_type}} {% endif %}</td> {% endcomment %}
+                                    </tr>
+                                    <tr>
+                                        <th>Motor</th>
+                                        <td>{{review_ebikeSystems.motor}}</td>
+                                        {% comment %} <td>{% if review_ebikeSystems.motor == " " or review_ebikeSystems.motor == "" %} None {% else %} {{review_ebikeSystems.motor}} {% endif %}</td> {% endcomment %}
+                                    </tr>
+                                    <tr>
+                                        <th>Additional Motors</th>
+                                        <td>{{review_ebikeSystems.additional_motors}}</td>
+                                        {% comment %} <td>{% if review_ebikeSystems.additional_motors == "" %} None {% else %} {{review_ebikeSystems.additional_motors}} {% endif %}</td> {% endcomment %}
+                                    </tr>
+                                    <tr>
+                                        <th>Systems Motor Nominal Output</th>
+                                        <td>{% if review_ebikeSystems.systems_motor_nominal_output %} {{review_ebikeSystems.systems_motor_nominal_output}} {% endif %}</td>
+                                        {% comment %} <td>{% if review_ebikeSystems.systems_motor_nominal_output == "" %} None {% else %} {{review_ebikeSystems.systems_motor_nominal_output}} {% endif %}</td> {% endcomment %}
+                                    </tr>
+                                    <tr>
+                                        <th>Display</th>
+                                        <td>{{review_ebikeSystems.display}}</td>
+                                        {% comment %} <td>{% if review_ebikeSystems.display == "" %} None {% else %} {{review_ebikeSystems.display}} {% endif %}</td> {% endcomment %}
+                                    </tr>
+                                    <tr>
+                                        <th>Smart Bike</th>
+                                        <td>{{review_ebikeSystems.smart_bike}}</td>
+                                        {% comment %} <td>{% if review_ebikeSystems.smart_bike == "" %} None {% else %} {{review_ebikeSystems.smart_bike}} {% endif %}</td> {% endcomment %}
+                                    </tr>
+                                    <tr>
+                                        <th>Theft Gps</th>
+                                        <td>{{review_ebikeSystems.theft_gps}}</td>
+                                        {% comment %} <td>{% if review_ebikeSystems.theft_gps == "" %} None {% else %} {{review_ebikeSystems.theft_gps}} {% endif %}</td> {% endcomment %}
+                                    </tr>
+                                    <tr>
+                                        <th>Systems Battery Watt Hours</th>
+                                        <td>{% if review_ebikeSystems.systems_battery_watt_hours %} {{review_ebikeSystems.systems_battery_watt_hours}} {% endif %}</td>
+                                        {% comment %} <td>{% if review_ebikeSystems.systems_battery_watt_hours == "" %} None {% else %} {{review_ebikeSystems.systems_battery_watt_hours}} {% endif %}</td> {% endcomment %}
+                                    </tr>
+                                    <tr>
+                                        <th>Battery</th>
+                                        <td>{{review_ebikeSystems.battery}}</td>
+                                        {% comment %} <td>{% if review_ebikeSystems.battery == "" %} None {% else %} {{review_ebikeSystems.battery}} {% endif %}</td> {% endcomment %}
+                                    </tr>
+                                    <tr>
+                                        <th>Additional Battery</th>
+                                        <td>{{review_ebikeSystems.additional_battery}}</td>
+                                        {% comment %} <td>{% if review_ebikeSystems.additional_battery == "" %} None {% else %} {{review_ebikeSystems.additional_battery}} {% endif %}</td> {% endcomment %}
+                                    </tr>
+                                    <tr>
+                                        <th>Charger</th>
+                                        <td>{{review_ebikeSystems.charger}}</td>
+                                        {% comment %} <td>{% if review_ebikeSystems.charger == "" %} None {% else %} {{review_ebikeSystems.charger}} {% endif %}</td> {% endcomment %}
+                                    </tr>
+                                </table>
+                            </div>
+                            <div class="review-accessories mt-5">
+                                <h4 class="section-title">Accessories</h4>
+                                <table class="w-100 border border-secondary">
+                                    <tr>
+                                        <th>Lights</th>
+                                        {% comment %} <td>{{review_accessories.lights}}</td> {% endcomment %}
+                                        <td>{% if review_accessories.lights == "" %} None {% else %} {{review_accessories.lights}} {% endif %}</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Fenders</th>
+                                        {% comment %} <td>{{review_accessories.fenders}}</td> {% endcomment %}
+                                        <td>{% if review_accessories.fenders == "" %} None {% else %} {{review_accessories.fenders}} {% endif %}</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Front Rack</th>
+                                        {% comment %} <td>{{review_accessories.front_rack}}</td> {% endcomment %}
+                                        <td>{% if review_accessories.front_rack == "" %} None {% else %} {{review_accessories.front_rack}} {% endif %}</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Rear Rack</th>
+                                        {% comment %} <td>{{review_accessories.rear_rack}}</td> {% endcomment %}
+                                        <td>{% if review_accessories.rear_rack == "" %} None {% else %} {{review_accessories.rear_rack}} {% endif %}</td>
+                                    </tr>
+                                </table>
+                            </div>
+                            <div class="review-more-details mt-5">
+                                <h4 class="section-title">More Details</h4>
+                                {{review.more_details | safe}}
+                            </div>
+
+                            <div class="review-more-details mt-5">
+                                <h4 class="section-title">Written Reviews</h4>
+                                {{review.description | safe}}
+                            </div>
+                            <div class="review-more-details mt-5" id="comment_container">
+                                <h4 class="section-title">Comments for {{review.name}} <span id="comment-count">({{total_comments}})</span></h4> 
+                                <select name="select_comment_formation" id="comment_formation">
+                                    <option value="newest_first">Newest  First</option>
+                                    <option value="most_valuable">Most Valuable</option>
+                                </select><br><br>
+                            </div>
+
+                            {% if not total_comments <= 2 %}
+                            <a href="javascript:;" id="show_more_comments" data-review="{{review.id}}">Show {% if total_comments >= 3 %} {{total_comments|add:"-2"}} {% else %} {{total_comments}} {% endif %} more {% if total_comments|add:"-2" > 1 %} Comments {% else %} Comment {% endif %}</a>
+                            {% endif %}
+
+                            <form method="POST" class="review-more-details mt-5" id="add_comment_form">
+                                {% csrf_token %}
+                                <h4 class="section-title">Post a Comments for {{review.name}}</h4>
+                                <p>Name and email are optional. Your email will be published.</p>
+                                <span id="cancel_reply" class="btn btn-sm btn-light d-none"></span>
+                                <input type="hidden" id="parent_id" name="replied_comment">
+                                <div class="w-50 d-flex justify-content-between">
+                                    <input type="text" id="add_comment_name" placeholder="Name" name="name" style="width: 48%;" class="form-control" autocomplete="off">
+                                    <input type="email" id="add_comment_email" placeholder="Email" name="email" style="width: 48%;" class="form-control" autocomplete="off">
+                                </div>
+                                <input type="hidden" id="comment_type_id" name="comment_type_id" value="{{review.id}}">
+                                <input type="hidden" name="user_ip" id="user_ip">
+                                <textarea name="description" id="description" placeholder="Comments" class="form-control w-50" required></textarea><br>
+                                <p id="error_description" class="text-danger d-none">HTML Tag are not allowed</p>
+                                <input type="checkbox" id="is_notification" name="is_notification" value="False"> Receive email notification when someone replies. <br><br>
+                                <input type="submit" id="post_commnet" value="Post Comment" class="text-light bg-dark btn theme-btn">
+                            </form>
+                            <p id="comment-submited" class="text-success mt-3"></p>
+                                
+                        </div>
+                    </div>
+                    {% include 'frontend/include/discussion.html' %}
+                </div>
+            </div>
+        </section>
+
+{% endblock %}
+{% block script %}
+<script>
+    $("#is_notification").on("click", function(){
+        if($(this).is(":checked")){
+            $(this).attr('value', 'True');
+        } else{
+            $(this).attr('value', 'False');
+        }
+    })
+
+    $(document).on('click', '.update_voteCount', function(){
+        //console.log($(this).attr('class'))
+        vote = parseInt($(this).find('small').text())
+
+        var change_code = false
+        $.ajax({
+          method: "POST",
+          url: "/highlights/update_vote",
+          data: {
+            'highlights_id': $(this).data('value'),
+            'ip': GetUserIP(),
+          },
+          dataType: 'json',
+          async: false,
+          success: function (res) {
+            if(res['status']===true){
+                //$(this).toggleClass("text-primary");
+                if(res['change']===true){
+                    change_code = true
+                    vote+=1
+                }else{
+                    change_code = false
+                    vote-=1
+                }
+                get_review_highlights()
+            }else{
+                console.log(res['message'])
+            }
+          },
+          complete: function(){
+            $('.page-loader').hide();
+          }
+         });
+
+         if(change_code===true){
+            $(this).addClass('text-primary')
+            $(this).find('small').text(vote)
+         }else{
+            $(this).removeClass('text-primary')
+            $(this).find('small').text(vote)
+         }
+    })
+    var live_url;
+    $(document).ready(function(){
+        live_url = window.location.pathname
+        // console.log(live_url)
+        get_review_highlights()
+    });
+
+    function get_review_highlights(){
+        $.ajax({
+          method: "POST",
+          url: "/highlights/get",
+          data: {
+            'live_url': live_url,
+            'ip': GetUserIP(),
+          },
+          dataType: 'json',
+          async: false,
+          success: function (res) {
+            if(res['status']===true){
+                //console.log(res['data'])
+                $('.highlights').empty();
+                $('.highlights').html(res['data']);
+            }else{
+                console.log(res['message'])
+            }
+          },
+          complete: function(){
+            $('.page-loader').hide();
+          }
+         });
+    }
+</script>
+
+{% endblock %}

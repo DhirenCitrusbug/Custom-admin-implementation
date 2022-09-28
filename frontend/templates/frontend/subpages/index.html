@@ -1,0 +1,216 @@
+{% extends 'frontend/subpages/base.html'%}
+{% load static %}
+{% block title %}
+    Electric Bike Reviews and Forums | ElectricBikeReview.com
+{% endblock %}
+
+{% block seoTag %}
+    <meta name="theme-color" content="#80b600">
+    <meta name="apple-mobile-web-app-status-bar-style" content="#80b600">
+    <meta name="msapplication-navbutton-color" content="#80b600">
+    <meta property='og:url' content='https://electricbikereview.com' />
+    <meta property="fb:app_id" content="462030500496873" />
+
+    <meta property="og:locale" content="en_us" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Best Electric Bikes | Unbiased, In-Depth Reviews | ElectricBikeReview.com" />
+    <meta property="og:description" content="Research electric bikes including prices, detailed specs, compare tools, local shops, and forums. Objective unbiased reviews and advice in the forums." />
+    <meta property="og:site_name" content="ElectricBikeReview.com" />
+    <meta property="og:image" content="http://54.213.76.238/static/assets/images/EBRlogo.png" />
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:description" content="Research electric bikes including prices, detailed specs, compare tools, local shops, and forums. Objective unbiased reviews and advice in the forums." />
+    <meta name="twitter:title" content="Best Electric Bikes | Unbiased, In-Depth Reviews | ElectricBikeReview.com" />
+    <meta name="twitter:image" content="http://54.213.76.238/static/assets/images/EBRlogo.png" />
+    <meta name="twitter:site" content="@ebikereview" />
+{% endblock %}
+
+{% block body %}
+        <!-- Header -->
+        <!-- Middle Area -->
+        <input type="hidden" id="refresh" value="no">
+        <section class="middle_area">
+            <div class="filter-selected-options">
+                <button class="btn filter-selected-databtn">
+                    <img src="{% static '/assets/images/up-arrow.png' %}" alt="arrow" />
+                    <span>Use Filters to Find Your Perfect Bike</span>
+                </button>
+            </div>
+            <script type="application/ld+json">
+                {{ seo_schema |safe }}
+            </script>
+            <div class="main-content">
+                <div class="row m-0">
+                    <div class="col-lg-8 col-xl-9 col-md-6 col-sm-6 p-0">
+                        <div class="left-side-content">
+                            <h3 class="section-title">Electric Bike Review</h3>
+                            <p class="desc_p">Research, discuss, and choose the electric bike that’s right for you!</p>
+                            <div class="product-card-wrapper" id="product-card">
+                                <!-- Display Review Data from the JS -->
+                                {% for bike_review in bike_review %}
+                                <div class="product-card-item">
+                                    <a href="/{{bike_review.brands.first.slug}}/{{bike_review.slug}}/"><img src="https://ebr-dev-bucket.s3.amazonaws.com/{{bike_review.featured_image_thumbnail}}" class="pro-card-img" alt="{{bike_review.name}}"  /></a>
+                                    <button class="btn compare-btn {% if bike_review.id in compare_review %} added {% endif %}" data-id="{{bike_review.id}}">
+                                        <img src="{% static '/assets/images/plus.png' %}" alt="plus" />
+                                    </button>
+                                    <div class="product-desc">
+                                        <h4 class="product-title" title="{{bike_review.name}}"><a href="/{{bike_review.brands.first.slug}}/{{bike_review.slug}}/">{{bike_review.name}}</a></h4>
+                                        {% for brand in bike_review.brands.all %}   
+                                            <p class="desc_1"><a href="/brand/{{brand.slug}}">{{brand.name}}</a></p>
+                                        {% endfor %}
+                                        <div class="data-price">
+                                            <div class="procard-lastdata">
+                                                {% for category in bike_review.categories.all %}
+                                                <p class="desc_1"><a href="/category/{{category.slug}}">{{category.name}}</a></p> 
+                                                {% endfor %}
+                                            </div>
+                                            {% for price in bike_review.review_general_review.all %}
+                                                <p class="product-price">${{price.msrp}}</p>
+                                            {% endfor %}
+                                        </div>
+                                    </div>
+                                </div>
+                                {% endfor %}
+                            </div>
+                            <ul class="pagination justify-content-center pagination-sm" id="pagination">
+                                {% if bike_review.has_previous %}
+                                <span class="btn page text-primary"><a href="?page={{ bike_review.previous_page_number }}"><b>&laquo; Prev</b></a></span>
+                                {% endif %}
+
+                                {% if bike_review.number == 1 %}
+                                    {% if bike_review.paginator.num_pages <= 5 %}
+                                        {% for page in pages %}
+                                            {% if  page == bike_review.number %}
+                                                <span class="btn page text-dark"><b>{{ page }}</b></span>
+                                            {% elif bike_review.number != bike_review.paginator.num_pages %}
+                                                <span class="btn page text-dark"><a href="?page={{ page }}"><b>{{ page }}</b></a></span>
+                                            {% endif %}
+                                        {% endfor %}
+                                    {% else %}
+                                    <span class="btn page text-dark"><b>{{ bike_review.number }}</b></span>
+                                    <span class="btn page text-dark"><a href="?page={{ bike_review.number|add:'1' }}"><b>{{ bike_review.number|add:"1" }}</b></a></span>
+                                    <span class="btn page text-dark"><a href="?page={{ bike_review.number|add:'2' }}"><b>{{ bike_review.number|add:"2" }}</b></a></span>
+                                    <span class="btn page text-dark"><a href="?page={{ bike_review.number|add:'3' }}"><b>{{ bike_review.number|add:"3" }}</b></a></span>
+                                    <span class="btn page text-dark"><a href="#" onclick="return false;"><b>...</b></a></span>
+                                    <span class="btn page text-dark"><a href="?page={{ bike_review.paginator.num_pages }}"><b>{{ bike_review.paginator.num_pages }}</b></a></span>
+                                    {% endif %}
+                                {% elif bike_review.number > 1 and bike_review.number < 4 %}
+                                    {% if bike_review.paginator.num_pages <= 5 %}
+                                        {% for page in pages %}
+                                            {% if  page == bike_review.number %}
+                                                <span class="btn page text-dark"><b>{{ page }}</b></span>
+                                            {% else %}
+                                                <span class="btn page text-dark"><a href="?page={{ page }}"><b>{{ page }}</b></a></span>
+                                            {% endif %}
+                                        {% endfor %}
+                                    {% else %}
+                                        <span class="btn page text-dark"><a href="?page=1"><b>1</b></a></span>
+                                        {% for page in pages %}
+                                            {% if page >= 2 and page <= 4 %}
+                                                {% if  page == bike_review.number %}
+                                                    <span class="btn page text-dark"><b>{{ page }}</b></span>
+                                                {% else %}
+                                                    <span class="btn page text-dark"><a href="?page={{ page }}"><b>{{ page }}</b></a></span>
+                                                {% endif %}
+                                            {% endif %}
+                                        {% endfor %}
+                                        <span class="btn page text-dark"><a href="#" onclick="return false;"><b>...</b></a></span>
+                                        <span class="btn page text-dark"><a href="?page={{ bike_review.paginator.num_pages }}"><b>{{ bike_review.paginator.num_pages }}</b></a></span>
+                                    {% endif %}
+                                {% elif bike_review.number >= 4 and bike_review.number <= bike_review.paginator.num_pages|add:'-3' %}
+                                    <span class="btn page text-dark"><a href="?page=1"><b>1</b></a></span>
+                                    <span class="btn page text-dark"><a href="#" onclick="return false;"><b>...</b></a></span>
+                                        {% for page in pages %}
+                                            {% if bike_review.number >= 4 and bike_review.number <= bike_review.paginator.num_pages|add:'-3' %}
+                                                {% if page == bike_review.number %}
+                                                    <span class="btn page text-primary"><a href="?page={{ bike_review.previous_page_number }}"><b>{{ bike_review.previous_page_number }}</b></a></span>
+                                                    <span class="btn page text-dark"><b>{{ page }}</b></span>
+                                                    <span class="btn page text-dark"><a href="?page={{ bike_review.next_page_number }}"><b>{{ bike_review.next_page_number }}</b></a></span>
+                                                {% endif %}
+                                            {% endif %}
+                                        {% endfor %}
+                                        <span class="btn page text-dark"><a href="#" onclick="return false;"><b>...</b></a></span>
+                                        <span class="btn page text-dark"><a href="?page={{ bike_review.paginator.num_pages }}"><b>{{ bike_review.paginator.num_pages }}</b></a></span>
+                                {% elif bike_review.number > bike_review.paginator.num_pages|add:'-3' and bike_review.number < bike_review.paginator.num_pages %}
+                                    {% if bike_review.paginator.num_pages <= 5 %}
+                                        {% for page in pages %}
+                                            {% if  page == bike_review.number %}
+                                                <span class="btn page text-dark"><b>{{ page }}</b></span>
+                                            {% elif bike_review.number != bike_review.paginator.num_pages %}
+                                                <span class="btn page text-dark"><a href="?page={{ page }}"><b>{{ page }}</b></a></span>
+                                            {% endif %}
+                                        {% endfor %}
+                                    {% else %}
+                                        <span class="btn page text-dark"><a href="?page=1"><b>1</b></a></span>
+                                        <span class="btn page text-dark"><a href="#" onclick="return false;"><b>...</b></a></span>
+                                        {% for page in pages %}
+                                            {% if page >= bike_review.paginator.num_pages|add:'-3' and bike_review.number < bike_review.paginator.num_pages %}
+                                                {% if  page == bike_review.number %}
+                                                    <span class="btn page text-dark"><b>{{ page }}</b></span>
+                                                {% else %}
+                                                    <span class="btn page text-dark"><a href="?page={{ page }}"><b>{{ page }}</b></a></span>
+                                                {% endif %}
+                                            {% endif %}
+                                        {% endfor %} 
+                                    {% endif %}
+                                {% elif bike_review.number == bike_review.paginator.num_pages %}
+                                    {% if bike_review.paginator.num_pages <= 5 %}
+                                        {% for page in pages %}
+                                            {% if  page == bike_review.number %}
+                                                <span class="btn page text-dark"><b>{{ page }}</b></span>
+                                            {% else %}
+                                                <span class="btn page text-dark"><a href="?page={{ page }}"><b>{{ page }}</b></a></span>
+                                            {% endif %}
+                                        {% endfor %}
+                                    {% else %}
+                                        <span class="btn page text-dark"><a href="?page=1"><b>1</b></a></span>
+                                        <span class="btn page text-dark"><a href="#" onclick="return false;"><b>...</b></a></span>
+                                        <span class="btn page text-dark"><a href="?page={{ bike_review.paginator.num_pages|add:'-3' }}"><b>{{ bike_review.paginator.num_pages|add:'-3' }}</b></a></span>
+                                        <span class="btn page text-dark"><a href="?page={{ bike_review.paginator.num_pages|add:'-2' }}"><b>{{ bike_review.paginator.num_pages|add:'-2' }}</b></a></span>
+                                        <span class="btn page text-dark"><a href="?page={{ bike_review.paginator.num_pages|add:'-1' }}"><b>{{ bike_review.paginator.num_pages|add:'-1' }}</b></a></span>
+                                        <span class="btn page text-dark"><b>{{ bike_review.paginator.num_pages }}</b></span>
+                                    {% endif %}
+                                {% endif %}
+
+                                {% if bike_review.has_next %}
+                                <span class="btn page text-primary"><a href="?page={{ bike_review.next_page_number }}"><b>Next &raquo;</b></a></span>
+                                {% endif %}
+                            </ul>
+
+                        </div>
+                    </div>
+                    {% include 'frontend/include/discussion.html' %}
+                </div>
+            </div>
+        </section>
+
+{% endblock %}
+{% block script %}
+    <script>
+        window.addEventListener( "pageshow", function ( event ) {
+          var historyTraversal = event.persisted ||
+                                 ( typeof window.performance != "undefined" &&
+                                      window.performance.navigation.type === 2 );
+          if ( historyTraversal ) {
+            // Handle page restore.
+            window.location.reload();
+          }
+        });
+
+        $(document).ready(function(){
+            $.ajax({
+                url: '/visitor_history/',
+                method: 'GET',
+                data: {
+                    "ip": GetUserIP(),
+                    "type": 'page',
+                    "type_name": 'home',
+                    "type_url": window.location.href,
+                },
+                async: false,
+                success: function (data) {
+                    console.log(data);
+                }
+            })
+        });
+    </script>
+{% endblock %}

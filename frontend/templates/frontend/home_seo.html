@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Home Page</title>
+</head>
+<body>
+	{% for review in reviews %}
+		<a href="/{{review.brands__slug}}/{{review.slug}}">{{ review.name }}</a>
+		<script type="application/ld+json">
+			{{ review.schema | safe }}
+		</script>
+		<hr>
+
+	{% endfor %}
+</body>
+</html>

@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Admin email for contact us</title>
+</head>
+<body>
+
+  <div>
+     <font color="#888888">
+     </font><font color="#888888">
+     </font>
+     <table width="99%" border="0" cellpadding="1" cellspacing="0" bgcolor="#EAEAEA">
+        <tbody>
+           <tr>
+              <td>
+                 <font color="#888888">
+                 </font><font color="#888888">
+                 </font>
+                 <table width="100%" border="0" cellpadding="5" cellspacing="0" bgcolor="#FFFFFF">
+                    <tbody>
+                       <tr bgcolor="#EAF2FA">
+                          <td colspan="2">
+                             <font style="font-family:sans-serif;font-size:12px"><strong>Name</strong></font>
+                          </td>
+                       </tr>
+                       <tr bgcolor="#FFFFFF">
+                          <td width="20">&nbsp;</td>
+                          <td>
+                             <font style="font-family:sans-serif;font-size:12px">{{name}}</font>
+                          </td>
+                       </tr>
+                       <tr bgcolor="#EAF2FA">
+                          <td colspan="2">
+                             <font style="font-family:sans-serif;font-size:12px"><strong>Email</strong></font>
+                          </td>
+                       </tr>
+                       <tr bgcolor="#FFFFFF">
+                          <td width="20">&nbsp;</td>
+                          <td>
+                             <font style="font-family:sans-serif;font-size:12px"><a href="mailto:{{email}}" target="_blank">{{email}}</a></font>
+                          </td>
+                       </tr>
+                       <tr bgcolor="#EAF2FA">
+                          <td colspan="2">
+                             <font style="font-family:sans-serif;font-size:12px"><strong>Message</strong></font>
+                          </td>
+                       </tr>
+                       <tr bgcolor="#FFFFFF">
+                          <td width="20">&nbsp;</td>
+                          <td>
+                             {{ description }}
+                          </td>
+                       </tr>
+                    </tbody>
+                 </table>
+                 <font color="#888888">
+                 </font>
+              </td>
+           </tr>
+        </tbody>
+     </table>
+     <font color="#888888">
+     </font>
+  </div>
+
+</body>
+</html>

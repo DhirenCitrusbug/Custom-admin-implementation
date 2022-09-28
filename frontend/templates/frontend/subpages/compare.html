@@ -1,0 +1,651 @@
+
+{% extends 'frontend/subpages/base.html'%}
+{% load static %}
+
+{% block title %}
+    compare page
+{% endblock %}
+
+
+
+{% block body %}
+    <style>
+        table, th, td {
+          border: 1px solid black;
+          padding: 15px;
+        }
+    </style>
+    <input type="hidden" id="refresh" value="no">
+    <section class="middle_area">
+        {% if review_list %}
+            <table >
+                <tbody>
+                        <tr>
+                            <td></td>
+                            {% for review in review_list %}
+                                <td>
+                                    <span style="float: right;" onclick="remove_compare({{ review.id }})">X</span>
+                                    <img src="{{ review.featured_image_web.url }}" width="150px"/>
+                                    <br>
+                                    <h5>{{ review.name }}</h5>
+                                </td>
+                            {% endfor %}
+                        </tr>
+                        <tr>
+                            <td colspan="{{ review_list | length |add:1 }}" style="text-align: center;">Review General</td>
+                        </tr>
+                        <tr>
+                            <td><b>Model Year</b></td>
+                            {% for review in review_list %}
+                                <td>{{ review.model_year }}</td>
+                            {% endfor %}
+                        </tr>
+                        <tr>
+                            <td><b>Brand</b></td>
+                            {% for review in review_list %}
+                                <td>
+                                    {% for brand in review.brands.all %}
+                                        {{ brand.name }}
+                                        {% if not forloop.last %}
+                                            ,
+                                        {% endif %}
+                                    {% endfor %}
+                                </td>
+                            {% endfor %}
+                        </tr>
+                        <tr>
+                            <td><b>category</b></td>
+                            {% for review in review_list %}
+                                <td>
+                                    {% for category in review.categories.all %}
+                                        {{ category.name }}
+                                        {% if not forloop.last %}
+                                            ,
+                                        {% endif %}
+                                    {% endfor %}
+                                </td>
+                            {% endfor %}
+                        </tr>
+                        <tr>
+                            <td><b>Model Name</b></td>
+                            {% for review in review_list %}
+                                <td>{{ review.model_name }}</td>
+                            {% endfor %}
+                        </tr>
+                        <tr>
+                            <td><b>Trim</b></td>
+                            {% for review in review_list %}
+                                <td>{{ review.trim }}</td>
+                            {% endfor %}
+                        </tr>
+
+                        <tr>
+                            <td><b>MSRP</b></td>
+                            {% for review in review_list %}
+                                <td>{{ review.review_general_review.all.0.msrp }}</td>
+                            {% endfor %}
+                        </tr>
+                        <tr>
+                            <td><b>Class</b></td>
+                            {% for review in review_list %}
+                                <td>
+                                    {% for bike_class in review.review_general_review.all.0.demo_bike_class.all %}
+                                        {{ bike_class }}
+                                        {% if not forloop.last %}
+                                            ,
+                                        {% endif %}
+                                    {% endfor %}
+                                </td>
+                            {% endfor %}
+                        </tr>
+                        <tr>
+                            <td><b>Frame Type</b></td>
+                            {% for review in review_list %}
+                                <td>
+                                    {% for frame_type in review.review_general_review.all.0.demo_frame_type.all %}
+                                        {{ frame_type }}
+                                        {% if not forloop.last %}
+                                            ,
+                                        {% endif %}
+                                    {% endfor %}
+                                </td>
+                            {% endfor %}
+                        </tr>
+                        <tr>
+                            <td><b>Suspension</b></td>
+                            {% for review in review_list %}
+                                <td>{{ review.review_general_review.all.0.suspension }}</td>
+                            {% endfor %}
+                        </tr>
+                        <tr>
+                            <td><b>Wheel Size</b></td>
+                            {% for review in review_list %}
+                                <td>
+                                    {% for wheel_size in review.review_general_review.all.0.demo_wheel_size.all %}
+                                        {{ wheel_size }}
+                                        {% if not forloop.last %}
+                                            ,
+                                        {% endif %}
+                                    {% endfor %}
+                                </td>
+                            {% endfor %}
+                        </tr>
+                        <tr>
+                            <td><b>Gears</b></td>
+                            {% for review in review_list %}
+                                <td>
+                                   {{ review.review_general_review.all.0.demo_gear }}
+                                </td>
+                            {% endfor %}
+                        </tr>
+                        <tr>
+                            <td><b>Brake Type</b></td>
+                            {% for review in review_list %}
+                                <td>
+                                    {% for brake_type in review.review_general_review.all.0.demo_brake_type.all %}
+                                        {{ brake_type }}
+                                        {% if not forloop.last %}
+                                            ,
+                                        {% endif %}
+                                    {% endfor %}
+                                </td>
+                            {% endfor %}
+                        </tr>
+                        <tr>
+                            <td><b>Motor Type</b></td>
+                            {% for review in review_list %}
+                                <td>{{ review.review_general_review.all.0.motor_type }}</td>
+                            {% endfor %}
+                        </tr>
+                        <tr>
+                            <td><b>Motor Nominal Output</b></td>
+                            {% for review in review_list %}
+                                <td>{{ review.review_general_review.all.0.demo_motor_nominal_output }}</td>
+                            {% endfor %}
+                        </tr>
+                        <tr>
+                            <td><b>Battery Watt Hours</b></td>
+                            {% for review in review_list %}
+                                <td>{{ review.review_general_review.all.0.demo_battery_watt_hours }}</td>
+                            {% endfor %}
+                        </tr>
+                        <tr>
+                            <td><b>Weight</b></td>
+                            {% for review in review_list %}
+                                <td>
+                                    {{review.review_general_review.all.0.demo_weight }}
+                                </td>
+                            {% endfor %}
+                        </tr>
+                        <tr>
+                            <td colspan="{{ review_list | length |add:1 }}" style="text-align: center;">Review Frameset</td>
+                        </tr>
+                        <tr>
+                            <td><b>Frameset Frame Type</b></td>
+                            {% for review in review_list %}
+                                <td>
+                                    {% for frame_type in review.review_general_review.all.0.demo_frame_type.all %}
+                                        {{ frame_type }}
+                                        {% if not forloop.last %}
+                                            ,
+                                        {% endif %}
+                                    {% endfor %}
+                                </td>
+                            {% endfor %}
+                        </tr>
+                        <tr>
+                            <td><b>Weight</b></td>
+                            {% for review in review_list %}
+                                <td>
+                                    {{review.review_frameset_review.all.0.demo_frameset_weight }}
+                                </td>
+                            {% endfor %}
+                        </tr>
+                        <tr>
+                            <td><b>Load Capacity</b></td>
+                            {% for review in review_list %}
+                                <td>{{ review.review_frameset_review.all.0.load_capacity }}</td>
+                            {% endfor %}
+                        </tr>
+                        <tr>
+                            <td><b>Frameset Suspension</b></td>
+                            {% for review in review_list %}
+                                <td>{{ review.review_frameset_review.all.0.frameset_suspension }}</td>
+                            {% endfor %}
+                        </tr>
+                        <tr>
+                            <td><b>Suspension Travel</b></td>
+                            {% for review in review_list %}
+                                <td>
+                                    {% if review.review_frameset_review.all.0.demo_suspension_travel %}
+                                        {{ review.review_frameset_review.all.0.demo_suspension_travel }}
+                                    {% endif %}
+                                </td>
+                            {% endfor %}
+                        </tr>
+                        <tr>
+                            <td><b>Fork</b></td>
+                            {% for review in review_list %}
+                                <td>{{ review.review_frameset_review.all.0.fork }}</td>
+                            {% endfor %}
+                        </tr>
+                        <tr>
+                            <td><b>Rear Shock</b></td>
+                            {% for review in review_list %}
+                                <td>{{ review.review_frameset_review.all.0.rear_shock }}</td>
+                            {% endfor %}
+                        </tr>
+                        <tr>
+                            <td><b>Front Hub</b></td>
+                            {% for review in review_list %}
+                            <td>
+                                {% if review.review_frameset_review.all.0.front_hub %}
+                                    {{ review.review_frameset_review.all.0.front_hub }}
+                                {% endif %}
+                            </td>
+                            {% endfor %}
+                        </tr>
+                        <tr>
+                            <td><b>Wheel Size</b></td>
+                            {% for review in review_list %}
+                                <td>
+                                    {% for wheel_size in review.review_frameset_review.all.0.demo_frameset_wheel_size.all %}
+                                        {{ wheel_size }}
+                                        {% if not forloop.last %}
+                                            ,
+                                        {% endif %}
+                                    {% endfor %}
+
+                                </td>
+                            {% endfor %}
+                        </tr>
+                        <tr>
+                            <td><b>Front Wheel</b></td>
+                            {% for review in review_list %}
+                                <td>{{ review.review_frameset_review.all.0.front_wheel }}</td>
+                            {% endfor %}
+                        </tr>
+                        <tr>
+                            <td><b>Rear Wheel</b></td>
+                            {% for review in review_list %}
+                                <td>{{ review.review_frameset_review.all.0.rear_wheel }}</td>
+                            {% endfor %}
+                        </tr>
+                        <tr>
+                            <td><b>Rear Hub</b></td>
+                            {% for review in review_list %}
+                                <td>{{ review.review_frameset_review.all.0.rear_hub }}</td>
+                            {% endfor %}
+                        </tr>
+                        <tr>
+                            <td><b>Tires</b></td>
+                            {% for review in review_list %}
+                                <td>{{ review.review_frameset_review.all.0.tires }}</td>
+                            {% endfor %}
+                        </tr>
+                        <tr>
+                            <td colspan="{{ review_list | length |add:1 }}" style="text-align: center;">
+                                Review Drivetrain
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><b>Drivetrain Gears</b></td>
+                            {% for review in review_list %}
+                                <td>{{ review.review_drivetrain_review.all.0.demo_drivetrain_gears }}</td>
+                            {% endfor %}
+                        </tr>
+                        <tr>
+                            <td><b>Shift Levers</b></td>
+                            {% for review in review_list %}
+                                <td>{{ review.review_drivetrain_review.all.0.shift_levers }}</td>
+                            {% endfor %}
+                        </tr>
+                        <tr>
+                            <td><b>Front Derailleur</b></td>
+                            {% for review in review_list %}
+                                <td>
+                                    {% if review.review_drivetrain_review.all.0.front_derailleur %}
+                                        {{ review.review_drivetrain_review.all.0.front_derailleur }}
+                                    {% endif %}
+                                </td>
+                            {% endfor %}
+                        </tr>
+                        <tr>
+                            <td><b>Crankset</b></td>
+                            {% for review in review_list %}
+                                <td>{{ review.review_drivetrain_review.all.0.crankset }}</td>
+                            {% endfor %}
+                        </tr>
+                        <tr>
+                            <td><b>Rear Derailleur</b></td>
+                            {% for review in review_list %}
+                                <td>{{ review.review_drivetrain_review.all.0.rear_derailleur }}</td>
+                            {% endfor %}
+                        </tr>
+                        <tr>
+                            <td><b>Wireless Components</b></td>
+                            {% comment %} <td><b>Electronic Shifting</b></td> {% endcomment %}
+                            {% for review in review_list %}
+                                <td>
+                                    {% if review.review_drivetrain_review.all.0.electronic_shifting %}
+                                        {{ review.review_drivetrain_review.all.0.electronic_shifting }}
+                                    {% endif %}
+                                </td>
+                            {% endfor %}
+                        </tr>
+                        <tr>
+                            <td><b>Internally Geared Hub</b></td>
+                            {% for review in review_list %}
+                                <td>
+                                    {% if review.review_drivetrain_review.all.0.internally_geared_hub %}
+                                        {{ review.review_drivetrain_review.all.0.internally_geared_hub }}
+                                    {% endif %}
+                                </td>
+                            {% endfor %}
+                        </tr>
+                        <tr>
+                            <td><b>Continually Variable Transmission</b></td>
+                            {% for review in review_list %}
+                                <td>
+                                    {% if review.review_drivetrain_review.all.0.continually_variable_transmission %}
+                                        {{ review.review_drivetrain_review.all.0.continually_variable_transmission }}
+                                    {% endif %}
+                                </td>
+                            {% endfor %}
+                        </tr>
+                        <tr>
+                            <td><b>Cassette</b></td>
+                            {% for review in review_list %}
+                                <td>{{ review.review_drivetrain_review.all.0.cassette }}</td>
+                            {% endfor %}
+                        </tr>
+                        <tr>
+                            <td><b>Chainring</b></td>
+                            {% for review in review_list %}
+                                <td>{{ review.review_drivetrain_review.all.0.chainring }}</td>
+                            {% endfor %}
+                        </tr>
+                        <tr>
+                            <td><b>Belt Drive</b></td>
+                            {% for review in review_list %}
+                                <td>{{ review.review_drivetrain_review.all.0.belt_drive }}</td>
+                            {% endfor %}
+                        </tr>
+                        <tr>
+                            <td colspan="{{ review_list | length |add:1 }}" style="text-align: center;">
+                                Review Components
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><b>Headset</b></td>
+                            {% for review in review_list %}
+                                <td>{{ review.review_components_review.all.0.headset }}</td>
+                            {% endfor %}
+                        </tr>
+                        <tr>
+                            <td><b>Stem</b></td>
+                            {% for review in review_list %}
+                                <td>{{ review.review_components_review.all.0.stem }}</td>
+                            {% endfor %}
+                        </tr>
+                        <tr>
+                            <td><b>Handlebar</b></td>
+                            {% for review in review_list %}
+                                <td>{{ review.review_components_review.all.0.handlebar }}</td>
+                            {% endfor %}
+                        </tr>
+                        <tr>
+                            <td><b>Grips</b></td>
+                            {% for review in review_list %}
+                                <td>{{ review.review_components_review.all.0.grips }}</td>
+                            {% endfor %}
+                        </tr>
+                        <tr>
+                            <td><b>Seatpost</b></td>
+                            {% for review in review_list %}
+                                <td>{{ review.review_components_review.all.0.seatpost }}</td>
+                            {% endfor %}
+                        </tr>
+                        <tr>
+                            <td><b>Seatpost Diameter</b></td>
+                            {% for review in review_list %}
+                                <td>{{ review.review_components_review.all.0.demo_seatpost_diameter }}</td>
+                            {% endfor %}
+                        </tr>
+                        <tr>
+                            <td><b>Saddle</b></td>
+                            {% for review in review_list %}
+                                <td>{{ review.review_components_review.all.0.saddle }}</td>
+                            {% endfor %}
+                        </tr>
+                        <tr>
+                            <td><b>Pedals</b></td>
+                            {% for review in review_list %}
+                                <td>{{ review.review_components_review.all.0.pedals }}</td>
+                            {% endfor %}
+                        </tr>
+                        <tr>
+                            <td><b>Components Brake Type</b></td>
+                            {% for review in review_list %}
+                                <td>
+                                    {% for brake_type in review.review_general_review.all.0.demo_brake_type.all %}
+                                        {{ brake_type }}
+                                        {% if not forloop.last %}
+                                            ,
+                                        {% endif %}
+                                    {% endfor %}
+                                </td>
+                            {% endfor %}
+                        </tr>
+                        <tr>
+                            <td><b>Front Brake</b></td>
+                            {% for review in review_list %}
+                                <td>{{ review.review_components_review.all.0.front_brake }}</td>
+                            {% endfor %}
+                        </tr>
+                        <tr>
+                            <td><b>Rear Brake</b></td>
+                            {% for review in review_list %}
+                                <td>{{ review.review_components_review.all.0.rear_brake }}</td>
+                            {% endfor %}
+                        </tr>
+                        <tr>
+                            <td colspan="{{ review_list | length |add:1 }}" style="text-align: center;">
+                                Review Ebike Systems
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><b>Systems Bike Class</b></td>
+                            {% for review in review_list %}
+                                <td>
+                                    {% for bike_class in review.review_ebike_systems_review.all.0.demo_systems_bike_class.all %}
+                                        {{ bike_class }}
+                                        {% if not forloop.last %}
+                                            ,
+                                        {% endif %}
+                                    {% endfor %}
+                                </td>
+                            {% endfor %}
+                        </tr>
+                        <tr>
+                            <td><b>Systems Motor Type</b></td>
+                            {% for review in review_list %}
+                                <td>{{ review.review_ebike_systems_review.all.0.systems_motor_type }}</td>
+                            {% endfor %}
+                        </tr>
+                        <tr>
+                            <td><b>Motor</b></td>
+                            {% for review in review_list %}
+                                <td>{{ review.review_ebike_systems_review.all.0.motor }}</td>
+                            {% endfor %}
+                        </tr>
+                        <tr>
+                            <td><b>Additional Motors</b></td>
+                            {% for review in review_list %}
+                                <td>{{ review.review_ebike_systems_review.all.0.additional_motors }}</td>
+                            {% endfor %}
+                        </tr>
+                        <tr>
+                            <td><b>Systems Motor Nominal Output</b></td>
+                            {% for review in review_list %}
+                                <td>{{ review.review_ebike_systems_review.all.0.demo_systems_motor_nominal_output }}</td>
+                            {% endfor %}
+                        </tr>
+                        <tr>
+                            <td><b>Display</b></td>
+                            {% for review in review_list %}
+                                <td>{{ review.review_ebike_systems_review.all.0.display }}</td>
+                            {% endfor %}
+                        </tr>
+                        <tr>
+                            <td><b>Smart Bike</b></td>
+                            {% for review in review_list %}
+                                <td>{{ review.review_ebike_systems_review.all.0.smart_bike }}</td>
+                            {% endfor %}
+                        </tr>
+                        <tr>
+                            <td><b>Theft Gps</b></td>
+                            {% for review in review_list %}
+                                <td>{{ review.review_ebike_systems_review.all.0.theft_gps }}</td>
+                            {% endfor %}
+                        </tr>
+                        <tr>
+                            <td><b>Systems Battery Watt Hours</b></td>
+                            {% for review in review_list %}
+                                <td>{{ review.review_ebike_systems_review.all.0.demo_systems_battery_watt_hours }}</td>
+                            {% endfor %}
+                        </tr>
+                        <tr>
+                            <td><b>Battery</b></td>
+                            {% for review in review_list %}
+                                <td>{{ review.review_ebike_systems_review.all.0.battery }}</td>
+                            {% endfor %}
+                        </tr>
+                        <tr>
+                            <td><b>Additional Battery</b></td>
+                            {% for review in review_list %}
+                                <td>{{ review.review_ebike_systems_review.all.0.additional_battery }}</td>
+                            {% endfor %}
+                        </tr>
+                        <tr>
+                            <td><b>Charger</b></td>
+                            {% for review in review_list %}
+                                <td>{{ review.review_ebike_systems_review.all.0.charger }}</td>
+                            {% endfor %}
+                        </tr>
+                        <tr>
+                            <td colspan="{{ review_list | length |add:1 }}" style="text-align: center;">
+                                Review Accessories
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><b>Lights</b></td>
+                            {% for review in review_list %}
+                                <td>{{ review.review_accessory_review.all.0.lights }}</td>
+                            {% endfor %}
+                        </tr>
+                        <tr>
+                            <td><b>Fenders</b></td>
+                            {% for review in review_list %}
+                                <td>{{ review.review_accessory_review.all.0.fenders }}</td>
+                            {% endfor %}
+                        </tr>
+                        <tr>
+                            <td><b>Front Rack</b></td>
+                            {% for review in review_list %}
+                                <td>{{ review.review_accessory_review.all.0.front_rack }}</td>
+                            {% endfor %}
+                        </tr>
+                        <tr>
+                            <td><b>Rear Rack</b></td>
+                            {% for review in review_list %}
+                                <td>{{ review.review_accessory_review.all.0.rear_rack }}</td>
+                            {% endfor %}
+                        </tr>
+                        <tr>
+                            <td colspan="{{ review_list | length |add:1 }}" style="text-align: center;">
+                                More Details
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><b>More Details</b></td>
+                            {% for review in review_list %}
+                                <td>{{ review.more_details | safe }}</td>
+                            {% endfor %}
+                        </tr>
+                </tbody>
+            </table>
+        {% endif %}
+        <div class="product-card-wrapper" id="product-card">
+            {% for featured_review in featured_reviews %}
+                <div class="product-card-item">
+                    <a href="/{{categories.brands.first.slug}}/{{ featured_review.slug }}/">
+                        {% if featured_review.featured_image_web %}
+                            <img src="{{ featured_review.featured_image_web.url }}" class="pro-card-img" alt="{{ featured_review.name }}"  width="200px" height="200px"/>
+                        {% endif %}
+                    </a>
+                    <button class="btn compare-btn {% if featured_review.id in compare_review %} added {% endif %}" data-id="{{featured_review.id}}">
+                        <img src="{% static 'assets/images/plus.png' %}" alt="plus" />
+                    </button>
+                    <div class="product-desc">
+                        <h4 class="product-title">
+                            <a href="/{{featured_review.brands.all.first.slug}}/{{ featured_review.slug }}/">{{ featured_review.name }}</a>
+                        </h4>
+                        {% for brand in featured_review.brands.all %}
+                            <p class="desc_1">
+                                <a href="/brand/{{brand.slug}}">{{brand.name}}</a>
+                            </p>
+                        {% endfor %}
+                        <div class="data-price">
+                            <div class="procard-lastdata">
+                                {% for category in featured_review.categories.all %}
+                                    <p class="desc_1">
+                                        <a href="/category/{{category.slug}}">{{category.name}}</a>
+                                    </p>
+                                 {% endfor %}
+                            </div>
+                            {% for price in featured_review.review_general_review.all %}
+                                <p class="product-price">${{price.msrp}}</p>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    <p class="product-status-text">Promoted</p>
+                </div>
+            {% endfor %}
+        </div>
+    </section>
+{% endblock %}
+
+{% block script %}
+    <script>
+        function remove_compare(review_id){
+            var get_cookies = $.cookie("id")
+            compate_count = parseInt($('.count-icon').html())
+            console.log(review_id, get_cookies, compate_count)
+            if(compate_count > 0){
+                var new_cookies = $.map(get_cookies.split(","), function(val){return parseInt(val);})
+                if(new_cookies.includes(review_id) == true){
+                    compate_count -= 1
+                    new_cookies = new_cookies.filter(new_cookies => new_cookies !== review_id)
+                    $.cookie("id", new_cookies, { path: '/' });
+                    $('.count-icon').html(compate_count)
+                    window.location.href = '/compare/'
+                }
+            }
+        }
+
+        window.addEventListener( "pageshow", function ( event ) {
+          var historyTraversal = event.persisted ||
+                                 ( typeof window.performance != "undefined" &&
+                                      window.performance.navigation.type === 2 );
+          if ( historyTraversal ) {
+            // Handle page restore.
+            window.location.reload();
+          }
+        });
+
+        $(".compare-btn").on('click', function () {
+            window.location.reload();
+        });
+    </script>
+{% endblock %}

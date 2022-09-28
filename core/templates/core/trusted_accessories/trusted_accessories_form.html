@@ -1,0 +1,65 @@
+{% extends 'core/change_form.html' %}
+{% load static %}
+{% load widget_tweaks %}
+{% load admin_extras %}
+{% load misc_filters %}
+{% load crispy_forms_tags %}
+{% load i18n %}
+
+
+{% block page_content %}
+    <form id="{{ opts.model_name }}-form" action="" method="post" enctype="multipart/form-data" autocomplete="off">
+        {{ form.media }}
+        {% include "core/partials/form_hidden_fields.html" %}
+
+        <div class="ibox float-e-margins">
+            {% include "core/partials/ibox_title.html" with ibox_title="Trusted Details" icon_class="fas fa-info-circle" only %}
+            <div class="ibox-content">
+                <div class="row">
+                    <div class="col-sm-6 mt-2">
+                        {{ form.name | as_crispy_field }}
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-6 mt-2">
+                        {{ form.slide_link | as_crispy_field }}
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-6 mt-2">
+                        {{ form.featured_image | as_crispy_field }}
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-6 mt-2 text-center">
+                        <div id="image-holder">
+                            {% if form.featured_image.value %}
+                                <p>Image Preview</p>
+                                <a href="{{ form.featured_image.value }}" target="_blank"><img id="prev_image" src="{{ form.featured_image.value.url }}" style="width: 300px; height: 200px; object-fit: contain;" /></a>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-6 mt-2">
+                        {{ form.alt_text | as_crispy_field }}
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-6 mt-2">
+                        {{ form.status | as_crispy_field }}
+                    </div>
+                </div>
+            </div>
+            <!-- /ibox-content -->
+        </div>
+        <!-- /ibox -->
+        {% include "core/partials/form_footer.html" %}
+    </form>
+
+{% endblock %}
+
+
+{% block js %}
+    {{ block.super }}
+{% endblock %}

@@ -1,0 +1,158 @@
+{% extends 'core/change_list.html' %}
+{% load static %}
+{% load admin_extras %}
+{% load misc_filters %}
+{% load i18n %}
+
+{% block current_breadcrumb %}
+    <li class="breadcrumb-item">
+        <a href="{% url 'core:index' %}">{% trans 'Home' %}</a>
+    </li>
+
+    <li class="breadcrumb-item">
+        <a href="{% url 'core:channel-list' %}">{% trans 'Channels' %}</a>
+    </li>
+
+    <li class="breadcrumb-item active">
+        {{ channel.name }}
+    </li>
+{% endblock%}
+
+
+{% block page_content %}
+    {% csrf_token %}
+
+    <header class="list-header card mb-4">
+        <div class="card-body clearfix">
+            <div class="float-left">
+                <h5 class="card-title">Channel Details</h5>
+                <p class="card-subtitle text-muted">Below is the brief details about the Channel.</p>
+            </div>
+
+            <div class="float-right lead">
+                <a href="{% url 'core:channel-update' channel.id %}" class="btn btn-primary btn-lg"><i class="fa fa-plus"></i> Add New Song</a>
+            </div>
+        </div>
+    </header>
+
+    <div class="ibox float-e-margins">
+
+        <div class="ibox-content">
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="ibox-content p-xl less-space-content">
+                        <div class="row">
+                            <div class="col-sm-12 text-center">
+
+                                <div class="card-box-custom song-card-box-custom">
+                                    <div class="card-box-custom-row">
+                                        <div class="image-thumb">
+                                            <img src="{{ channel.image }}" alt="Channel Image" class="img-responsive"/>
+                                        </div>
+
+                                        <div class="content-div-div">
+                                            <div class="content-div-row">
+                                                <div class="text-title-box">
+                                                    <h5>Name</h5>
+                                                    <h3>{{ channel.name }}</h3>
+                                                </div>
+
+                                                <div class="inner-row-details-div">
+                                                    {%if channel.curator.name%}
+                                                    <div class="box-card-inner-grid">
+                                                        <h5>Curator</h5><h4>{{ channel.curator.name }}</h4>
+                                                    </div>
+                                                    {%endif%}
+                                                    <div class="box-card-inner-grid">
+                                                        <h5>Category</h5><h4>{{ channel.category.title }}</h4>
+                                                    </div>
+                                                    <div class="box-card-inner-grid">
+                                                        <h5>Likes</h5><h4>{{ channel.channellike_channel.count }}</h4>
+                                                    </div>
+                                                    <div class="box-card-inner-grid">
+                                                        <h5>Followers</h5><h4>{{ channel.channelfollow_channel.count }}</h4>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <br/>
+                        <hr class="w-100">
+                        <div class="row">
+                            <div class="col-sm-12 text-left">
+                                <div class="title-common-all">
+                                    <h3>Description</h3>
+                                    <h5>{{ channel.description|striptags }}</h5>
+                                </div>
+                            </div>
+                        </div>
+                        <hr class="w-100">
+                        <div class="row">
+                            <div class="col-sm-12 text-left">
+                                <div class="title-common-all">
+                                    <h3>Channel Songs</h3>
+                                </div>
+                                <table class="table table-striped table-bordered table-hover" id="paginate-table">
+                                    <thead>
+                                    <tr>
+                                        <th>Image</th>
+                                        <th>Name</th>
+                                        <th>File</th>
+                                        <th>Likes</th>
+                                    </tr>
+                                    </thead>
+                                    <tfoot>
+                                    <tr>
+                                        <th>Image</th>
+                                        <th>Name</th>
+                                        <th>File</th>
+                                        <th>Likes</th>
+                                    </tr>
+                                    </tfoot>
+                                    <tbody>
+                                    {% for o in song_data %}
+                                        {% for song in o.song.all %}
+                                            <tr>
+                                                <td><img src="{{ song.image }}" alt="Channel Image" width="50px;" height="50px;"/></td>
+                                                <td><a href="{% url 'core:song-detail' song.pk %}">{{ song.name }}</a></td>
+                                                <td class="audio-box">
+                                                    <audio controls>
+                                                        <source src="{{ song.audio_file }}" type="audio/mpeg">
+                                                        Your browser does not support the audio element.
+                                                    </audio>
+                                                </td>
+                                                <td>{{ song.songlike_song.count }}</td>
+                                            </tr>
+                                        {% endfor %}
+                                    {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}
+
+{% block js %}
+    {{ block.super }}
+    <script>
+        $(document).ready(function(){
+            $('#paginate-table').DataTable({
+                pageLength: 25,
+                responsive: true,
+                order: [[ 1, "asc" ]],
+                columnDefs: [{
+                    orderable: false,
+                    targets: [ 0, -1, -2 ]
+                },]
+            });
+        });
+    </script>
+{% endblock %}

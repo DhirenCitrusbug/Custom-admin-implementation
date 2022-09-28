@@ -1,0 +1,130 @@
+{% extends 'core/change_form.html' %}
+{% load static %}
+{% load widget_tweaks %}
+{% load admin_extras %}
+{% load misc_filters %}
+{% load crispy_forms_tags %}
+{% load i18n %}
+
+
+{% block page_content %}
+    <form id="{{ opts.model_name }}-form" action="" method="post" enctype="multipart/form-data" autocomplete="off">
+        {{ form.media }}
+        {% include "core/partials/form_hidden_fields.html" %}
+
+        <div class="ibox float-e-margins">
+            {% include "core/partials/ibox_title.html" with ibox_title="Review Category Details" icon_class="fas fa-info-circle" only %}
+            <div class="ibox-content">
+
+                <div class="row">
+                    <div class="col-sm-6 mt-2">
+                        {{ form.name|as_crispy_field }}
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-6 mt-2">
+                        {{ form.slug|as_crispy_field }}
+                    </div>
+                </div>
+
+                 <div class="row">
+                    <div class="col-sm-6 mt-2">
+                        {{ form.meta_title|as_crispy_field }}
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-sm-6 mt-2">
+                        {{ form.parent_category|as_crispy_field }}
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-6 mt-2">
+                        {{ form.description|as_crispy_field }}
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-6 mt-2">
+                        {{ form.short_description|as_crispy_field }}
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-6 mt-2">
+                        {{ form.status|as_crispy_field }}
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-6 mt-2">
+                        {{ form.featured_review|as_crispy_field }}
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-6 mt-2 checkbox-space">
+                        {{ form.category_image_full|as_crispy_field }}
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-sm-6 mt-2 text-center">
+                        <div id="image-holder">
+                            {% if form.category_image_full.value %}
+                                <p>Image Preview</p>
+                                <a href="{{ form.category_image_full.value }}" target="_blank"><img id="prev_image" src="{{ form.category_image_full.value.url }}" style="width: 300px; height: 200px; object-fit: contain;" /></a>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-sm-6 mt-2 checkbox-space">
+                        {{ form.icon_image|as_crispy_field }}
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-sm-6 mt-2 text-center">
+                        <div id="image-holder">
+                            {% if form.icon_image.value %}
+                                <p>Image Preview</p>
+                                <a href="{{ form.icon_image.value }}" target="_blank"><img id="prev_image" src="{{ form.icon_image.value.url }}" style="width: 300px; height: 200px; object-fit: contain;" /></a>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- /ibox-content -->
+        </div>
+        <!-- /ibox -->
+        {% include "core/partials/form_footer.html" %}
+    </form>
+
+{% endblock %}
+
+
+{% block js %}
+    {{ block.super }}
+    <script>
+
+        function titleCase(str) {
+          str.toLowerCase();
+          var strAr = str.split(" ");
+          for(var i=0;i<strAr.length;i++)
+          {
+             strAr[i] = strAr[i].charAt(0).toUpperCase() + strAr[i].substring(1).toLowerCase();
+          }
+          str = strAr.join(" ");
+          return str;
+        }
+
+
+        $('#id_name').on('keyup', function(){
+            static_meta = ' | ElectricBikeReview.com';
+            name = $(this).val();
+            link = $('#id_meta_title').val(titleCase(name)+static_meta);
+        });
+
+        $('#id_meta_title').on('dblclick', function(){
+            $('#id_meta_title').attr('readonly', false)
+        });
+    </script>
+{% endblock %}

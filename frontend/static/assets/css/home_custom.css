@@ -1,0 +1,14 @@
+.justify-content-between {
+    margin-bottom: 16px;
+}
+.product-title .btn .filter-selected-databtn {
+    position: relative;
+    display: inline-block;
+    margin-top: 20px;
+}
+.product-title[title] {
+    content: attr(title);
+}
+.btn.page.text-primary b{
+    color: #1155cc!important;
+}

@@ -1,0 +1,23 @@
+{% extends "registration/base.html" %}
+{% load static %}
+{% load widget_tweaks %}
+
+{% block title %}Logout{% endblock %}
+
+{% block content %}
+    <div id="login">
+        <div class="container">
+            <div class="middle-box text-center loginscreen animated fadeInDown">
+            <div class="login-logo">
+              <img src="{% static 'img/django-logo-negative.svg' %}" class="animated fadeInDown"/>
+            </div>
+            <div class="middle-box text-center loginscreen animated fadeInDown">
+                <div class="alert alert-info">You have been logged out.</div>
+                <a href="{% url 'auth:auth_login' %}" class="btn btn-primary block full-width m-b">Login Again</a>
+            </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}
+

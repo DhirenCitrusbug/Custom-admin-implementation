@@ -1,0 +1,255 @@
+{% extends 'frontend/subpages/base.html'%}
+{% load static %}
+
+{% block title %}
+    {{ brand.meta_title }}
+{% endblock %}
+
+{% block seoTag %}
+    <meta name="theme-color" content="#80b600">
+	<meta name="apple-mobile-web-app-status-bar-style" content="#80b600">
+	<meta name="msapplication-navbutton-color" content="#80b600">
+    <meta property='og:url' content='https://electricbikereview.com/brand/urtopia/' />
+    <meta property="fb:app_id" content="462030500496873" />
+
+    <meta property="og:locale" content="en_us" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="{{ brand.meta_title }}" />
+    <meta property="og:description" content="{{ brand.description }}" />
+    <meta property="og:site_name" content="ElectricBikeReview.com" />
+    <meta property="og:image" content="{{ brand.brand_image_web.url }}" />
+	<meta name="twitter:card" content="summary" />
+    <meta name="twitter:description" content="{{ brand.description }}" />
+    <meta name="twitter:title" content="{{ brand.meta_title }}" />
+    <meta name="twitter:image" content="{{ brand.brand_image_web.url }}" />
+    <meta name="twitter:site" content="@ebikereview" />
+{% endblock %}
+
+
+{% block body %}
+    <!-- Middle Area -->
+    <section class="middle_area">
+        <div class="filter-selected-options">
+            <button class="btn filter-selected-databtn">
+                <a href="/"><img src="{% static 'assets/images/cross.png' %}" alt="cross" /></a>
+                <span>{{ brand.name }}</span>
+            </button>
+            <p class="search-res-text">{{ total_reviews }} Results:</p>
+        </div>
+        <script type="application/ld+json">
+            {{ seo_schema |safe }}
+        </script>
+        <div class="main-content">
+            <div class="row m-0">
+                <div class="col-lg-8 col-xl-9 col-md-6 col-sm-6 p-0">
+                    <div class="left-side-content">
+                        <h3 class="section-title">{{ brand.name }}</h3>
+                        <div class="img-cont-box brand-det">
+                            {% if brand.brand_image_web %}
+                                <img src="{{ brand.brand_image_web.url }}" alt="cycle">
+                            {% endif %}
+                            <p class="desc_p" data-disc="{{brand.description}}">
+                                {{brand.description|truncatewords:380}}
+                                {% if brand.descriptio.lenght > 380 %}
+                                    <a href="#" onclick="return false;" id="show-more-desc">
+                                        Show More <i class="fa fa-angle-down"></i>
+                                    </a>
+                                {% endif %}
+                            </p>
+                        </div>
+                        <div class="product-card-wrapper" >
+                            {% for featured_review in featured_reviews %}
+                                <div class="product-card-item">
+                                    <a href="/{{ brand.slug }}/{{ featured_review.slug }}/">
+                                        {% if featured_review.featured_image_web %}
+                                            <img src="{{ featured_review.featured_image_web.url }}" class="pro-card-img" alt="{{ featured_review.name }}" />
+                                        {% endif %}
+                                    </a>
+                                    <button class="btn compare-btn {% if featured_review.id in compare_review %} added {% endif %}" data-id="{{featured_review.id}}">
+                                        <img src="{% static 'assets/images/plus.png' %}" alt="plus" />
+                                    </button>
+                                    <div class="product-desc">
+                                        <h4 class="product-title">
+                                            <a href="/{{ brand.slug }}/{{ featured_review.slug }}/">{{ featured_review.name }}</a>
+                                        </h4>
+                                        {% for brand in featured_review.brands.all %}
+                                            <p class="desc_1">
+                                                <a href="/brand/{{brand.slug}}">{{brand.name}}</a>
+                                            </p>
+                                        {% endfor %}
+                                        <div class="data-price">
+                                            <div class="procard-lastdata">
+                                                {% for category in featured_review.categories.all %}
+                                                    <p class="desc_1">
+                                                        <a href="/category/{{category.slug}}">{{category.name}}</a>
+                                                    </p>
+                                                 {% endfor %}
+                                            </div>
+                                            {% for price in featured_review.review_general_review.all %}
+                                                <p class="product-price">${{price.msrp}}</p>
+                                            {% endfor %}
+                                        </div>
+                                    </div>
+                                    <p class="product-status-text">Promoted</p>
+                                </div>
+                            {% endfor %}
+
+
+                            {% for review in reviews %}
+                                <div class="product-card-item">
+                                <a href="/{{ brand.slug }}/{{ review.slug }}/">
+                                    {% if review.featured_image_web %}
+                                    <img src="{{ review.featured_image_web.url }}" class="pro-card-img" alt="{{ review.name }}" />
+                                    {% endif %}
+                                </a>
+                                <button class="btn compare-btn {% if review.id in compare_review %} added {% endif %}" data-id="{{review.id}}">
+                                    <img src="{% static 'assets/images/plus.png' %}" alt="plus" />
+                                </button>
+                                <div class="product-desc">
+                                    <h4 class="product-title"><a href="/{{ brand.slug }}/{{ review.slug }}/">{{ review.name }}</a></h4>
+                                    {% for brand in review.brands.all %}
+                                        <p class="desc_1">
+                                            <a href="/brand/{{brand.slug}}">{{brand.name}}</a>
+                                        </p>
+                                    {% endfor %}
+                                    <div class="data-price">
+                                         <div class="procard-lastdata">
+                                             {% for category in review.categories.all %}
+                                                <p class="desc_1">
+                                                    <a href="/category/{{category.slug}}">{{category.name}}</a>
+                                                </p>
+                                             {% endfor %}
+                                         </div>
+                                        {% for price in review.review_general_review.all %}
+                                            <p class="product-price">${{price.msrp}}</p>
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                        {% if reviews or featured_reviews %}
+                            {% if pages|length > 1 %}
+                                <ul class="pagination justify-content-center pagination-sm" id="pagination">
+                                    {% if reviews.has_previous %}
+                                        <span class="btn page text-primary"><a href="?page={{ reviews.previous_page_number }}"><b>&laquo; Prev</b></a></span>
+                                    {% else %}
+                                        <span class="btn page text-primary disabled" style="disa"><b>&laquo; Prev</b></span>
+                                    {% endif %}
+
+                                    {% if reviews.number == 1 %}
+                                        {% if reviews.paginator.num_pages <= 5 %}
+                                            {% for page in pages %}
+                                                {% if  page == reviews.number %}
+                                                    <span class="btn page text-dark"><b>{{ page }}</b></span>
+                                                {% elif reviews.number != reviews.paginator.num_pages %}
+                                                    <span class="btn page text-dark"><a href="?page={{ page }}"><b>{{ page }}</b></a></span>
+                                                {% endif %}
+                                            {% endfor %}
+                                        {% else %}
+                                        <span class="btn page text-dark"><b>{{ reviews.number }}</b></span>
+                                        <span class="btn page text-dark"><a href="?page={{ reviews.number|add:'1' }}"><b>{{ reviews.number|add:"1" }}</b></a></span>
+                                        <span class="btn page text-dark"><a href="?page={{ reviews.number|add:'2' }}"><b>{{ reviews.number|add:"2" }}</b></a></span>
+                                        <span class="btn page text-dark"><a href="?page={{ reviews.number|add:'3' }}"><b>{{ reviews.number|add:"3" }}</b></a></span>
+                                        <span class="btn page text-dark"><a href="#" onclick="return false;"><b>...</b></a></span>
+                                        <span class="btn page text-dark"><a href="?page={{ reviews.paginator.num_pages }}"><b>{{ reviews.paginator.num_pages }}</b></a></span>
+                                        {% endif %}
+                                    {% elif reviews.number > 1 and reviews.number < 4 %}
+                                        {% if reviews.paginator.num_pages <= 5 %}
+                                            {% for page in pages %}
+                                                {% if  page == reviews.number %}
+                                                    <span class="btn page text-dark"><b>{{ page }}</b></span>
+                                                {% else %}
+                                                    <span class="btn page text-dark"><a href="?page={{ page }}"><b>{{ page }}</b></a></span>
+                                                {% endif %}
+                                            {% endfor %}
+                                        {% else %}
+                                            <span class="btn page text-dark"><a href="?page=1"><b>1</b></a></span>
+                                            {% for page in pages %}
+                                                {% if page >= 2 and page <= 4 %}
+                                                    {% if  page == reviews.number %}
+                                                        <span class="btn page text-dark"><b>{{ page }}</b></span>
+                                                    {% else %}
+                                                        <span class="btn page text-dark"><a href="?page={{ page }}"><b>{{ page }}</b></a></span>
+                                                    {% endif %}
+                                                {% endif %}
+                                            {% endfor %}
+                                            <span class="btn page text-dark"><a href="#" onclick="return false;"><b>...</b></a></span>
+                                            <span class="btn page text-dark"><a href="?page={{ reviews.paginator.num_pages }}"><b>{{ reviews.paginator.num_pages }}</b></a></span>
+                                        {% endif %}
+                                    {% elif reviews.number >= 4 and reviews.number <= reviews.paginator.num_pages|add:'-3' %}
+                                        <span class="btn page text-dark"><a href="?page=1"><b>1</b></a></span>
+                                        <span class="btn page text-dark"><a href="#" onclick="return false;"><b>...</b></a></span>
+                                            {% for page in pages %}
+                                                {% if reviews.number >= 4 and reviews.number <= reviews.paginator.num_pages|add:'-3' %}
+                                                    {% if page == reviews.number %}
+                                                        <span class="btn page text-primary"><a href="?page={{ reviews.previous_page_number }}"><b>{{ reviews.previous_page_number }}</b></a></span>
+                                                        <span class="btn page text-dark"><b>{{ page }}</b></span>
+                                                        <span class="btn page text-dark"><a href="?page={{ reviews.next_page_number }}"><b>{{ reviews.next_page_number }}</b></a></span>
+                                                    {% endif %}
+                                                {% endif %}
+                                            {% endfor %}
+                                            <span class="btn page text-dark"><a href="#" onclick="return false;"><b>...</b></a></span>
+                                            <span class="btn page text-dark"><a href="?page={{ reviews.paginator.num_pages }}"><b>{{ reviews.paginator.num_pages }}</b></a></span>
+                                    {% elif reviews.number > reviews.paginator.num_pages|add:'-3' and reviews.number < reviews.paginator.num_pages %}
+                                        {% if reviews.paginator.num_pages <= 5 %}
+                                            {% for page in pages %}
+                                                {% if  page == reviews.number %}
+                                                    <span class="btn page text-dark"><b>{{ page }}</b></span>
+                                                {% elif reviews.number != reviews.paginator.num_pages %}
+                                                    <span class="btn page text-dark"><a href="?page={{ page }}"><b>{{ page }}</b></a></span>
+                                                {% endif %}
+                                            {% endfor %}
+                                        {% else %}
+                                            <span class="btn page text-dark"><a href="?page=1"><b>1</b></a></span>
+                                            <span class="btn page text-dark"><a href="#" onclick="return false;"><b>...</b></a></span>
+                                            {% for page in pages %}
+                                                {% if page >= reviews.paginator.num_pages|add:'-3' and reviews.number < reviews.paginator.num_pages %}
+                                                    {% if  page == reviews.number %}
+                                                        <span class="btn page text-dark"><b>{{ page }}</b></span>
+                                                    {% else %}
+                                                        <span class="btn page text-dark"><a href="?page={{ page }}"><b>{{ page }}</b></a></span>
+                                                    {% endif %}
+                                                {% endif %}
+                                            {% endfor %}
+                                        {% endif %}
+                                    {% elif reviews.number == reviews.paginator.num_pages %}
+                                        {% if reviews.paginator.num_pages <= 5 %}
+                                            {% for page in pages %}
+                                                {% if  page == reviews.number %}
+                                                    <span class="btn page text-dark"><b>{{ page }}</b></span>
+                                                {% else %}
+                                                    <span class="btn page text-dark"><a href="?page={{ page }}"><b>{{ page }}</b></a></span>
+                                                {% endif %}
+                                            {% endfor %}
+                                        {% else %}
+                                            <span class="btn page text-dark"><a href="?page=1"><b>1</b></a></span>
+                                            <span class="btn page text-dark"><a href="#" onclick="return false;"><b>...</b></a></span>
+                                            <span class="btn page text-dark"><a href="?page={{ reviews.paginator.num_pages|add:'-3' }}"><b>{{ reviews.paginator.num_pages|add:'-3' }}</b></a></span>
+                                            <span class="btn page text-dark"><a href="?page={{ reviews.paginator.num_pages|add:'-2' }}"><b>{{ reviews.paginator.num_pages|add:'-2' }}</b></a></span>
+                                            <span class="btn page text-dark"><a href="?page={{ reviews.paginator.num_pages|add:'-1' }}"><b>{{ reviews.paginator.num_pages|add:'-1' }}</b></a></span>
+                                            <span class="btn page text-dark"><b>{{ reviews.paginator.num_pages }}</b></span>
+                                        {% endif %}
+                                    {% endif %}
+
+                                    {% if reviews.has_next %}
+                                        <span class="btn page text-primary"><a href="?page={{ reviews.next_page_number }}"><b>Next &raquo;</b></a></span>
+                                    {% else %}
+                                        <span class="btn page text-primary disabled"><b>Next &raquo;</b></span>
+                                    {% endif %}
+                                </ul>
+                            {% endif %}
+                        {% else %}
+                            <h4 class="pagination justify-content-center pagination-sm">No reviews for this brand!</h4>
+                        {% endif %}
+                    </div>
+                </div>
+                {% include 'frontend/include/discussion.html' %}
+            </div>
+        </div>
+    </section>
+{% endblock %}
+
+{% block script %}
+
+{% endblock %}

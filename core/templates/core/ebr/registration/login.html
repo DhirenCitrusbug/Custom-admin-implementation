@@ -1,0 +1,66 @@
+{% extends "core/ebr/registration/base.html" %}
+{% load static %}
+{% load widget_tweaks %}
+
+
+{% block title %}Login{% endblock %}
+
+
+{% block content %}
+    <div id="login">
+        <div class="container">
+
+            <div class="middle-box text-center loginscreen animated fadeInDown">
+
+                <div class="login-logo">
+                  <img src="{% static 'core/img/logo.svg' %}" class="animated fadeInDown"/>
+                </div>
+                {% comment %} <object type="image/svg+xml" data="{% static '\2' %}" class="animated fadeInDown"></object> {% endcomment %}
+
+                {% if form.errors %}
+                <div class="alert alert-danger" role="alert">
+                {% for field, errors in form.errors.items %}
+                    {% for error in errors %}
+                        {{ error }}
+                    {% endfor %}
+                {% endfor %}
+                </div>
+                {% endif %}
+
+                <form class="m-t" role="form" action="{% url 'auth:auth_login' %}?next={{ next }}" accept-charset="UTF-8" method="post">
+                    {% csrf_token %}
+                    <div class="form-group">
+                        {{ form.username|attr:"required"|attr:"autofocus"|attr:"placeholder:Email"|attr:"class:form-control" }}
+                    </div>
+                    <div class="form-group">
+                        {{ form.password|attr:"required"|attr:"placeholder:Password"|attr:"class:form-control" }}
+                    </div>
+                    <!--<div class="form-group text-left">
+                        <div class="i-checks"><input type="checkbox"><i></i> Remember me</div>
+                    </div>-->
+
+                    <input type="hidden" name="next" value="{{ next }}" />
+                    <button type="submit" class="btn btn-primary block full-width m-b">Login</button>
+
+                </form>
+
+            </div>
+        </div>
+    </div>
+{% endblock%}
+
+
+{% block js %}
+{{ block.super }}
+    {% comment %} <!-- iCheck -->
+    <script src="{% static 'core/js/plugins/iCheck/icheck.min.js' %}"></script>
+    <script>
+        $(document).ready(function(){
+            $('.i-checks').iCheck({
+                checkboxClass: 'icheckbox_square-green',
+                radioClass: 'iradio_square-green',
+            });
+        });
+    </script> {% endcomment %}
+{% endblock%}
+

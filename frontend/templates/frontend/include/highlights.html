@@ -1,0 +1,5 @@
+<h3 class="section-title">Highlights</h3>
+{% for highlights in review_highlights %}
+<span data-value="{{ highlights.id }}" class="update_voteCount {% if highlights.id in upvote_list %}text-primary{% endif %}">vote <small>{{ highlights.upvote_count }}</small></span>
+    <p>{{forloop.counter}} : {{highlights.highlight}}</p>
+{% endfor %}

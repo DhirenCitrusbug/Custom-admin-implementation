@@ -1,0 +1,63 @@
+{% extends 'frontend/subpages/base.html'%}
+{% load review_card %}
+{% load static %}
+{% block title %}
+Contact
+{% endblock %}
+
+{% block body %}
+
+<section class="middle_area">
+    <div class="filter-selected-options">
+
+    </div>
+    <script type="application/ld+json">
+        {{ seo_schema |safe }}
+    </script>
+    <div class="main-content">
+        <div class="row m-0">
+            <div class="col-lg-8 col-xl-9 col-md-6 col-sm-6 p-0">
+                <div class="left-side-content">
+                    <h3 class="section-title">Contact Us</h3>
+                    <p>
+                        We like happy riders! If you’ve got a question about which ebike is the perfect fit, visit our
+                        help forum where moderators, dealers and other electric bike owners will be happy to assist.
+
+                        Once you’ve narrowed it down a bit, use the compare tool then search for the closest dealer
+                        using our directory map. They will be happy to answer your questions and guide you. We have also
+                        created a list of starter guides here including topics like electric bike vs. regular bike and
+                        how to choose an electric bike amongst others. We created these resources to help you because we
+                        can’t always respond to emails when we travel.
+
+                        Please note that we do NOT sell electric bikes, electric bike components, accessories, or any
+                        physical products. If you are attempting to purchase an ebike or to get support for one you
+                        already own, please contact the manufacturer directly as we cannot help you with that.
+
+                        If you have a business request please use the contact form below and we’ll get back to you at
+                        our earliest convenience! Most of the content on this website is created by Court Rye who is the
+                        founder of EBR and primary writer/videographer, I just want to say thanks for visiting and
+                        making this website such a great community.
+                    </p>
+                    <form method='POST' class="mt-5">
+                        <div class="w-50 d-flex justify-content-between">
+                            <input type="text" id="contact_us_name" placeholder="Name" name="contact_us_name" style="width: 48%;" class="form-control" autocomplete="off">
+                            <input type="email" id="contact_us_email" placeholder="Email" name="contact_us_email" style="width: 48%;" class="form-control" autocomplete="off">
+                        </div>
+                        <textarea name="contact_us_description" id="contact_us_description" placeholder="Message" class="form-control w-50" required></textarea><br>
+                        <input type="submit" id="send_message" value="Send Message" class="text-light bg-dark btn theme-btn">
+                    </form>
+
+                    <h3 class="section-title mt-5">About Us</h3>
+                </div>
+            </div>
+
+
+            {% include 'frontend/include/discussion.html' %}
+        </div>
+    </div>
+</section>
+
+{% endblock %}
+
+{% block script %}
+{% endblock %}

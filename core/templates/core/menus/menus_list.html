@@ -1,0 +1,146 @@
+{% extends 'core/change_list.html' %}
+{% load static %}
+{% load admin_extras %}
+{% load misc_filters %}
+{% load i18n %}
+
+
+{% block page_content %}
+    {% csrf_token %}
+
+    {% include "core/includes/list_header_card.html" with title="Create a new menu" subtitle="You can add a new menu by clicking this button." show_button=True %}
+
+    <div class="ibox float-e-margins">
+        <div class="ibox-content">
+            <div class="table-responsive">
+                <div class="mb-2 col-4" style="padding-left: 0px;">
+                    <label for="menu_location">Menu location:</label>
+                    <select class="form-control" id="menu_location" name="menu_location" onchange="menu_search()">
+                        <option value="main_menu">Main Menu</option>
+                        <option value="best_electric_bikes">Best Electric Bikes</option>
+                        <option value="popular_brands">Popular Brands</option>
+                        <option value="popular_categories">Popular Categories</option>
+                        <option value="popular_searches">Popular Searches</option>
+                        <option value="popular_topics">Popular Topics</option>
+                        <option value="footer_links">Footer Links</option>
+                    </select>
+                </div>
+
+                <table class="table table-striped table-bordered table-hover" id="{{ opts.model_name }}-table">
+                    <thead>
+                    <tr>
+                        <th>Order Number</th>
+                        <th>Menu Name</th>
+                        <th>Menu Location</th>
+                        <th>Actions</th>
+                    </tr>
+                    </thead>
+                    <tfoot>
+                    <tr>
+                        <th>Order Number</th>
+                        <th>Menu Name</th>
+                        <th>Menu Location</th>
+                        <th>Actions</th>
+                    </tr>
+                    </tfoot>
+                    <tbody>
+                        {% if menu_list %}
+                            {% for menu in menu_list %}
+                                <tr>
+                                    <td>{{menu.order}}</td>
+                                    <td>{{menu.name}}</td>
+                                    <td>{{menu.menu_location}}</td>
+                                    <td class="row-actions">
+                                        {% if has_view_permission or has_change_permission or has_delete_permission    %}
+                                            <a href="{% url opts|admin_urlname:'update' menu.id|admin_urlquote %}" title="Edit" class="btn btn-primary btn-xs"><i class="fas fa-pencil-alt"></i></a>
+                                        {% endif %}
+
+                                        {% if has_delete_permission %}
+                                            <a data-title="{{ menu.id }}" title="Delete" href="{% url opts|admin_urlname:'delete' menu.id|admin_urlquote %}" class="btn btn-danger btn-xs btn-delete"><i class="fas fa-trash-alt"></i></a>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                                {% if menu.child_menu %}
+                                    <tr>
+                                        <td></td>
+                                        <td colspan="3">
+                                            <table class="table table-striped table-bordered table-hover" id="{{ opts.model_name }}-table">
+                                                <thead>
+                                                <tr>
+                                                    <th>Order Number</th>
+                                                    <th>Menu Name</th>
+                                                    <th>Menu Location</th>
+                                                    <th>Actions</th>
+                                                </tr>
+                                                </thead>
+                                                <tfoot>
+                                                <tr>
+                                                    <th>Order Number</th>
+                                                    <th>Menu Name</th>
+                                                    <th>Menu Location</th>
+                                                    <th>Actions</th>
+                                                </tr>
+                                                </tfoot>
+                                                <tbody>
+                                                    {% for child_menu in menu.child_menu %}
+                                                        <tr>
+                                                            <td>{{child_menu.order}}</td>
+                                                            <td>{{child_menu.name}}</td>
+                                                            <td>{{child_menu.menu_location}}</td>
+                                                            <td class="row-actions">
+                                                                {% if has_view_permission or has_change_permission or has_delete_permission    %}
+                                                                    <a href="{% url opts|admin_urlname:'update' child_menu.id|admin_urlquote %}" title="Edit" class="btn btn-primary btn-xs"><i class="fas fa-pencil-alt"></i></a>
+                                                                {% endif %}
+
+                                                                {% if has_delete_permission %}
+                                                                    <a data-title="{{ child_menu.id }}" title="Delete" href="{% url opts|admin_urlname:'delete' child_menu.id|admin_urlquote %}" class="btn btn-danger btn-xs btn-delete"><i class="fas fa-trash-alt"></i></a>
+                                                                {% endif %}
+                                                            </td>
+                                                        </tr>
+                                                    {% endfor %}
+                                                </tbody>
+                                            </table>
+                                        </td>
+                                    </tr>
+                                {% endif %}
+                            {% endfor %}
+                        {% else %}
+                            <tr>
+                                <td colspan="4" style="text-align: center;">
+                                    No Data Found.
+                                </td>
+                            </tr>
+                        {% endif %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}
+
+
+{% block js %}
+    {{ block.super }}
+    <script src="{% static 'core/js/ajax_processing.js' %}"></script>
+
+    <script>
+        var pagination_url = "{% url opts|admin_urlname:'list-ajax' %}";
+        function menu_search(){
+            console.log(window.location.origin)
+            window.location.replace(window.location.origin+"/customadmin/menus/?s="+$('#menu_location').val());
+            //$('#menus-table').DataTable().search($('#menu_location').val()).draw();
+        }
+
+        $(document).ready(function () {
+            var url_string = window.location.href
+            var url = new URL(url_string);
+            var c = url.searchParams.get("s");
+            if(c == null){
+                $('#menu_location').val('main_menu');
+            }else{
+                $('#menu_location').val(c);
+            }
+        });
+    </script>
+{% endblock %}

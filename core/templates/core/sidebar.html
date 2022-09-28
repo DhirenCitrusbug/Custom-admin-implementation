@@ -1,0 +1,93 @@
+{% load static %}
+{% load admin_extras %}
+
+<nav class="navbar-default navbar-static-side" role="navigation">
+    <div class="sidebar-collapse">
+        <ul class="nav metismenu" id="side-menu">
+
+            <li class="nav-header">
+                <a href="{% url 'core:index' %}">
+                    <img class="nav-image" src="{% static 'core/img/logo.svg' %}" width="100%" />
+                </a>
+                <div class="logo-element">
+                    UC
+                </div>
+            </li>
+
+<!--            {% if perms.core.add_user or perms.core.view_user or perms.core.change_user or perms.core.delete_user or request.user.is_superuser %}-->
+<!--                <li {% if 'users/' in request.path %}class="active" {% endif %}>-->
+<!--                    <a href="">-->
+<!--                        <i class="fa fa-user fa-fw fa-2x"></i>-->
+<!--                        <span class="nav-label">Users</span>-->
+<!--                    </a>-->
+<!--                </li>-->
+<!--            {% endif %}-->
+
+            {% if perms.core.add_reviewcategory or perms.core.view_reviewcategory or perms.core.change_reviewcategory or perms.core.delete_reviewcategory or request.user.is_superuser %}
+                <li {% if 'review-category/' in request.path %} class="active" {% endif %}>
+                    <a href="{% url 'core:reviewcategory-list' %}">
+                        <i class="fa fa-list-alt fa-fw fa-2x"></i>
+                        <span class="nav-label">Categories</span>
+                    </a>
+                </li>
+            {% endif %}
+
+            {% if perms.core.add_reviewbrand or perms.core.view_reviewbrand or perms.core.change_reviewbrand or perms.core.delete_reviewbrand or request.user.is_superuser %}
+                <li {% if 'review-brand/' in request.path %} class="active" {% endif %}>
+                    <a href="{% url 'core:reviewbrand-list' %}">
+                        <i class="fa fa-bicycle fa-fw fa-2x"></i>
+                        <span class="nav-label">Brands</span>
+                    </a>
+                </li>
+            {% endif %}
+
+            {% if perms.core.add_review or perms.core.view_review or perms.core.change_review or perms.core.delete_review or request.user.is_superuser %}
+                <li {% if 'review/' in request.path %} class="active" {% endif %}>
+                    <a href="{% url 'core:review-list' %}">
+                        <i class="fa fa-comments fa-fw fa-2x"></i>
+                        <span class="nav-label">Reviews</span>
+                    </a>
+                </li>
+            {% endif %}
+
+            {% if perms.core.add_pages or perms.core.view_pages or perms.core.change_pages or perms.core.delete_pages or request.user.is_superuser %}
+            <li {% if 'pages/' in request.path %} class="active" {% endif %}>
+                <a href="{% url 'core:pages-list' %}">
+                    <i class="fa fa-file fa-fw fa-2x"></i>
+                    <span class="nav-label">Pages</span>
+                </a>
+            </li>
+            {% endif %}
+
+            {% if perms.core.add_menus or perms.core.view_menus or perms.core.change_menus or perms.core.delete_menus or request.user.is_superuser %}
+            <li {% if 'menus/' in request.path %} class="active" {% endif %}>
+                <a href="{% url 'core:menus-list' %}">
+                    <i class="fa fa-bars fa-fw fa-2x"></i>
+                    <span class="nav-label">Menus</span>
+                </a>
+            </li>
+            {% endif %}
+
+            {% comment %}
+            {% if perms.core.add_trusted_accessories or perms.core.view_trusted_accessories or perms.core.change_trusted_accessories or perms.core.delete_trusted_accessories or request.user.is_superuser %} #}
+            <li {% if 'trusted-accessories/' in request.path %} class="active" {% endif %}>
+                <a href="{% url 'core:trustedaccessories-list' %}">
+                    <i class="fa fa-ad fa-fw fa-2x"></i>
+                    <span class="nav-label">Trusted</span>
+                </a>
+            </li>
+            {% endif %}
+            {% endcomment %}
+
+            {% if perms.core.add_comments or perms.core.view_comments or perms.core.change_comments or perms.core.delete_comments or request.user.is_superuser %}
+            <li {% if 'comments/' in request.path %} class="active" {% endif %}>
+                <a href="{% url 'core:comments-list' %}">
+                    <i class="fa fa-comment fa-fw fa-2x"></i>
+                    <span class="nav-label">Comments</span>
+                </a>
+            </li>
+            {% endif %}
+
+        </ul>
+    </div>
+</nav>

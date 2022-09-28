@@ -1,0 +1,252 @@
+{% extends 'frontend/subpages/base.html'%}
+{% load static %}
+{% block title %}
+    {{category.first.meta_title}}
+{% endblock %}
+
+{% block seoTag %}
+    <meta name="theme-color" content="#80b600">
+	<meta name="apple-mobile-web-app-status-bar-style" content="#80b600">
+	<meta name="msapplication-navbutton-color" content="#80b600">
+    <meta property='og:url' content='https://electricbikereview.com/category/road/' />
+    <meta property="fb:app_id" content="462030500496873" />
+
+    <meta property="og:locale" content="en_us" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="{{category.first.meta_title}}" />
+    <meta property="og:description" content="{{ category.first.description }}" />
+    <meta property="og:site_name" content="ElectricBikeReview.com" />
+    {% if category.first.icon_image %}
+        <meta property="og:image" content="{{ category.first.icon_image.url }}" />
+        <meta property="og:image:width" content="300" />
+        <meta property="og:image:height" content="300" />
+	{% endif %}
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:description" content="{{ category.first.description }}" />
+    <meta name="twitter:title" content="{{category.first.meta_title}}" />
+    {% if category.first.icon_image %}
+        <meta name="twitter:image" content="{{ category.first.icon_image.url }}" />
+        <meta property="og:image:width" content="300" />
+        <meta property="og:image:height" content="300" />
+    {% endif %}
+    <meta name="twitter:site" content="@ebikereview" />
+{% endblock %}
+
+{% block body %}
+        <section class="middle_area">
+            <div class="filter-selected-options">
+                {% comment %} <button class="btn filter-selected-databtn">
+                    <a href="" class="remove-category-cross" data-id="{{category.id}}"><img src="{% static '/assets/images/cross.png' %}" alt="cross" /></a>
+                    <span>{{category}}</span>
+                </button> {% endcomment %}
+                {% for child_category in category %}
+                <button class="btn filter-selected-databtn">
+                    <a href="" class="remove-category-cross" data-id="{{child_category.id}}"><img src="{% static '/assets/images/cross.png' %}" alt="cross" /></a>
+                    <span>{{child_category.name}}</span>
+                </button>
+                {% endfor %}
+                <p class="search-res-text">{{total_reviews}} Results:</p>
+            </div>
+            <script type="application/ld+json">
+                {{ seo_schema |safe }}
+            </script>
+            <div class="main-content">
+                <div class="row m-0">
+                    <div class="col-lg-8 col-xl-9 col-md-6 col-sm-6 p-0">
+                        <div class="left-side-content">
+                            {% comment %} {% for category in category %} {% endcomment %}
+                            <h3 class="section-title">{{category.first.name}}</h3>
+                            <div class="img-cont-box">
+                                <img src="https://ebr-dev-bucket.s3.amazonaws.com/{{ category.first.icon_image }}" alt="cycle">
+                                <p class="desc_p" data-disc="{{category.first.short_description}}">{{category.first.short_description|truncatewords:35}}<a href="#" onclick="return false;" id="show-more-desc">Show More <i class="fa fa-angle-down"></i></a></p>
+                            </div>
+                            {% comment %} {% endfor %} {% endcomment %}
+                            <div class="product-card-wrapper" id="product-card">
+
+
+
+                                {% for categories in featured_reviews %}
+                                <div class="product-card-item">
+                                    <a href="/{{categories.brands.first.slug}}/{{categories.slug}}/"><img
+                                            src="https://ebr-dev-bucket.s3.amazonaws.com/{{ categories.featured_image_thumbnail }}"
+                                            class="pro-card-img" alt="{{categories.name}}" /></a>
+                                    <button class="btn compare-btn {% if categories.id in compare_review %} added {% endif %}" data-id="{{categories.id}}">
+                                        <img src="{% static '/assets/images/plus.png' %}" alt="plus" />
+                                    </button>
+                                    <div class="product-desc">
+                                        <h4 class="product-title" title="{{categories.name}}"><a href="/{{categories.brands.first.slug}}/{{categories.slug}}/">{{categories.name}}</a></h4>
+                                        {% for brand in categories.brands.all %}
+                                        <p class="desc_1">
+                                            <a href="/brand/{{brand.slug}}">{{brand.name}}</a>
+                                        </p>
+                                        {% endfor %}
+                                        <div class="data-price">
+                                            <div class="procard-lastdata">
+                                                {% for category in categories.categories.all %}
+                                                <p class="desc_1">
+                                                    <a href="/category/{{category.slug}}">{{category.name}}</a>
+                                                </p>
+                                                {% endfor %}
+                                            </div>
+                                            {% for price in categories.review_general_review.all %}
+                                            <p class="product-price">${{price.msrp}}</p>
+                                            {% endfor %}
+                                        </div>
+                                        <p class="product-status-text">Promoted</p>
+                                    </div>
+                                </div>
+                                {% endfor %}
+
+
+
+                                {% for categories in category_reviews %}
+                                <div class="product-card-item">
+                                    <a href=""><img
+                                            src="https://ebr-dev-bucket.s3.amazonaws.com/{{ categories.featured_image_thumbnail }}"
+                                            class="pro-card-img" alt="{{categories.name}}" /></a>
+                                    <button class="btn compare-btn {% if categories.id in compare_review %} added {% endif %}" data-id="{{categories.id}}">
+                                        <img src="{% static '/assets/images/plus.png' %}" alt="plus" />
+                                    </button>
+                                    <div class="product-desc">
+                                        <h4 class="product-title" title="{{categories.name}}"><a href="/{{categories.brands.first.slug}}/{{categories.slug}}/">{{categories.name}}</a></h4>
+                                        {% for brand in categories.brands.all %}
+                                        <p class="desc_1">
+                                            <a href="/brand/{{brand.slug}}">{{brand.name}}</a>
+                                        </p>
+                                        {% endfor %}
+                                        <div class="data-price">
+                                            <div class="procard-lastdata">
+                                                {% for category in categories.categories.all %}
+                                                <p class="desc_1">
+                                                    <a href="/category/{{category.slug}}">{{category.name}}</a>
+                                                </p>
+                                                {% endfor %}
+                                            </div>
+                                            {% for price in categories.review_general_review.all %}
+                                            <p class="product-price">${{price.msrp}}</p>
+                                            {% endfor %}
+                                        </div>
+                                    </div>
+                                </div>
+                                {% endfor %}
+                            </div>
+
+                            <ul class="pagination justify-content-center pagination-sm" id="pagination">
+                                {% if category_reviews.has_previous %}
+                                <span class="btn page text-primary"><a href="?page={{ category_reviews.previous_page_number }}"><b>&laquo; Prev</b></a></span>
+                                {% endif %}
+
+                                {% if category_reviews.number == 1 %}
+                                    {% if category_reviews.paginator.num_pages <= 5 %}
+                                        {% for page in pages %}
+                                            {% if  page == category_reviews.number %}
+                                                <span class="btn page text-dark"><b>{{ page }}</b></span>
+                                            {% elif category_reviews.number != category_reviews.paginator.num_pages %}
+                                                <span class="btn page text-dark"><a href="?page={{ page }}"><b>{{ page }}</b></a></span>
+                                            {% endif %}
+                                        {% endfor %}
+                                    {% else %}
+                                    <span class="btn page text-dark"><b>{{ category_reviews.number }}</b></span>
+                                    <span class="btn page text-dark"><a href="?page={{ category_reviews.number|add:'1' }}"><b>{{ category_reviews.number|add:"1" }}</b></a></span>
+                                    <span class="btn page text-dark"><a href="?page={{ category_reviews.number|add:'2' }}"><b>{{ category_reviews.number|add:"2" }}</b></a></span>
+                                    <span class="btn page text-dark"><a href="?page={{ category_reviews.number|add:'3' }}"><b>{{ category_reviews.number|add:"3" }}</b></a></span>
+                                    <span class="btn page text-dark"><a href="#" onclick="return false;"><b>...</b></a></span>
+                                    <span class="btn page text-dark"><a href="?page={{ category_reviews.paginator.num_pages }}"><b>{{ category_reviews.paginator.num_pages }}</b></a></span>
+                                    {% endif %}
+                                {% elif category_reviews.number > 1 and category_reviews.number < 4 %}
+                                    {% if category_reviews.paginator.num_pages <= 5 %}
+                                        {% for page in pages %}
+                                            {% if  page == category_reviews.number %}
+                                                <span class="btn page text-dark"><b>{{ page }}</b></span>
+                                            {% else %}
+                                                <span class="btn page text-dark"><a href="?page={{ page }}"><b>{{ page }}</b></a></span>
+                                            {% endif %}
+                                        {% endfor %}
+                                    {% else %}
+                                        <span class="btn page text-dark"><a href="?page=1"><b>1</b></a></span>
+                                        {% for page in pages %}
+                                            {% if page >= 2 and page <= 4 %}
+                                                {% if  page == category_reviews.number %}
+                                                    <span class="btn page text-dark"><b>{{ page }}</b></span>
+                                                {% else %}
+                                                    <span class="btn page text-dark"><a href="?page={{ page }}"><b>{{ page }}</b></a></span>
+                                                {% endif %}
+                                            {% endif %}
+                                        {% endfor %}
+                                        <span class="btn page text-dark"><a href="#" onclick="return false;"><b>...</b></a></span>
+                                        <span class="btn page text-dark"><a href="?page={{ category_reviews.paginator.num_pages }}"><b>{{ category_reviews.paginator.num_pages }}</b></a></span>
+                                    {% endif %}
+                                {% elif category_reviews.number >= 4 and category_reviews.number <= category_reviews.paginator.num_pages|add:'-3' %}
+                                    <span class="btn page text-dark"><a href="?page=1"><b>1</b></a></span>
+                                    <span class="btn page text-dark"><a href="#" onclick="return false;"><b>...</b></a></span>
+                                        {% for page in pages %}
+                                            {% if category_reviews.number >= 4 and category_reviews.number <= category_reviews.paginator.num_pages|add:'-3' %}
+                                                {% if page == category_reviews.number %}
+                                                    <span class="btn page text-primary"><a href="?page={{ category_reviews.previous_page_number }}"><b>{{ category_reviews.previous_page_number }}</b></a></span>
+                                                    <span class="btn page text-dark"><b>{{ page }}</b></span>
+                                                    <span class="btn page text-dark"><a href="?page={{ category_reviews.next_page_number }}"><b>{{ category_reviews.next_page_number }}</b></a></span>
+                                                {% endif %}
+                                            {% endif %}
+                                        {% endfor %}
+                                        <span class="btn page text-dark"><a href="#" onclick="return false;"><b>...</b></a></span>
+                                        <span class="btn page text-dark"><a href="?page={{ category_reviews.paginator.num_pages }}"><b>{{ category_reviews.paginator.num_pages }}</b></a></span>
+                                {% elif category_reviews.number > category_reviews.paginator.num_pages|add:'-3' and category_reviews.number < category_reviews.paginator.num_pages %}
+                                    {% if category_reviews.paginator.num_pages <= 5 %}
+                                        {% for page in pages %}
+                                            {% if  page == category_reviews.number %}
+                                                <span class="btn page text-dark"><b>{{ page }}</b></span>
+                                            {% elif category_reviews.number != category_reviews.paginator.num_pages %}
+                                                <span class="btn page text-dark"><a href="?page={{ page }}"><b>{{ page }}</b></a></span>
+                                            {% endif %}
+                                        {% endfor %}
+                                    {% else %}
+                                        <span class="btn page text-dark"><a href="?page=1"><b>1</b></a></span>
+                                        <span class="btn page text-dark"><a href="#" onclick="return false;"><b>...</b></a></span>
+                                        {% for page in pages %}
+                                            {% if page >= category_reviews.paginator.num_pages|add:'-3' and category_reviews.number < category_reviews.paginator.num_pages %}
+                                                {% if  page == category_reviews.number %}
+                                                    <span class="btn page text-dark"><b>{{ page }}</b></span>
+                                                {% else %}
+                                                    <span class="btn page text-dark"><a href="?page={{ page }}"><b>{{ page }}</b></a></span>
+                                                {% endif %}
+                                            {% endif %}
+                                        {% endfor %} 
+                                    {% endif %}
+                                {% elif category_reviews.number == category_reviews.paginator.num_pages %}
+                                    {% if category_reviews.paginator.num_pages <= 5 %}
+                                        {% for page in pages %}
+                                            {% if  page == category_reviews.number %}
+                                                <span class="btn page text-dark"><b>{{ page }}</b></span>
+                                            {% else %}
+                                                <span class="btn page text-dark"><a href="?page={{ page }}"><b>{{ page }}</b></a></span>
+                                            {% endif %}
+                                        {% endfor %}
+                                    {% else %}
+                                        <span class="btn page text-dark"><a href="?page=1"><b>1</b></a></span>
+                                        <span class="btn page text-dark"><a href="#" onclick="return false;"><b>...</b></a></span>
+                                        <span class="btn page text-dark"><a href="?page={{ category_reviews.paginator.num_pages|add:'-3' }}"><b>{{ category_reviews.paginator.num_pages|add:'-3' }}</b></a></span>
+                                        <span class="btn page text-dark"><a href="?page={{ category_reviews.paginator.num_pages|add:'-2' }}"><b>{{ category_reviews.paginator.num_pages|add:'-2' }}</b></a></span>
+                                        <span class="btn page text-dark"><a href="?page={{ category_reviews.paginator.num_pages|add:'-1' }}"><b>{{ category_reviews.paginator.num_pages|add:'-1' }}</b></a></span>
+                                        <span class="btn page text-dark"><b>{{ category_reviews.paginator.num_pages }}</b></span>
+                                    {% endif %}
+                                {% endif %}
+
+                                {% if category_reviews.has_next %}
+                                <span class="btn page text-primary"><a href="?page={{ category_reviews.next_page_number }}"><b>Next &raquo;</b></a></span>
+                                {% endif %}
+                            </ul>
+                        </div>
+                    </div>
+                    {% include 'frontend/include/discussion.html' %}
+                </div>
+            </div>
+        </section>
+
+{% comment %} <script src="{% static 'assets/js/jquery.js' %}"></script>
+<script src="{% static 'assets/js/category_pagination.js' %}"></script> {% endcomment %}
+
+{% endblock %}
+
+{% block script %}
+
+{% endblock %}

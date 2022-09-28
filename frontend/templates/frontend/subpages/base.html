@@ -1,0 +1,524 @@
+{% load static %}
+{% load review_card %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="description" content="Research electric bikes including prices, detailed specs, compare tools, local shops, and forums. Objective unbiased reviews and advice in the forums.">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>
+        {% block title %}
+        {% endblock %}
+    </title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=PT+Sans:ital,wght@0,400;0,700;1,400;1,700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet"
+        href="https://fonts.sandbox.google.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+    <link rel="stylesheet" href="{% static 'assets/css/bootstrap.min.css' %}">
+    <link rel="stylesheet" href="https://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.css">
+    <link rel="stylesheet" href="{% static 'assets/css/font-awesome.css' %}">
+    <link rel="stylesheet" href="{% static 'assets/css/common.css' %}">
+    <link rel="stylesheet" href="{% static 'assets/css/home_custom.css' %}">
+    <meta name="msapplication-TileImage" content="http://54.213.76.238/static/assets/images/EBRlogo.png" />
+
+    {% block seoTag %}
+
+    {% endblock %}
+</head>
+
+<body class="">
+    <div class="page-wrapper">
+        <!-- Header -->
+        <header data-scroll="top" class="header_wrapper" id="top">
+            <div class="header-top">
+                <div class="logo-wrapper">
+                    <a href="/">
+                        <img src="{% static 'assets/images/ebr-logo.svg' %}" alt="logo" />
+                    </a>
+                </div>
+                <div class="header-nav">
+                    <ul class="navbar-nav" id="accordionul">
+                        {% for main_menu in main_menus %}
+                        <li class="nav-item">
+                            <a class="nav-link dropdown-toggle" href="#" data-toggle="dropdown" id="#{{ main_menu.id }}"
+                                aria-expanded="false">
+                                <span>{{ main_menu.name | title }}</span>
+                            </a>
+                            <div id="{{ main_menu.id }}drop" class="dropdown-menu" aria-labelledby="{{ main_menu.id }}">
+                                {% for child_menu in main_menu.child_menus %}
+                                <a class="dropdown-item" href="{{ child_menu.link }}">{{ child_menu.name | title }}</a>
+                                {% endfor %}
+                            </div>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                <div class="navExtra-content">
+                    <a href="/compare/" class="compare-icon-head">
+                        <img src="{% static 'assets/images/compare-icon.png' %}" alt="compare" />
+                        <div class="count-icon">{{compare_review|length}}</div>
+                    </a>
+                </div>
+            </div>
+            <div class="header-bottom">
+                <ul class="navbar-nav" id="header-bottom">
+                    <!-- Nav Item - Pages Collapse Menu -->
+                    <div class="filter-data">
+                        <div class="form-group search-bar">
+                            <img src="{% static 'assets/images/search-glass.png' %}" alt="search" />
+                            <input type="search" class="search form-control" placeholder="Brand or Model" name="search"
+                                id="search-review-data" />
+                            <ul class="suggestions">
+
+                            </ul>
+                        </div>
+                    </div>
+                    <li class="nav-item">
+                        <button class="btn dropdown-toggle" data-toggle="dropdown" id="#price" aria-expanded="false">
+                            <span>Price</span>
+                        </button>
+                        <div id="pricedrop" class="dropdown-menu header-bottom-drops">
+                            <h4 class="bottom-header-title">Price: </h4>
+                            <div class="graph-range-box">
+                                <canvas id="myChart"></canvas>
+
+                                <div class="min-max-slider" data-legendnum="2">
+                                    <label for="min">Minimum price</label>
+                                    <input id="min" class="min" name="min" type="range" step="1" min="0" max="3000" />
+                                    <label for="max">Maximum price</label>
+                                    <input id="max" class="max" name="max" type="range" step="1" min="0" max="3000" />
+                                </div>
+                            </div>
+                            <div class="price-range-box">
+                                <input class="form-control price-range min" type="number" name=""
+                                    placeholder="Min Price" />
+                                <span class="line"></span>
+                                <input class="form-control price-range max" type="number" name=""
+                                    placeholder="Max Price" />
+                            </div>
+                            <div class="justify-content-between">
+                                <span id="error_min_price" class="text-danger d-block text-left small"></span>
+                                <span id="error_max_price" class="text-danger d-block text-right small"></span>
+                            </div>
+                            <button class="btn theme-btn see-result" id="price-result">See {{bike_reviews.count}}
+                                Results</button>
+                        </div>
+                    </li>
+                    <li class="nav-item">
+                        <button class="btn dropdown-toggle" data-toggle="dropdown" id="#categories"
+                            aria-expanded="false">
+                            <span>Categories</span>
+                        </button>
+                        <div id="categoriesdrop" class="dropdown-menu header-bottom-drops" aria-labelledby="categories">
+                            <h4 class="bottom-header-title">Categories: </h4>
+                            <div class="categories-group">
+                                <div class="categoryitems">
+                                    <div class="row">
+                                        {% for category in bike_categories %}
+                                        <div class="col-sm-6">
+                                            <a href="javascript:void(0);" class="category-item"
+                                                data-id="{{ category.id }}" data-value="{{ category.total_review }}"
+                                                data-slug={{category.slug}}>
+                                                <img src="https://ebr-dev-bucket.s3.amazonaws.com/{{ category.icon_image }}"
+                                                    alt="{{ category.name }}" />
+                                                <p>{{ category.slug | category_name_clean }} ({{ category.total_review }})</p>
+                                            </a>
+                                        </div>
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                                <div class="btn-section-sticky">
+                                    <div class="">
+                                        <a href="/category/" class="category-list-link">Complete ebike category
+                                            list</a>
+                                    </div>
+                                    <div class="">
+                                        <!-- <button class="btn theme-btn">See 1,762 Results</button> -->
+                                        <button class="btn theme-btn" id="total_result" data-value="{{ bike_reviews.count }}" disabled>See {{ bike_reviews.count }} Results</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </li>
+                    <li class="nav-item">
+                        <button class="btn dropdown-toggle" href="#" data-toggle="dropdown" id="#morefilters"
+                            aria-expanded="false">
+                            <span>More Filters</span>
+                        </button>
+                        <div id="morefiltersdrop" class="dropdown-menu header-bottom-drops">
+                            <div class="morefilter-list">
+                                <h4 class="bottom-header-title">Model Year: </h4>
+                                <div class="price-range-box">
+                                    <select class="form-control year-range min more-filter" id="year-range">
+                                        <option disabled="disabled" selected="selected">Min Year</option>
+                                        {% for year in review_year_range %}
+                                            <option value="{{year}}">{{year}}</option>
+                                        {% endfor %}
+                                    </select>
+                                    <span class="line"></span>
+                                    <select class="form-control year-range max more-filter" id="year-range">
+                                        <option disabled="disabled" selected="selected">Max Year</option>
+                                        {% for year in review_year_range %}
+                                            <option value="{{year}}">{{year}}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                                <div class="justify-content-between">
+                                    <span id="error_min_year" class="text-danger d-block text-left small"></span>
+                                    <span id="error_max_year" class="text-danger d-block text-right small"></span>
+                                </div>
+                                <h4 class="bottom-header-title">Total Weight:</h4>
+                                <div class="graph-range-box">
+                                    <canvas id="myChart2"></canvas>
+                                
+                                    <div class="min-max-slider" data-legendnum="2">
+                                        <label for="min">Minimum price</label>
+                                        <input id="min2" class="min" name="min" type="range" step="1" min="0" max="3000" />
+                                        <label for="max">Maximum price</label>
+                                        <input id="max2" class="max" name="max" type="range" step="1" min="0" max="3000" />
+                                    </div>
+                                </div>
+                                <div class="price-range-box">
+                                    <input class="form-control more-filter weight-range min" type="number" name=""
+                                        placeholder="Min Weight" />
+                                    <span class="line"></span>
+                                    <input class="form-control more-filter weight-range max" type="number" name=""
+                                        placeholder="Max Weight" />
+                                </div>
+                                <div class="justify-content-between">
+                                    <span id="error_min_weight" class="text-danger d-block text-left small"></span>
+                                    <span id="error_max_weight" class="text-danger d-block text-right small"></span>
+                                </div>
+                                
+                                <h4 class="bottom-header-title">Motor Type:</h4>
+                                <div class="checkbox-grp-filter">
+                                    <div class="form-check">
+                                        <label class="form-check-label">
+                                            <input type="checkbox" class="form-check-input more-filter" value="Hub"
+                                                id="hub-motor">Hub Motor ({{hub_motors.count}})
+                                        </label>
+                                    </div>
+                                    <div class="form-check">
+                                        <label class="form-check-label">
+                                            <input type="checkbox" class="form-check-input more-filter" value="Mid-Drive"
+                                                id="mid-drive-motor">Mid-Drive Motor ({{mid_drive_motors.count}})
+                                        </label>
+                                    </div>
+                                </div>
+
+                                <h4 class="bottom-header-title">Battery Capacity:</h4>
+                                <div class="graph-range-box">
+                                    <canvas id="myChart3"></canvas>
+                                
+                                    <div class="min-max-slider" data-legendnum="2">
+                                        <label for="min">Minimum price</label>
+                                        <input id="min3" class="min" name="min" type="range" step="1" min="0" max="3000" />
+                                        <label for="max">Maximum price</label>
+                                        <input id="max3" class="max" name="max" type="range" step="1" min="0" max="3000" />
+                                    </div>
+                                </div>
+                                <div class="price-range-box">
+                                    <input class="form-control more-filter battery-capacity min" type="number" name=""
+                                        placeholder="Min Capacity" />
+                                    <span class="line"></span>
+                                    <input class="form-control more-filter battery-capacity max" type="number" name=""
+                                        placeholder="Max Capacity" />
+                                </div>
+                                <div class="justify-content-between">
+                                    <span id="error_min_battery_capacity"
+                                        class="text-danger d-block text-left small"></span>
+                                    <span id="error_max_battery_capacity"
+                                        class="text-danger d-block text-right small"></span>
+                                </div>
+
+                                <h4 class="bottom-header-title">Class:</h4>
+                                <div class="checkbox-grp-filter">
+                                    <div class="form-check">
+                                        <label class="form-check-label">
+                                            <input type="checkbox" class="form-check-input more-filter" id="bike-class-1"
+                                                value="Class 1">Class 1: Pedal assist only
+                                            ({{review_class_1.count}})<br /><span>Top speed 20mph in NA, 25km/h in
+                                                Europe.</span>
+                                        </label>
+                                    </div>
+                                    <div class="form-check">
+                                        <label class="form-check-label">
+                                            <input type="checkbox" class="form-check-input more-filter" id="bike-class-2"
+                                                value="Class 2">Class 2: Throttle ({{review_class_2.count}})
+                                            <br /><span>Twist or trigger, may also have pedal assist.</span>
+                                        </label>
+                                    </div>
+                                    <div class="form-check">
+                                        <label class="form-check-label">
+                                            <input type="checkbox" class="form-check-input more-filter" id="bike-class-3"
+                                                value="Class 3">Class 3: Speed pedelec ({{review_class_3.count}})
+                                            <br /><span>Pedal assist up to 28mph (45km/h).</span>
+                                        </label>
+                                    </div>
+                                    <div class="form-check">
+                                        <label class="form-check-label">
+                                            <input type="checkbox" class="form-check-input more-filter"
+                                                id="bike-class-other" value="Other">Other: Very high speed
+                                            ({{review_class_other.count}}) <br /><span>Usually for off-road recreational
+                                                use.</span>
+                                        </label>
+                                    </div>
+                                </div>    
+
+                                <h4 class="bottom-header-title">Suspension:</h4>
+                                <div class="checkbox-grp-filter">
+                                    <div class="form-check">
+                                        <label class="form-check-label">
+                                            <input type="checkbox" class="form-check-input more-filter" id="suspension-none"
+                                                value="None">None: Rigid ({{suspension_rigid.count}})
+                                        </label>
+                                    </div>
+                                    <div class="form-check">
+                                        <label class="form-check-label">
+                                            <input type="checkbox" class="form-check-input more-filter"
+                                                id="suspension-front" value="Front Suspension">Front: Hardtail
+                                            ({{suspension_hardtail.count}})
+                                        </label>
+                                    </div>
+                                    <div class="form-check">
+                                        <label class="form-check-label">
+                                            <input type="checkbox" class="form-check-input more-filter" id="suspension-rear"
+                                                value="Rear Suspension">Rear: Softail ({{suspension_softail.count}})
+                                        </label>
+                                    </div>
+                                    <div class="form-check">
+                                        <label class="form-check-label">
+                                            <input type="checkbox" class="form-check-input more-filter" id="suspension-full"
+                                                value="Full Suspension">Both: Full Suspension
+                                            ({{suspension_full_suspension.count}})
+                                        </label>
+                                    </div>
+                                </div>
+
+                                <h4 class="bottom-header-title">Suspension Travel: </h4>
+                                <div class="price-range-box">
+                                    <input class="form-control more-filter suspension-travel min" type="number" name=""
+                                        placeholder="Min Travel" />
+                                    <span class="line"></span>
+                                    <input class="form-control more-filter suspension-travel max" type="number" name=""
+                                        placeholder="Max Travel" />
+                                </div>
+                                <div class="justify-content-between">
+                                    <span id="error_min_suspension_travel"
+                                        class="text-danger d-block text-left small"></span>
+                                    <span id="error_max_suspension_travel"
+                                        class="text-danger d-block text-right small"></span>
+                                </div>
+                                
+                                <h4 class="bottom-header-title">Accessories:</h4>
+                                <div class="checkbox-grp-filter">
+                                    <div class="form-check">
+                                        <label class="form-check-label">
+                                            <input type="checkbox" class="form-check-input more-filter"
+                                                id="accessories-fenders" value="Yes">Fenders ({{accessories_fenders.count}})
+                                        </label>
+                                    </div>
+                                    <div class="form-check">
+                                        <label class="form-check-label">
+                                            <input type="checkbox" class="form-check-input more-filter"
+                                                id="accessories-lights" value="Yes">Lights ({{accessories_lights.count}})
+                                        </label>
+                                    </div>
+                                    <div class="form-check">
+                                        <label class="form-check-label">
+                                            <input type="checkbox" class="form-check-input more-filter"
+                                                id="accessories-racks" value="Yes">Racks ({{accessories_rack.count}})
+                                        </label>
+                                    </div>
+                                </div>
+
+                                <h4 class="bottom-header-title">Keywords:</h4>
+                                <input type="text" class="form-control keyword-search more-filter" placeholder="Bosch, Fox, Gates etc." name="" />
+                            </div>
+                            <div class="motorfilbtn">
+                                <!-- <button class="btn theme-btn see-result">See 767 Results</button> -->
+                                <button class="btn theme-btn see-result" id="more-filter-see-result" data-value="{{ bike_reviews.count }}" disabled>See {{ bike_reviews.count }} Results</button>
+                            </div>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </header>
+        {% block body %}
+
+        {% endblock %}
+        <footer class="footer_wrapper cookie_pad">
+            <iframe src="http://54.213.76.238/dashboard-integration/shops-nearby/" id="shops-nearby-iframe"
+                frameborder="0" style="width: 100%;height: 100vh;"></iframe>
+            <div class="footer_links_wrapper">
+                <div class="row">
+                    <div class="col-lg-4 col-md-6 col-sm-12">
+                        <div class="footer_links">
+                            <h2>Popular Electric Bike Brands</h2>
+                            <div class="row">
+                                <div class="col-lg-6 col-md-6 col-xs-6">
+                                    <ul>
+                                        {% for popular_brand in popular_brands %}
+                                        <li><a href="">{{ popular_brand.name }}</a></li>
+
+                                        {% if forloop.counter|divisibleby:"8" %}
+                                    </ul>
+                                </div>
+                                <div class="col-lg-6 col-md-6 col-sm-12">
+                                    <ul>
+                                        {% endif %}
+                                        <!-- <li><a href="">{{ popular_brand.name }}</a></li> -->
+                                        {% endfor %}
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-4 col-md-6 col-sm-12">
+                        <div class="footer_links">
+                            <h2>Popular Electric Bike Categories</h2>
+                            <div class="row">
+                                <div class="col-lg-6 col-md-6 col-xs-6">
+                                    <ul>
+                                        {% for popular_category in popular_categories %}
+                                        <li><a href="{{ popular_category.link }}">{{ popular_category.name }}</a></li>
+
+                                        {% if forloop.counter|divisibleby:"8" %}
+                                    </ul>
+                                </div>
+                                <div class="col-lg-6 col-md-6 col-sm-12">
+                                    <ul>
+                                        {% endif %}
+                                        <!-- <li><a href="">{{ popular_category.name }}</a></li> -->
+                                        {% endfor %}
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-4 col-md-6 col-sm-12">
+                        <div class="footer_links">
+                            <h2>Popular Electric Bike Topics</h2>
+                            <div class="row">
+                                <div class="col-lg-6 col-md-6 col-xs-6">
+                                    <ul>
+                                        {% for popular_search in popular_topics %}
+                                        <li><a href="{{ popular_search.link }}">{{ popular_search.name }}</a></li>
+
+                                        {% if forloop.counter|divisibleby:"8" %}
+                                    </ul>
+                                </div>
+                                <div class="col-lg-6 col-md-6 col-sm-12">
+                                    <ul>
+                                        {% endif %}
+                                        <!-- <li><a href="">{{ popular_search.name }}</a></li> -->
+                                        {% endfor %}
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="copy_right_wrapper">
+                <div class="copy_right_inner">
+                    <ul class="footer_menu">
+                        {% for footer_menu in footer_menus %}
+                            <li><a href="{{ footer_menu.link }}"> {{ footer_menu.slug }}{{footer_menu.name }}</a></li>
+                            {% if not forloop.last %}
+                                <li><span class="dash-line">/</span></li>
+                            {% endif %}
+                        {% endfor %}
+                    </ul>
+                    <p>
+                        Copyright © 2012-{% now 'Y' %} ElectricBikeReview.com, All Rights Reserved.
+                    </p>
+                    <ul class="social_link">
+                        <li>
+                            <a href="">
+                                <svg width="32" height="32" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
+                                    <path
+                                        d="M16.0083 25.3506H15.9817C15.899 25.3506 7.62833 25.3346 5.54166 24.768C4.39423 24.4589 3.49813 23.5623 3.18966 22.4146C2.81444 20.2978 2.63324 18.1511 2.64833 16.0013C2.63864 13.848 2.82474 11.6983 3.20433 9.57864C3.52127 8.42998 4.41344 7.52923 5.559 7.2013C7.58833 6.66797 15.631 6.66797 15.9723 6.66797H16.0003C16.0843 6.66797 24.3763 6.68397 26.4417 7.25064C27.5867 7.56131 28.481 8.4561 28.791 9.6013C29.1782 11.726 29.3599 13.8831 29.3337 16.0426C29.343 18.1933 29.1565 20.3404 28.7763 22.4573C28.4639 23.6035 27.5672 24.4981 26.4203 24.808C24.3937 25.3453 16.3497 25.3506 16.0083 25.3506ZM13.3417 12.008L13.335 20.008L20.2843 16.008L13.3417 12.008Z"
+                                        fill="#1D1D1F"></path>
+                                </svg>
+                            </a>
+                        </li>
+                        <li><a href="">
+                                <svg width="32" height="32" viewBox="0 0 32 32" fill="none"
+                                    xmlns="http://www.w3.org/2000/svg">
+                                    <path
+                                        d="M2.66895 16.0034C2.6705 22.5626 7.44015 28.1474 13.9183 29.1754V19.8567H10.5356V16.0034H13.9223V13.07C13.7709 11.6801 14.2456 10.2948 15.2178 9.28995C16.19 8.28507 17.5587 7.76473 18.9529 7.87004C19.9537 7.8862 20.9519 7.97533 21.9396 8.13671V11.4154H20.2543C19.6741 11.3394 19.0908 11.531 18.6686 11.9363C18.2465 12.3415 18.0313 12.9166 18.0836 13.4994V16.0034H21.7783L21.1876 19.858H18.0836V29.1754C25.0896 28.0682 30.0024 21.6697 29.263 14.6155C28.5235 7.5612 22.3907 2.32062 15.3074 2.69028C8.22409 3.05995 2.67007 8.91045 2.66895 16.0034Z"
+                                        fill="#1D1D1F"></path>
+                                </svg>
+                            </a></li>
+                        <li><a href="">
+                                <svg width="32" height="32" viewBox="0 0 32 32" fill="none"
+                                    xmlns="http://www.w3.org/2000/svg">
+                                    <path
+                                        d="M16.0029 28.0558C12.7229 28.0558 12.3363 28.0385 11.0563 27.9825C10.0581 27.9497 9.07284 27.7467 8.14293 27.3825C6.53401 26.7563 5.26178 25.4836 4.63626 23.8745C4.286 22.9412 4.09709 21.9551 4.0776 20.9585C4.00293 19.6811 4.00293 19.2625 4.00293 16.0078C4.00293 12.7185 4.02026 12.3345 4.0776 11.0611C4.09751 10.0658 4.28642 9.08116 4.63626 8.14915C5.2611 6.53785 6.5354 5.26404 8.14693 4.63981C9.07845 4.28808 10.0634 4.09867 11.0589 4.07981C12.3323 4.00781 12.7509 4.00781 16.0029 4.00781C19.3096 4.00781 19.6896 4.02515 20.9496 4.07981C21.9477 4.09883 22.9353 4.28823 23.8696 4.63981C25.4807 5.26475 26.7547 6.53831 27.3803 8.14915C27.7364 9.09474 27.9263 10.0948 27.9416 11.1051C28.0163 12.3825 28.0163 12.7998 28.0163 16.0531C28.0163 19.3065 27.9976 19.7331 27.9416 20.9958C27.9217 21.9934 27.7324 22.9804 27.3816 23.9145C26.7545 25.5248 25.4803 26.7979 23.8696 27.4238C22.9366 27.7734 21.9511 27.9623 20.9549 27.9825C19.6816 28.0558 19.2643 28.0558 16.0029 28.0558ZM15.9576 6.11848C12.6963 6.11848 12.3576 6.13448 11.0843 6.19181C10.3242 6.20188 9.57157 6.34213 8.85893 6.60648C7.8066 7.00916 6.9739 7.83847 6.56693 8.88915C6.30055 9.60954 6.16027 10.3705 6.15226 11.1385C6.0816 12.4305 6.0816 12.7691 6.0816 16.0078C6.0816 19.2078 6.0936 19.5958 6.15226 20.8798C6.1642 21.6401 6.30439 22.3929 6.56693 23.1065C6.9745 24.1565 7.80705 24.9851 8.85893 25.3878C9.57108 25.6539 10.3241 25.7942 11.0843 25.8025C12.3749 25.8771 12.7149 25.8771 15.9576 25.8771C19.2283 25.8771 19.5669 25.8611 20.8296 25.8025C21.5901 25.7932 22.3434 25.653 23.0563 25.3878C24.1022 24.9817 24.9295 24.1549 25.3363 23.1091C25.6021 22.3881 25.7424 21.6269 25.7509 20.8585H25.7656C25.8229 19.5838 25.8229 19.2438 25.8229 15.9865C25.8229 12.7291 25.8083 12.3865 25.7509 11.1131C25.739 10.3537 25.5988 9.60183 25.3363 8.88915C24.9304 7.84191 24.103 7.01354 23.0563 6.60648C22.3435 6.3408 21.5902 6.20051 20.8296 6.19181C19.5403 6.11848 19.2029 6.11848 15.9576 6.11848ZM16.0029 22.1665C13.5096 22.1681 11.2608 20.6675 10.3054 18.3644C9.35 16.0614 9.87614 13.4096 11.6384 11.6458C13.4007 9.88194 16.0521 9.35351 18.3559 10.3069C20.6598 11.2603 22.1624 13.5078 22.1629 16.0011C22.1593 19.4026 19.4043 22.1599 16.0029 22.1665ZM16.0029 11.9985C13.7938 11.9985 12.0029 13.7893 12.0029 15.9985C12.0029 18.2076 13.7938 19.9985 16.0029 19.9985C18.2121 19.9985 20.0029 18.2076 20.0029 15.9985C19.9978 13.7915 18.2099 12.0036 16.0029 11.9985ZM22.4029 11.0478C21.6102 11.0449 20.9695 10.4006 20.9709 9.60782C20.9724 8.81505 21.6155 8.17316 22.4083 8.17316C23.201 8.17316 23.8441 8.81504 23.8456 9.60781C23.846 9.9903 23.694 10.3572 23.4233 10.6274C23.1526 10.8976 22.7854 11.0489 22.4029 11.0478Z"
+                                        fill="#1D1D1F"></path>
+                                </svg>
+                            </a></li>
+                        <li><a href="">
+                                <svg width="32" height="32" viewBox="0 0 32 32" fill="none"
+                                    xmlns="http://www.w3.org/2000/svg">
+                                    <path
+                                        d="M26.66 8.91602C27.8553 8.20147 28.7496 7.07633 29.176 5.75068C28.0529 6.41709 26.8241 6.88652 25.5427 7.13868C23.7661 5.25939 20.9514 4.80205 18.6712 6.02222C16.3911 7.2424 15.21 9.838 15.788 12.3587C11.1875 12.1277 6.90131 9.95457 3.99602 6.38002C2.47981 8.99524 3.25462 12.3384 5.76669 14.02C4.8583 13.9908 3.97006 13.7449 3.17602 13.3027C3.17602 13.3267 3.17602 13.3507 3.17602 13.3747C3.17655 16.0989 5.09652 18.4455 7.76669 18.9853C6.92411 19.2146 6.0403 19.2483 5.18269 19.084C5.93362 21.4137 8.08076 23.0097 10.528 23.0573C8.50113 24.6482 5.99799 25.5109 3.42135 25.5067C2.96465 25.5073 2.5083 25.4811 2.05469 25.428C4.67121 27.1094 7.71651 28.0018 10.8267 27.9987C15.1537 28.0284 19.3121 26.3226 22.3717 23.2627C25.4313 20.2029 27.1368 16.0443 27.1067 11.7173C27.1067 11.4693 27.1009 11.2227 27.0894 10.9773C28.21 10.1675 29.1771 9.16422 29.9454 8.01468C28.9014 8.47743 27.794 8.78125 26.66 8.91602Z"
+                                        fill="#1D1D1F"></path>
+                                </svg>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <div class="cookie_wrapper">
+                <div class="cookie_inner">
+                    <p>
+                        We use cookies to improve user experience and advertising. By clicking accept, you agree to our
+                        <a href="">Terms of Use</a>. You can change settings by clicking Preferences.
+                    </p>
+                    <ul>
+                        <li><button class="btn theme-btn cookie_p_btn">Preferences</button></li>
+                        <li><button class="btn theme-btn blue-btn cookie_close_btn">Accept</button></li>
+                    </ul>
+                </div>
+            </div>
+        </footer>
+
+        <a href="#" id="scrollToTop" style="display: none;"><span></span></a>
+        <div class='upper-layout' style="display: none;"></div>
+        <div class="bottom-layout" style="display: none;"></div>
+    </div>
+
+    <!-- <script src="{% static 'assets/js/jquery-3.2.1.slim.min.j' %}s"></script> -->
+    <script src="{% static 'assets/js/jquery.js' %}"></script>
+    <!-- <script src="https://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.js"></script> -->
+    <script src="{% static 'assets/js/jquery-ui.min.js' %}"></script>
+    <script src="{% static 'assets/js/popper.min.js' %}"></script>
+    <script src="{% static 'assets/js/bootstrap.min.js' %}"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="{% static 'assets/js/custom.js' %}"></script>
+    <script src="{% static 'assets/js/flyto.js' %}"></script>
+    <script src="{% static 'assets/js/home_custom.js' %}"></script>
+    <script src="{% static 'assets/js/jquery_cookie.min.js' %}"></script>
+    <!-- <script src="./assets/js/jquery-3.2.1.slim.min.js"></script> -->
+
+    <script>
+        $('.product-card-wrapper').flyto({
+            item: '.product-card-item',
+            target: '.compare-icon-head',
+            button: '.compare-btn'
+        });
+    </script>
+    {% block script %}
+    {% endblock %}
+
+
+
+</body>
+
+</html>

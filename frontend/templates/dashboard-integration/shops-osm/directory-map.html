@@ -1,0 +1,41 @@
+{% load static %}
+<!-- Main stylesheet for this widget -->
+<link rel="stylesheet" href="{% static 'shops-osm/app.min.css' %}" />
+<!-- Font Awesome assets used for icons  -->
+<link rel="stylesheet" href="{% static 'shops-osm/all.min.css' %}" />
+<!-- PT Sans Fonts  -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=PT+Sans:wght@400;700&display=swap" rel="stylesheet">
+<script type="text/javascript">
+    Parent_URL = 'electricbikereview.website';
+    DASHBOARD_GEOLOCATE_ENDPOINT = 'https://partner-dashboard.' + Parent_URL + '/api/geolocate';
+	DASHBOARD_SHOPS_BRANDS_ENDPOINT = 'https://partner-dashboard.' + Parent_URL + '/api/shops/brands-list';
+	DASHBOARD_SHOPS_SERVICES_ENDPOINT = 'https://partner-dashboard.' + Parent_URL + '/api/shops/services-list';
+	DASHBOARD_SHOPS_MAP_ENDPOINT = 'https://partner-dashboard.' + Parent_URL + '/api/shops/map';
+	SHOPS_ICON_PATH_OSM = 'https://' + Parent_URL + '/dashboard-integration/shops-osm/images';
+    
+// 	DASHBOARD_GEOLOCATE_ENDPOINT = 'https://partner-dashboard.' + window.parent.location.hostname + '/api/geolocate';
+// 	DASHBOARD_SHOPS_BRANDS_ENDPOINT = 'https://partner-dashboard.' + window.parent.location.hostname + '/api/shops/brands-list';
+// 	DASHBOARD_SHOPS_SERVICES_ENDPOINT = 'https://partner-dashboard.' + window.parent.location.hostname + '/api/shops/services-list';
+// 	DASHBOARD_SHOPS_MAP_ENDPOINT = 'https://partner-dashboard.' + window.parent.location.hostname + '/api/shops/map';
+// 	SHOPS_ICON_PATH_OSM = 'https://' + window.parent.location.hostname + '/dashboard-integration/shops-osm/images';
+</script>
+
+<div class="shops-directory-map-wrapper">
+	<div id="map-brand-sidebar"></div>
+	<div id="map-service-sidebar"></div>
+	<div class="location-search-wrapper">
+		<i class="location-search-icon fas fa-search"></i>
+		<input type="text" id="map-location-search" class="location-search-input" placeholder="Search Location">
+	</div>
+	<div id="osm-map" style="width: 100%; height: 100%;">
+		<div id="shop-detail-wrapper">
+		</div>
+		<div class="active-filters-wrapper">
+			<div id="brand-active-filter" style="text-transform: capitalize;" class="active-filter hidden"></div>
+			<div id="service-active-filter" style="text-transform: capitalize;" class="active-filter hidden"></div>
+		</div>
+	</div>
+</div>
+<script onload="initShopsDirectoryMap(false);" src="{% static 'shops-osm/app.min.js' %}" defer></script>

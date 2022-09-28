@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>{{ review_details.meta_title }}</title>
+</head>
+<body>
+	<p>{{ review_details.review_name }}</p>
+	<img src="{{ review_details.review_featured_image_thumbnail }}"/>
+	<script type="application/ld+json">
+		{{ review_details.schema |safe }}
+	</script>
+	<p>{{ brand_details.0.name }}</p>
+	<img src="{{ brand_details.0.brand_image_web.url }}"/>
+	<script type="application/ld+json">
+		{{ brand_schemas |safe }}
+	</script>
+
+	<p>{{ category_details.0.name }}</p>
+	<img src="{{ category_details.0.category_image_web }}"/>
+	<script type="application/ld+json">
+		{{ category_schemas |safe }}
+	</script>
+
+
+	{% for category in bike_categories %}
+		<img src="https://ebr-dev-bucket.s3.amazonaws.com/{{ category.icon_image }}"  width="150" height="150"/>
+		<h4>{{ category.name }}</h4>
+		<p>{{ category.short_description }}</p>
+	{% endfor %}
+</body>
+</html>

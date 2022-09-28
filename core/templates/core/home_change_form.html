@@ -1,0 +1,40 @@
+{% extends 'core/home_section.html' %}
+{% load static %}
+{% load widget_tweaks %}
+{% load admin_extras %}
+{% load misc_filters %}
+{% load crispy_forms_tags %}
+{% load i18n %}
+
+
+{% block title %}
+    {% if object.pk %}Change{% else %}Add{% endif %} {{ opts.verbose_name|capfirst }} - {{ opts.verbose_name_plural|capfirst }}
+{% endblock%}
+
+
+{% block page_header %}
+    {% if object.pk %}Change{% else %}Add{% endif %} {{ opts.verbose_name|capfirst }}
+{% endblock%}
+
+
+{% block current_breadcrumb %}
+<li class="breadcrumb-item">
+    <a href="{% url 'core:index' %}">{% trans 'Home' %}</a>
+</li>
+<li class="breadcrumb-item">
+    {% if has_view_permission %}<a href="{% url opts|admin_urlname:'list' %}">{{ opts.verbose_name_plural|capfirst }}</a>{% else %}{{ opts.verbose_name_plural|capfirst }}{% endif %}
+</li>
+<li class="breadcrumb-item active">
+    {% if add %}{% blocktrans with name=opts.verbose_name %}Add {{ name }}{% endblocktrans %}{% else %}{{ object|truncatewords:"18" }}{% endif %}
+</li>
+{% endblock %}
+
+
+{% block formset_errors %}
+    {% include "core/partials/form_errors.html" with form=form %}
+{% endblock%}
+
+
+{% block page_content %}
+    Change form content goes here.
+{% endblock %}

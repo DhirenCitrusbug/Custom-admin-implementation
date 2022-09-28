@@ -1,0 +1,28 @@
+{% load static %}
+{% for comment in review_comments %}
+<div class='{% if comment.parent_id %}ml-5{% endif %} replied_comments' class="">
+    <span class='upvote {{comment.id}} {% if comment.id in upvoted_comments %}text-primary{% endif %}' data-id='{{comment.id}}'>&#5169; {{comment.upvote_count}}</span>
+    <b class="ml-4">{% if comment.name == None or "" %} Anonymous {% else %} {{comment.name}} {% endif %}</b>{% if comment.email in admin_emails %} <img style="width: 35px;" src="{% static 'assets/images/ebr-logo.svg' %}" alt="logo"/> {% endif %} | {{comment.create_at}}<br>
+    {{comment.description | safe}}
+    <span class="btn btn-sm btn-light reply_comment" data-parentid="{{comment.id}}">REPLY</span><span class='upvote {{comment.id}} btn btn-sm {% if comment.id in upvoted_comments %}text-primary{% endif %}' data-id='{{comment.id}}'>HELPFUL</span><br><br>
+
+    <div class='{{comment.id}}_replied_comments'>
+        {% for replied_comments in comment.replied_comments %}
+            {% if forloop.counter < 3 %}
+                <div class='ml-5 {{replied_comments.id}}_container'>
+                    <span class='upvote {{replied_comments.id}} {% if replied_comments.id in upvoted_comments %}text-primary{% endif %}' data-id='{{replied_comments.id}}'>&#5169; {{replied_comments.upvote_count}}</span>
+                    <b class="ml-4">{% if replied_comments.name == "" %} Anonymous {% else %} {{replied_comments.name}} {% endif %}</b>{% if replied_comments.email in admin_emails %} <img style="width: 35px;" src="{% static 'assets/images/ebr-logo.svg' %}" alt="logo"/> {% endif %} | {{replied_comments.create_at}}<br>
+                    {{replied_comments.description | safe}}
+                    <span class="btn btn-sm btn-light reply_comment" data-parentid="{{replied_comments.id}}">REPLY</span><span class='upvote {{replied_comments.id}} btn btn-sm {% if replied_comments.id in upvoted_comments %}text-primary{% endif %}' data-id='{{replied_comments.id}}'>HELPFUL</span><br><br>
+                    {% if replied_comments.replied_comments %}
+                        <a href="javascript:;" class="sub_comments ml-5" data-parent="{{replied_comments.id}}" data-issubcomment="True">Show {{replied_comments.replied_comments|length}} more {% if replied_comments.replied_comments|length > 1 %} Replies {% else %} Reply {% endif %}</a>
+                    {% endif %}
+                </div>
+            {% elif forloop.counter == 3 %}
+                <a href="javascript:;" class="sub_comments ml-5" data-parent="{{comment.id}}" data-issubcomment="False">Show {% if comment.replied_comments|length >= 3 %} {{comment.replied_comments|length|add:"-2"}} {% else %} {{comment.replied_comments|length}} {% endif %} more {% if comment.replied_comments|length|add:"-2" > 1 %} Replies {% else %} Reply {% endif %}</a>
+            {% endif %}
+        {% endfor %}
+    </div>
+
+</div>
+{% endfor %}

@@ -1,0 +1,76 @@
+{% extends 'core/change_list.html' %}
+{% load static %}
+{% load admin_extras %}
+{% load misc_filters %}
+{% load i18n %}
+
+
+{% block page_content %}
+    {% csrf_token %}
+
+    
+
+    {% include "core/includes/list_header_card.html" with title="User Details" subtitle="Create a new user and assign with individual or group permissions." show_button=True %}
+
+    <div class="ibox float-e-margins">
+     
+
+        <div class="ibox-content">
+            <div class="table-responsive">
+                <table class="table table-striped table-bordered table-hover" id="{{ opts.model_name }}-table">
+                    <thead>
+                        <tr>
+                            <th>First Name</th>
+                            <th>Last Name</th>
+                            <th>Email</th>
+                            <th>Mobile No</th>
+                            <th>Status</th>
+                            <th>Customer id</th>
+                            <th>Created at</th>
+                            <th>Profile picture</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tfoot>
+                        <tr>
+                            <th>First Name</th>
+                            <th>Last Name</th>
+                            <th>Email</th>
+                            <th>Mobile No</th>
+                            <th>Status</th>
+                            <th>Customer id</th>
+                            <th>Created at</th>
+                            <th>Profile picture</th>
+                            <th></th>
+                        </tr>
+                    </tfoot>
+                    <tbody>
+                        {% for o in user_list %}
+                        <tr>
+                            <td>{{ o.first_name }}</td>
+                            <td>{{ o.last_name }}</td>
+                            <td>{{ o.email }}</td>
+                            <td>{{ o.phone }}</td>
+                            <td>{% show_check o.is_active %}
+                            </td>
+                            <td>{{ o.customer_id }}</td>
+                            <td>{{ o.created_at }}</td>
+                            {% if o.profile_picture == "sample.jpg" %}
+                            <td><img src="{% static 'img/django-logo-negative.svg' %}" width="50px;" height="50px;"></td>
+                            {% elif o.profile_picture %}
+                            <td><img src="{{ o.profile_picture.url }}" width="50px;" height="50px;"></td>
+                            {% else %}
+                            <td><img src="{% static 'img/django-logo-negative.svg' %}" width="50px;" height="50px;"></td>
+                            {% endif %}
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block js %}
+{{ block.super }}
+{% endblock %}

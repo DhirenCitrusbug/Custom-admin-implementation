@@ -1,0 +1,1560 @@
+{% extends 'core/change_form.html' %}
+{% load static %}
+{% load widget_tweaks %}
+{% load admin_extras %}
+{% load misc_filters %}
+{% load crispy_forms_tags %}
+{% load i18n %}
+
+{% block page_content %}
+    <style>
+        .gallery_btn{
+          display: flex;
+          align-items: center;
+              min-height: 40px;
+            border-radius: 4px;
+            font-size: 14px;
+            color: #2f3033;
+            border: 1px solid #aaa;
+            width: 100%;
+            padding: 6px 12px;
+        }
+        .gallery_btn span{
+          font-size: 12px;
+            display: inline-block;
+            background-color: #0066cc;
+            color: #fff;
+            margin: 3px 8px 3px 0px;
+            padding: 1px 6px;
+            border-radius: 3px;
+            cursor: pointer;
+        }
+        .gallery_btn p{
+          font-size: 14px;
+          margin: 0;
+        }
+
+        .select2-container--default.select2-container--disabled .select2-selection--multiple {
+            background-color: #e9ecef !important;
+        }
+
+        .review-wrapper{
+            transform: none !important;
+        }
+
+        .modal-footer{
+            position: fixed;
+            bottom: 0px;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            padding: 10px 20px;
+            background: white;
+            border-top: 1px solid #e7eaec;
+            margin-left: 220px;
+        }
+
+        .footer.fixed{
+            display: none;
+        }
+
+
+
+    </style>
+    <div>
+        <form id="{{ opts.model_name }}-form" action="{% url opts|admin_urlname:'create' %}" method="post" enctype="multipart/form-data" autocomplete="off">
+            <div>
+                {{ form.media }}
+                {% include "core/partials/form_hidden_fields.html" %}
+
+                <!-- ---------- Review details section START ---------- -->
+                <div class="ibox float-e-margins">
+                    {% include "core/partials/ibox_title.html" with ibox_title="Review Details" icon_class="fas fa-info-circle" only %}
+                    <div class="ibox-content">
+                        <div class="row">
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    <div class="form-group">
+                                        <label>Model Year*</label>
+                                        <input type="text" name="model_year" id="model_year" class="form-control" maxlength="50" placeholder="ie. 2022" required autofocus />
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    <label>Brand Name*</label>
+                                    <select name="brands" id="brands" class="form-control" multiple required>
+                                        {% for brand in review_brand %}
+                                        <option value="{{brand.id}}" data-value="{{brand.slug}}">{{brand.name}}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    <label>Model Name*</label>
+                                    <input type="text" name="model_name" id="model_name" class="form-control" maxlength="80" placeholder="ie. Model E" required />
+                                </div>
+                            </div>
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    <label>Model Trim</label>
+                                    <input type="text" name="trim" id="trim" class="form-control" maxlength="80" placeholder="ie. Step-Thru" />
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    <label>Review Title*</label>
+                                    <input type="text" name="name" id="name" class="form-control" maxlength="230" placeholder="ie. 2022 Electric Bike Company Model E Step-Thru Review" required />
+                                </div>
+                            </div>
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    <label>Meta Title</label>
+                                    <input type="text" name="meta_title" id="meta_title" class="form-control" maxlength="230" placeholder="ie. 2022 Electric Bike Company Model E Step-Thru Review | ElectricBikeReview.com" readonly />
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    <label>URL Slug</label>
+                                    <input type="text" name="slug" id="slug" class="form-control" maxlength="230" placeholder="ie. 2022-model-e-step-thru" />
+                                </div>
+                            </div>
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    <label>Categories*</label>
+                                    <select name="categories" class="form-control" multiple id="categories" required>
+                                        {% for category in review_category %}
+                                        <option value="{{category.id}}">{{category.name}}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <div class="form-group">
+                                    <label>URL Preview</label>
+                                    <input type="text" id="permalink" class="form-control" value="http://54.213.76.238///" readonly>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    <label>YouTube Video ID</label>
+                                    <input type="text" name="youtube_video" id="youtube_video" class="form-control" maxlength="50" placeholder="YouTube Video ID"/>
+                                </div>
+                            </div>
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    <label>Publish Status*</label>
+                                    <select name="status" class="form-control select" id="status">
+                                        <option value="Published">Published</option>
+                                        <option value="Draft" selected="">Draft</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    <label>Publish Date*</label>
+                                    <input type="date" name="publish_date" id="publish_date" class="form-control" required />
+                                </div>
+                            </div>
+
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    <label>Update Date</label>
+                                    <input type="date" name="publish_date" id="update_date" class="form-control" readonly />
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                    <!-- /ibox-content -->
+                </div>
+                <!-- /ibox -->
+                <!-- ---------- Review details section END ---------- -->
+
+                <!-- ---------- Technical Specification section START ---------- -->
+                <div class="ibox float-e-margins">
+                    {% include "core/partials/ibox_title.html" with ibox_title="Technical Specifications" %}
+                    <div class="ibox-content">
+                        <!-- ---------- Technical specification -> General section START ---------- -->
+                        <div class="ibox float-e-margins">
+                            {% include "core/partials/ibox_title.html" with ibox_title="General Stats" %}
+                            <div class="ibox-content">
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <div class="form-group">
+                                            <div class="form-group">
+                                                <label>Year*</label>
+                                                <input type="text" name="show_model_year" id="show_model_year" class="form-control" maxlength="50" placeholder="ie. 2022" readonly />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <div class="form-group">
+                                            <label>Brand*</label>
+                                            <select name="show_brands" id="show_brands" class="form-control" multiple readonly>
+                                                <option value="">ie. Electric Bike Company</option>
+                                                {% for brand in review_brand %}
+                                                <option value="{{brand.id}}" data-value="{{brand.slug}}">{{brand.name}}</option>
+                                                {% endfor %}
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <div class="form-group">
+                                            <label>Model*</label>
+                                            <input type="text" name="show_model_name" id="show_model_name" class="form-control" maxlength="80" placeholder="ie. Model E" readonly />
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <div class="form-group">
+                                            <label>Trim</label>
+                                            <input type="text" name="show_trim" id="show_trim" class="form-control" maxlength="80" placeholder="ie. Step-Thru" readonly />
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <div class="form-group">
+                                            <label>MSRP in USD*</label>
+                                            <input type="number" name="msrp" id="msrp" class="form-control" min="0" placeholder="ie. 1999" required />
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <div class="form-group">
+                                            <label>Categories*</label>
+                                            <select name="show_categories" class="form-control" multiple id="show_categories" required>
+                                                {% for category in review_category %}
+                                                <option value="{{category.id}}">{{category.name}}</option>
+                                                {% endfor %}
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <div class="form-group">
+                                            <label>Class</label>
+                                            <!-- <input type="text" name="bike_class" id="bike_class" class="form-control" maxlength="190">-->
+                                            <select name="bike_class" id="bike_class" class="form-control" multiple>
+                                                {% for bike_class in review_bike_class %}
+                                                <option value="{{bike_class.id}}" data-value="{{bike_class.bike_class}}">{{bike_class.bike_class}}</option>
+                                                {% endfor %}
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <div class="form-group">
+                                            <label>Frame Type</label>
+                                            <select name="frame_type" id="frame_type" class="form-control" multiple>
+                                                {% for frame_type in review_frame_type %}
+                                                <option value="{{frame_type.id}}">{{frame_type.frame_type}}</option>
+                                                {% endfor %}
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <div class="form-group">
+                                            <label>Suspension</label>
+                                            <!-- <input type="text" name="suspension" id="suspension" class="form-control" maxlength="190">-->
+                                            <select name="suspension" id="suspension" class="form-control">
+                                                <option value="" selected>Select Suspension</option>
+                                                <option value="None">None</option>
+                                                <option value="Kit">Kit</option>
+                                                <option value="Front Suspension">Front Suspension</option>
+                                                <option value="Rear Suspension">Rear Suspension</option>
+                                                <option value="Full Suspension">Full Suspension</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <div class="form-group">
+                                            <label>Wheel Size</label>
+                                            <select name="wheel_size" id="wheel_size" class="form-control" multiple>
+                                                {% for wheel_size in review_wheel_size %}
+                                                <option value="{{wheel_size.id}}">{{wheel_size.wheel_size}}</option>
+                                                {% endfor %}
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <div class="form-group">
+                                            <label>Gears</label>
+                                            <input type="number" name="gears" id="gears" class="form-control" min="1" placeholder="ie. 0, 3, 24" />
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <div class="form-group">
+                                            <label>Brake Type</label>
+                                            <select name="brake_type" id="brake_type" class="form-control" multiple>
+                                                {% for break_type in review_break_type %}
+                                                <option value="{{break_type.id}}">{{break_type.break_type}}</option>
+                                                {% endfor %}
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <div class="form-group">
+                                            <label>Motor Type</label>
+                                            <!-- <input type="text" name="motor_type" id="motor_type" class="form-control" maxlength="190">-->
+                                            <select name="motor_type" id="motor_type" class="form-control">
+                                                <option value="" selected>Select motor type</option>
+                                                <option value="Hub">Hub</option>
+                                                <option value="Mid-Drive">Mid-Drive</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <div class="form-group">
+                                            <label>Motor Nominal Output</label>
+                                            <input type="number" name="motor_nominal_output" id="motor_nominal_output" class="form-control" min="1" max="9999" placeholder="ie. 250, 750, 1000" />
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <div class="form-group">
+                                            <label>Battery Watt Hours</label>
+                                            <input type="number" name="battery_watt_hours" id="battery_watt_hours" class="form-control" min="1" max="99999" placeholder="ie. 350, 1024, 11200" />
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <div class="form-group">
+                                            <label>Weight in Pounds</label>
+                                            <input type="number" name="weight" id="weight" class="form-control" min="1" max="999" placeholder="ie. 50, 99, 114" />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- /ibox-content -->
+                        </div>
+
+                        <!-- ---------- Technical specification -> Framset section START ---------- -->
+                        <div class="ibox float-e-margins">
+                            {% include "core/partials/ibox_title.html" with ibox_title="Frameset" %}
+                            <div class="ibox-content">
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <div class="form-group">
+                                            <label>Frame Type</label>
+                                            <select name="frameset_frame_type" id="frameset_frame_type" class="form-control select-disable" aria-label="Disabled select example" multiple>
+                                                {% for frame_type in review_frame_type %}
+                                                <option value="{{frame_type.id}}">{{frame_type.frame_type}}</option>
+                                                {% endfor %}
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <div class="form-group">
+                                            <label>Frame Weight</label>
+                                            <input type="text" name="frameset_weight" id="frameset_weight" placeholder="ie. 50, 99, 114" class="form-control" maxlength="190" readonly />
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <div class="form-group">
+                                            <label>Load Capacity</label>
+                                            <input type="number" name="load_capacity" id="load_capacity" class="form-control" placeholder="ie. 50, 99, 114" min="1" max="999" />
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <div class="form-group">
+                                            <label>Suspension</label>
+                                            <input type="text" name="frameset_suspension" id="frameset_suspension" class="form-control" placeholder="select suspension" maxlength="190" readonly />
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <div class="form-group">
+                                            <label>Suspension Travel</label>
+                                            <input type="number" name="suspension_travel" id="suspension_travel" class="form-control" placeholder="ie. 60, 80, 120, 150" min="1" max="999" />
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <div class="form-group">
+                                            <label>Fork</label>
+                                            <input type="text" name="fork" id="fork" class="form-control" placeholder="ie. SR Suntour NCX, 80mm Travel, Lockout, Preload" maxlength="190" />
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <div class="form-group">
+                                            <label>Rear Shock</label>
+                                            <input type="text" name="rear_shock" id="rear_shock" class="form-control" placeholder="ie. RockShox Super Deluxe Air, 150mm Travel, Compression Adjust, Rebound Clicker" maxlength="190" />
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <div class="form-group">
+                                            <label>Wheel Size</label>
+                                            <select name="frameset_wheel_size" id="frameset_wheel_size" class="form-control" multiple>
+                                                {% for wheel_size in review_wheel_size %}
+                                                <option value="{{wheel_size.id}}">{{wheel_size.wheel_size}}</option>
+                                                {% endfor %}
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <div class="form-group">
+                                            <label>Front Wheel</label>
+                                            <input type="text" name="front_wheel" id="front_wheel" class="form-control" placeholder="ie. Lapierre eAM 27.5+ 6061 Aluminum Alloy, Double Wall, 28 Hole, ETRTO 584x40c" maxlength="190" />
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <div class="form-group">
+                                            <label>Rear Wheel</label>
+                                            <input type="text" name="rear_wheel" id="rear_wheel" class="form-control" placeholder="ie. Lapierre eAM 27.5+ 6061 Aluminum Alloy, Double Wall, 28 Hole, ETRTO 584x40c" maxlength="190" />
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <div class="form-group">
+                                            <label>Front Hub</label>
+                                            <input type="text" name="front_hub" id="front_hub" class="form-control" placeholder="ie. Shimano Hub, 110mm Boost Hub Spacing, 9mm Axle with Quick Release Skewer" maxlength="190" />
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <div class="form-group">
+                                            <label>Rear Hub</label>
+                                            <input type="text" name="rear_hub" id="rear_hub" class="form-control" placeholder="ie. Shimano Hub, 148mm Boost Hub Spacing, 12mm Thru-Axle with 6mm Bolts" maxlength="190" />
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <div class="form-group">
+                                            <label>Tires</label>
+                                            <input type="text" name="tires" id="tires" class="form-control" placeholder='ie. Bontrager SE5 Team Issue, 29" x 2.50, Tubeless Ready, Core Strength Sidewalls, Aramid Bead, Presta Valve' maxlength="190" />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- /ibox-content -->
+                        </div>
+
+                        <!-- ---------- Technical specification -> Drivetrain section START ---------- -->
+                        <div class="ibox float-e-margins">
+                            {% include "core/partials/ibox_title.html" with ibox_title="Drivetrain" %}
+                            <div class="ibox-content">
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <div class="form-group">
+                                            <label>Gears</label>
+                                            <input type="number" name="drivetrain_gears" id="drivetrain_gears" class="form-control"s placeholder="ie. 0, 3, 24" maxlength="190" readonly />
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <div class="form-group">
+                                            <label>Shift Levers</label>
+                                            <input type="text" name="shift_levers" id="shift_levers" class="form-control" placeholder="ie. SRAM Eagle AXS Triggers on Right" maxlength="190" />
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <div class="form-group">
+                                            <label>Front Derailleur</label>
+                                            <input type="text" name="front_derailleur" id="front_derailleur" class="form-control" placeholder="ie. Shimano Deore, 3 Speed" maxlength="190" />
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <div class="form-group">
+                                            <label>Crankset</label>
+                                            <input type="text" name="crankset" id="crankset" class="form-control" placeholder="ie. Shimano Hollowtech Spindle with 170mm Integrated Crank Arms, Aluminum Alloy Bash Guard" maxlength="190" />
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <div class="form-group">
+                                            <label>Rear Derailleur</label>
+                                            <input type="text" name="rear_derailleur" id="rear_derailleur" class="form-control" placeholder="ie. SRAM XX1 Eagle AXS Derailleur, SRAM Wireless Electronic Shifting" maxlength="190" />
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <div class="form-group">
+                                            <label>Wireless Components</label>
+                                            <input type="text" name="electronic_shifting" id="electronic_shifting" class="form-control" placeholder="ie. SRAM Wireless Components" maxlength="190" />
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <div class="form-group">
+                                            <label>Internally Geared Hub (IGH)</label>
+                                            <input type="text" name="internally_geared_hub" id="internally_geared_hub" class="form-control" placeholder="ie. Shimano Nexus INTER8" maxlength="190" />
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <div class="form-group">
+                                            <label>Continually Variable Transmission (CVT)</label>
+                                            <input type="text" name="continually_variable_transmission" id="continually_variable_transmission" class="form-control" placeholder="ie. Enviolo Automatiq Planetary CVP N380" maxlength="190" />
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <div class="form-group">
+                                            <label>Cassette</label>
+                                            <input type="text" name="cassette" id="cassette" class="form-control" placeholder="ie. SRAM XG-1299 10-52 Tooth Cassette" maxlength="190" />
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <div class="form-group">
+                                            <label>Chainring</label>
+                                            <input type="text" name="chainring" id="chainring" class="form-control" placeholder="ie. 34 Tooth Narrow-Wide Chainring, Ethirteen Plastic Chain Guide" maxlength="190" />
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <div class="form-group">
+                                            <label>Belt Drive</label>
+                                            <input type="text" name="belt_drive" id="belt_drive" class="form-control" placeholder="ie. Gates Carbon Belt Drive" maxlength="190" />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- /ibox-content -->
+                        </div>
+
+                        <!-- ---------- Technical specification -> Components section START ---------- -->
+                        <div class="ibox float-e-margins">
+                            {% include "core/partials/ibox_title.html" with ibox_title="Components" %}
+                            <div class="ibox-content">
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <div class="form-group">
+                                            <label>Headset</label>
+                                            <input type="text" name="headset" id="headset" class="form-control" placeholder='ie. FSA Cartridge Bearings, Internal Cups, Tapered 1-1/8" to 1-1/2", 68° Head Tube Angle' maxlength="190" />
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <div class="form-group">
+                                            <label>Stem</label>
+                                            <input type="text" name="stem" id="stem" class="form-control" placeholder="ie. PLW Comfort, Integrated Extrusion Stem, Included with Handlebar, One 20mm Plastic Spacer" maxlength="190" />
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <div class="form-group">
+                                            <label>Handlebar</label>
+                                            <input
+                                                type="text"
+                                                name="handlebar"
+                                                id="handlebar"
+                                                class="form-control"
+                                                placeholder="ie. Specialized Trail, 6061 Aluminum Alloy, 8° Backsweep, 6° Upsweep, 27mm Rise, 31.8mm Clamp Diameter, S 720mm, M-XL 750mm"
+                                                maxlength="190"
+                                            />
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <div class="form-group">
+                                            <label>Grips</label>
+                                            <input type="text" name="grips" id="grips" class="form-control" placeholder="ie. Ergon GS1, Trail Grip, Lock-On" maxlength="190" />
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <div class="form-group">
+                                            <label>Seatpost</label>
+                                            <input type="text" name="seatpost" id="seatpost" class="form-control" placeholder="ie. TranzX Dropper, S: 100mm, M-XL: 120mm Travel" maxlength="190" />
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <div class="form-group">
+                                            <label>Seatpost Diameter in mm</label>
+                                            <input type="number" name="seatpost_diameter" id="seatpost_diameter" class="form-control" min="1" max="999.9" placeholder="ie. 27.2, 30.9, 31.6" />
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <div class="form-group">
+                                            <label>Saddle</label>
+                                            <input type="text" name="saddle" id="saddle" class="form-control" placeholder="ie. Rivo Sport, Steel Rails, 155mm" maxlength="190" />
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <div class="form-group">
+                                            <label>Pedals</label>
+                                            <input type="text" name="pedals" id="pedals" class="form-control" placeholder="ie. Wellgo Magnesium Platform Pedals with Adjustable Pins" maxlength="190" />
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <div class="form-group">
+                                            <label>Brake Type</label>
+                                            <select name="components_brake_type" id="components_brake_type" class="form-control" multiple>
+                                                {% for break_type in review_break_type %}
+                                                <option value="{{break_type.id}}">{{break_type.break_type}}</option>
+                                                {% endfor %}
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <div class="form-group">
+                                            <label>Front Brake</label>
+                                            <input
+                                                type="text"
+                                                name="front_brake"
+                                                id="front_brake"
+                                                class="form-control"
+                                                placeholder="ie. SRAM Guide T Hydraulic Disc with 200mm Front Rotor, Quad-Piston Caliper, SRAM Guide T Two-Finger Lever with Adjustable Reach"
+                                                maxlength="190"
+                                            />
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <div class="form-group">
+                                            <label>Rear Brake</label>
+                                            <input
+                                                type="text"
+                                                name="rear_brake"
+                                                id="rear_brake"
+                                                class="form-control"
+                                                placeholder="ie. SRAM Guide T Hydraulic Disc with 180mm Rear Rotor, Dual-Piston Caliper, SRAM Guide T Two-Finger Lever with Tool-Free Adjustable Reach and Throw Adjust, Motor Inhibitor"
+                                                maxlength="190"
+                                            />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- /ibox-content -->
+                        </div>
+
+                        <!-- ---------- Technical specification -> Ebike Systems section START ---------- -->
+                        <div class="ibox float-e-margins">
+                            {% include "core/partials/ibox_title.html" with ibox_title="Ebike Systems" %}
+                            <div class="ibox-content">
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <div class="form-group">
+                                            <label>Class</label>
+                                            <select name="systems_bike_class" id="systems_bike_class" class="form-control" multiple>
+                                                {% for bike_class in review_bike_class %}
+                                                <option value="{{bike_class.id}}">{{bike_class.bike_class}}</option>
+                                                {% endfor %}
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <div class="form-group">
+                                            <label>Motor Type</label>
+                                            <input type="text" name="systems_motor_type" id="systems_motor_type" class="form-control" placeholder="Select motor type" maxlength="190" readonly />
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <div class="form-group">
+                                            <label>Motor</label>
+                                            <input type="text" name="motor" id="motor" class="form-control" placeholder="ie. Bosch Performance Line CX, 4th Generation" maxlength="190" />
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <div class="form-group">
+                                            <label>Additional Motors</label>
+                                            <input type="text" name="additional_motors" id="additional_motors" class="form-control" placeholder="ie. Bafang RM G020.500.DC" maxlength="190" />
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <div class="form-group">
+                                            <label>Motor Nominal Output</label>
+                                            <input type="number" name="systems_motor_nominal_output" id="systems_motor_nominal_output" class="form-control" maxlength="190" placeholder="ie. 250, 750, 1000" readonly />
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <div class="form-group">
+                                            <label>Display</label>
+                                            <input type="text" name="display" id="display" class="form-control" placeholder='ie. Bosch Intuvia, Removable, Backlit, Grayscale, 3.5" Diagonal' maxlength="190" />
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <div class="form-group">
+                                            <label>Smart Bike</label>
+                                            <input type="text" name="smart_bike" id="smart_bike" class="form-control" placeholder="ie. Android, iOS, Smartphone, Shimano E-Tube, Bosch eBike Connect, Bosch Smart System, Stromer OMNI" maxlength="190" />
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <div class="form-group">
+                                            <label>Theft / GPS</label>
+                                            <input type="text" name="theft_gps" id="theft_gps" class="form-control" placeholder="ie. Stromer OMNI" maxlength="190" />
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <div class="form-group">
+                                            <label>Battery Watt Hours</label>
+                                            <input type="number" name="systems_battery_watt_hours" id="systems_battery_watt_hours" class="form-control" placeholder="ie. 350, 1024, 11200" readonly />
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <div class="form-group">
+                                            <label>Battery</label>
+                                            <input type="text" name="battery" id="battery" class="form-control" placeholder="ie. Bosch PowerTube 750" maxlength="190" />
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <div class="form-group">
+                                            <label>Additional Battery</label>
+                                            <input type="text" name="additional_battery" id="additional_battery" class="form-control" placeholder="Additional Battery" maxlength="190" />
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <div class="form-group">
+                                            <label>Charger</label>
+                                            <input type="text" name="charger" id="charger" class="form-control" placeholder="ie. Bosch Compact Charger, 2 Amps" maxlength="190" />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- /ibox-content -->
+                        </div>
+
+                        <!-- ---------- Technical specification -> Accessories section START ---------- -->
+                        <div class="ibox float-e-margins">
+                            {% include "core/partials/ibox_title.html" with ibox_title="Accessories" %}
+                            <div class="ibox-content">
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <div class="form-group">
+                                            <label>Lights</label>
+                                            <input type="text" name="lights" id="lights" class="form-control" placeholder="ie. Büchel Secu Forte E-Bike LED Headlight (70 LUX), Büchel Tivoli 2-LED Rear Light with Blinking Mode" maxlength="190" />
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <div class="form-group">
+                                            <label>Fenders</label>
+                                            <input type="text" name="fenders" id="fenders" class="form-control" placeholder="ie. Aluminum Alloy Fenders (65mm Width)" maxlength="190" />
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <div class="form-group">
+                                            <label>Front Rack</label>
+                                            <input type="text" name="front_rack" id="front_rack" class="form-control" placeholder="ie. Specialized Front Tray Rack with Removable Plastic Bin and Bungee (15kg 33lb Max Load)" maxlength="190" />
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <div class="form-group">
+                                            <label>Rear Rack</label>
+                                            <input
+                                                type="text"
+                                                name="rear_rack"
+                                                id="rear_rack"
+                                                class="form-control"
+                                                placeholder="ie. Custom Welded-On Rear Rack with Standard Gauge Pannier Hangers and Bungee Loops, RackTime Compatible, 25kg Max Load"
+                                                maxlength="190"
+                                            />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- /ibox-content -->
+                        </div>
+
+                        <!-- ---------- Technical specification -> More Details section START ---------- -->
+                        <div class="ibox float-e-margins">
+                        {% include "core/partials/ibox_title.html" with ibox_title="More Details" %}
+                            <div class="ibox-content">
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <div class="form-group">
+                                            <label for="more_details">More Details</label>
+                                            <textarea class="textarea form-control" name="more_details" id="more_details" placeholder="ie. 98RPM Max Motor Support, IP65 Rated Electronics, Includes Basic Tools" rows="5" cols="40"></textarea>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- /ibox-content -->
+                </div>
+                <!-- /ibox -->
+                <!-- ---------- Technical Specification section END ---------- -->
+
+                <!-- ---------- Review images section START ---------- -->
+                <div class="ibox float-e-margins">
+                    {% include "core/partials/ibox_title.html" with ibox_title="Images" %}
+                    <div class="ibox-content">
+                        <div class="row">
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    <label for="featured_image" class="control-label">Featured Image*</label>
+                                    <input type="file" name="featured_image" class="form-control" accept="image/*" id="featured_image" required />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-6">
+                                <label class="control-label">Image Gallery</label>
+                                <div class="gallery_btn">
+                                    <span class="image_gallery_open">Choose File</span>
+                                    <p>Choose image for review</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-10">
+                                <div class="file_input_wrapper">
+                                    <div class="file_input">
+                                        <input type="file" name="image_gallery" class="form-control" accept="image/*" multiple id="image_gallery" />
+                                        <input type="hidden" name="image_list" id="image_list" />
+                                    </div>
+                                    <span class="image_error"></span>
+                                </div>
+                                <div class="file_wrapper">
+                                    <div class="uploaded_images">
+                                        <ul class="img_list" id="sortable">
+                                            <!-- <li><img src="http://via.placeholder.com/300" alt="image"><span class="remove_image">x</span></li>-->
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- /ibox-content -->
+                </div>
+                <!-- /ibox -->
+                <!-- ---------- Review images section END ---------- -->
+
+
+                <!-- ---------- Review Highlights section START ---------- -->
+                    <div class="ibox float-e-margins">
+                    {% include "core/partials/ibox_title.html" with ibox_title="Highlights" %}
+                        <div class="ibox-content">
+                            <div class="highlights_append">
+
+                                <div class="form-row">
+                                    <div class="col-sm-10">
+                                        <div class="form-group">
+                                            <label>Highlights</label>
+                                            <textarea class="textarea form-control" name="highlight" id="highlight" placeholder="Enter summary." rows="2" cols="40"></textarea>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-2" style="align-items: center; display: flex;">
+                                        <a class="btn remove_div btn-danger" style="color: #fff; width: 135px;">Remove Highlights</a>
+                                    </div>
+                                </div>
+
+                                <div class="form-row">
+                                    <div class="col-sm-10">
+                                        <div class="form-group">
+                                            <label>Highlights</label>
+                                            <textarea class="textarea form-control" name="highlight" id="highlight" placeholder="Enter summary." rows="2" cols="40"></textarea>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-2" style="align-items: center; display: flex;">
+                                        <a class="btn remove_div btn-danger" style="color: #fff; width: 135px;">Remove Highlights</a>
+                                    </div>
+                                </div>
+
+                                <div class="form-row">
+                                    <div class="col-sm-10">
+                                        <div class="form-group">
+                                            <label>Highlights</label>
+                                            <textarea class="textarea form-control" name="highlight" id="highlight" placeholder="Enter summary." rows="2" cols="40"></textarea>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-2" style="align-items: center; display: flex;">
+                                        <a class="btn remove_div btn-danger" style="color: #fff; width: 135px;">Remove Highlights</a>
+                                    </div>
+                                </div>
+
+                                <div class="form-row">
+                                    <div class="col-sm-10">
+                                        <div class="form-group">
+                                            <label>Highlights</label>
+                                            <textarea class="textarea form-control" name="highlight" id="highlight" placeholder="Enter summary." rows="2" cols="40"></textarea>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-2" style="align-items: center; display: flex;">
+                                        <a class="btn btn-success add_button" style="color: #fff; width: 135px;">Add Highlights</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                <!-- ---------- Review Highlights section END ---------- -->
+
+                <!-- ---------- Written Reviews section END ---------- -->
+                    <div class="ibox float-e-margins">
+                    {% include "core/partials/ibox_title.html" with ibox_title="Written Reviews" %}
+                        <div class="ibox-content">
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <div class="form-group">
+                                        <label>Description*</label>
+                                        <textarea class="textarea" name="description" id="description" placeholder="Enter description" required></textarea>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                <!-- ---------- Written Reviews section END ---------- -->
+            </div>
+            <div>
+                {% include "core/partials/form_footer.html" %}
+            </div>
+        </form>
+    </div>
+{% endblock %}
+
+{% block js %}
+    {{ block.super }}
+    <script src="{% static 'core/js/select2.min.js' %}"></script>
+    <script src="{% static 'core/js/image_gallery.js' %}"></script>
+    <script src="https://cdn.jsdelivr.net/jquery.validation/1.16.0/additional-methods.js"></script>
+    <script>
+        $("#categories").select2({
+            placeholder: "Select category",
+            allowClear: true,
+            multiple: true,
+            tags: false,
+        });
+        $("#show_categories").select2({
+            placeholder: "Select category",
+            multiple: true,
+            tags: false,
+        });
+        $("#show_categories").prop("disabled", true);
+
+        $("#wheel_size").select2({
+            placeholder: "Select wheel size",
+            allowClear: true,
+            multiple: true,
+            tags: false,
+        });
+        $("#frameset_wheel_size").select2({
+            placeholder: "Select wheel size",
+            multiple: true,
+            tags: false,
+        });
+        $("#frameset_wheel_size").prop("disabled", true);
+
+        $("#brands").select2({
+            placeholder: "ie. Electric Bike Company",
+            allowClear: true,
+            multiple: true,
+            tags: false,
+        });
+        $("#show_brands").select2({
+            placeholder: "ie. Electric Bike Company",
+            multiple: true,
+            tags: false,
+        });
+        $("#show_brands").prop("disabled", true);
+
+        $("#bike_class").select2({
+            placeholder: "Select bike class.",
+            allowClear: true,
+            multiple: true,
+            tags: false,
+        });
+        $("#systems_bike_class").select2({
+            placeholder: "Select bike class.",
+            multiple: true,
+            tags: false,
+        });
+        $("#systems_bike_class").prop("disabled", true);
+        $("#systems_bike_class").css('background-color', '#e9ecef');
+
+        $("#frame_type").select2({
+            placeholder: "Select frame type.",
+            allowClear: true,
+            multiple: true,
+            tags: false,
+        });
+        $("#frameset_frame_type").select2({
+            placeholder: "Select frame type.",
+            multiple: true,
+            tags: false,
+        });
+        $("#frameset_frame_type").prop("disabled", true);
+
+        $("#brake_type").select2({
+            placeholder: "Select brake type.",
+            allowClear: true,
+            multiple: true,
+            tags: false,
+        });
+        $("#components_brake_type").select2({
+            placeholder: "Select brake type.",
+            allowClear: true,
+            multiple: true,
+            tags: false,
+        });
+        $("#components_brake_type").prop("disabled", true);
+
+        var editor = CKEDITOR.replace("description", {
+            // Define the toolbar groups as it is a more accessible solution.
+            toolbar: [
+                {
+                    name: "insert",
+                    items: ["Table"],
+                },
+                {
+                    name: 'basicstyles',
+                    items: [ 'Bold', 'Italic', 'Strike', '-', 'RemoveFormat' ]
+                },
+                {
+                    name: 'links',
+                    items: [ 'Link', 'Unlink', 'Anchor' ]
+                },
+                {
+                    name: 'paragraph',
+                    items: [ 'NumberedList', 'BulletedList']
+                },
+		        {
+		            name: 'styles',
+		            items: ['Format']
+		        },
+		        {
+		            name: 'document',
+		            items: [ 'Source' ]
+		        },
+            ]
+        });
+
+        CKEDITOR.replace("more_details", {
+            // Define the toolbar groups as it is a more accessible solution.
+            toolbar: [
+                {
+                    name: "insert",
+                    items: ["Table"],
+                },
+                {
+                    name: 'document',
+                    items: [ 'Source' ]
+                },
+            ]
+        });
+
+        var date = new Date();
+        var day = date.getDate();
+        var month = date.getMonth() + 1;
+        var year = date.getFullYear();
+
+        if (month < 10) month = "0" + month;
+        if (day < 10) day = "0" + day;
+
+        var today = year + "-" + month + "-" + day;
+
+        $(document).ready(function () {
+            $("#publish_date").val(today);
+            $("#update_date").val(today);
+            jQuery.validator.addMethod(
+                "noSpace",
+                function (value, element) {
+                    return value == "" || value.trim().length != 0;
+                },
+                "This field is required."
+            );
+
+            //Have to build custom method to check ckeditor
+            jQuery.validator.addMethod(
+                "ckeditor",
+                function (value, element) {
+                    var textData = editor.getData();
+                    if (textData.length > 0) return true;
+                    return false;
+                },
+                "No data in editor"
+            );
+
+            jQuery.validator.addMethod(
+                "filesize",
+                function (value, element, param) {
+                    return this.optional(element) || element.files[0].size <= param * 1000000;
+                },
+                "Image size must be less than {0} MB"
+            );
+
+            jQuery.validator.addMethod(
+                "slugCheck",
+                function (value, element) {
+                    // allow any non-whitespace characters as the host part
+                    return this.optional(element) || /[a-z]{1}[a-z0-9\-]*/i.test(value);
+                },
+                "Please enter a valid email address."
+            );
+
+            // jQuery.validator.addMethod(
+            //     "checkExists",
+            //     function (value, element) {
+            //         if ($("#slug").val() != "") {
+            //             try {
+            //                 (data = { review_id: "", slug: $("#slug").val() }), (eReport = ""); //error report
+
+            //                 $.ajax({
+            //                     type: "POST",
+            //                     url: "/customadmin/review-slug/check",
+            //                     // dataType: "json",
+            //                     data: { review_id: "", slug: $("#slug").val() },
+            //                     // contentType:false,
+            //                     // cache: false,
+            //                     // processData: false,
+            //                     // async: false,
+            //                     success: function (returnData) {
+            //                         if (returnData["status"] === true) {
+            //                             console.log("if condition");
+            //                             return "<p>This email address is already registered.</p>";
+            //                         } else {
+            //                             console.log("hleldkfjkl");
+            //                             return true;
+            //                         }
+            //                         console.log("out side");
+            //                     },
+            //                     error: function (xhr, textStatus, errorThrown) {
+            //                         alert("ajax loading error... ... ");
+            //                         return false;
+            //                     },
+            //                 });
+            //             } catch (e) {
+            //                 console.log(e); // handle the error as required
+            //             }
+            //         } else {
+            //             return true;
+            //         }
+
+            //         //     checkExists: ''
+            //     },
+            //     ""
+            // );
+
+            $("#review-form").validate({
+                ignore: [],
+                rules: {
+                    name: {
+                        required: true,
+                        noSpace: true,
+                        //slugCheck: true
+                    },
+                    description: {
+                        required: function () {
+                            CKEDITOR.instances.description.updateElement();
+                        },
+                        noSpace: true,
+                        ckeditor: true,
+                    },
+                    model_name: {
+                        required: true,
+                        noSpace: true,
+                    },
+                    model_year: {
+                        required: true,
+                        noSpace: true,
+                    },
+                    msrp: {
+                        required: true,
+                        noSpace: true,
+                        min: 1,
+                    },
+                    featured_image: {
+                        required: true,
+                        extension: "jpg,jpeg,png",
+                        filesize: 15,
+                    },
+                    gears: {
+                        required: false,
+                        digits: true
+                    },
+                    motor_nominal_output: {
+                        required: false,
+                        digits: true
+                    },
+                    suspension_travel: {
+                        required: false,
+                        digits: true
+                    },
+                },
+
+                messages: {
+                    name: {
+                        required: "This field is required.",
+                    },
+                    description: {
+                        required: "This field is required.",
+                    },
+                    featured_image: {
+                        required: "This field is required.",
+                        extension: "Please upload image in these format only (jpg, jpeg,png).",
+                        filesize: "File size must be less than 15mb.",
+                    },
+                    slug: {
+                        remote: "This slug is already added.",
+                    },
+                },
+                errorPlacement: function (error, element) {
+                    if (element.attr("name") == "description") {
+                        error.insertBefore("textarea#description");
+                    } else {
+                        error.insertBefore(element);
+                    }
+                },
+            });
+
+            $(".caregory_brand")
+                .select2({})
+                .on("change", function (e) {
+                    $("#review-form").valid();
+                    $(".caregory_brand").select2().trigger("select2:close");
+                });
+
+            $("#review-form").on("submit", function () {
+                console.log("Form submit");
+                if ($("#review-form").valid() == true) {
+                    console.log("zdfjlskhfozxhfgzxhcgjklxch");
+                    const image_order = $("#sortable").find("li");
+                    let revierw_images = [];
+                    image_order.each(function (index) {
+                        console.log($(this).data("lookup"), index);
+                        revierw_images.push({ index: index, image: $(this).data("lookup") });
+                    });
+                    console.log(revierw_images);
+                    $("#image_list").val(JSON.stringify(revierw_images));
+                    console.log("Form is validate!");
+                    $(".page-loader").show();
+                    return true;
+                    // return false
+                } else {
+                    console.log("Form is not validate!");
+                    $("#review-form").valid();
+                    $(".page-loader").hide();
+                    return false;
+                }
+                // return false;
+            });
+        });
+
+        // Image gallery part START ----------
+
+        const showImages = () => {
+            $(".img_list").empty();
+            selected_images.forEach((e, i) => {
+                $(".img_list").append(`<li data-lookup="${e["id"]}" ><img src="${e["img"].attr("src")}" alt="" title="${e["img"].attr("title")}"><span class="remove_image" onclick="remove_image(${i});">x</span></li>`);
+            });
+        };
+
+        const remove_image = (index) => {
+            selected_images.splice(index, 1);
+            showImages();
+        };
+
+        $(function () {
+            $("#sortable").sortable();
+        });
+
+        var selected_images = [];
+        let gallery_image_id_list = [];
+        // Add selected image image review page.
+        $("#add_to_review_album").on("click", function () {
+            $(".eb_media_popup_wrapper").css("display", "none");
+            $("body").removeClass("overflow_hidden");
+            $(".gallery_image_list")
+                .find("li.selected")
+                .each(function () {
+                    var gallery_image_id = $(this).data("value");
+                    var gallery_image_data = $(this).find("img");
+                    if (gallery_image_id_list.includes(gallery_image_id) === false) {
+                        gallery_image_id_list.push(gallery_image_id);
+                        selected_images.push({ id: gallery_image_id, img: gallery_image_data });
+                    }
+                });
+            clear_gallery_section();
+
+            showImages();
+        });
+
+        function titleCase(str) {
+            str.toLowerCase();
+            var strAr = str.split(" ");
+            for (var i = 0; i < strAr.length; i++) {
+                strAr[i] = strAr[i].charAt(0).toUpperCase() + strAr[i].substring(1).toLowerCase();
+            }
+            str = strAr.join(" ");
+            return str;
+        }
+
+        function slugTitleCase(str) {
+            str.toLowerCase();
+            var strAr = str.replace("-", " ").split(" ");
+            for (var i = 0; i < strAr.length; i++) {
+                strAr[i] = strAr[i].charAt(0).toUpperCase() + strAr[i].substring(1).toLowerCase();
+            }
+            str = strAr.join(" ");
+            return str;
+        }
+
+        $("#name").on("keyup", function () {
+            static_meta = " | ElectricBikeReview.com";
+            name = $(this).val();
+            link = $("#meta_title").val(titleCase(name) + static_meta);
+        });
+
+        $("#meta_title").on("dblclick", function () {
+            $("#meta_title").attr("readonly", false);
+        });
+
+        $("#model_year, #model_name, #trim").on("keyup", function () {
+            model_year = $("#model_year").val().split(",")[0];
+            model_name = $("#model_name").val();
+            trim = $("#trim").val();
+            brand_name = $("#brands").select2().find(":selected").data("value");
+
+            $("#show_model_year").val($("#model_year").val());
+            $("#show_model_name").val(model_name);
+            $("#show_trim").val(trim);
+
+            model_year = model_year != "" ? model_year.split(",")[0] + " " : "";
+            model_name = model_name != "" ? model_name + " " : "";
+            trim = trim != "" ? trim + " " : "";
+            brand_name = brand_name != undefined ? slugTitleCase(brand_name) + " " : "";
+
+            $("#name").val(model_year + brand_name + model_name + trim + "Review");
+            static_meta = "Review | ElectricBikeReview.com";
+            link = $("#meta_title").val(model_year + brand_name + model_name + trim + static_meta);
+        });
+
+        $("#brands").on("change", function () {
+            model_year = $("#model_year").val().split(",")[0];
+            model_name = $("#model_name").val();
+            trim = $("#trim").val();
+            brand_name = $("#brands").select2().find(":selected").data("value");
+            console.log(brand_name)
+
+            model_year = model_year != "" ? model_year + " " : "";
+            trim = trim != "" ? trim + " " : "";
+            brands_name = brand_name != undefined ? slugTitleCase(brand_name) + " " : "";
+            brand = brand_name != undefined ? brand_name: "";
+
+            console.log(brands_name)
+            $("#name").val(model_year + brands_name + model_name + trim + "Review");
+            static_meta = "Review | ElectricBikeReview.com";
+            link = $("#meta_title").val(model_year + brands_name + model_name + trim + static_meta);
+
+            link = $('#permalink').val();
+            myArray = link.split('/');
+            myArray[myArray.length - 3] = brand;
+            let new_link = myArray.join('/');
+            $('#permalink').val(new_link);
+
+            select_brand = $("#brands").select2().val();
+            $("#show_brands").select2().val(select_brand).trigger("change.select2");
+        });
+
+        $("#categories").on("change", function () {
+            select_category = $("#categories").select2().val();
+            $("#show_categories").select2().val(select_category).trigger("change.select2");
+        });
+
+        $("#frame_type").on("change", function () {
+            frame_type = $('#frame_type').select2().val()
+            $("#frameset_frame_type").select2().val(frame_type).trigger('change.select2');
+        });
+
+        $("#weight").on("keyup", function () {
+            $("#frameset_weight").val($(this).val());
+        });
+
+        $("#suspension").on("change", function () {
+            $("#frameset_suspension").val($(this).val());
+        });
+
+        $("#wheel_size").on("change", function () {
+            wheel_size = $("#wheel_size").select2().val();
+            $("#frameset_wheel_size").select2().val(wheel_size).trigger("change.select2");
+        });
+
+        $("#gears").on("change", function () {
+            $("#drivetrain_gears").val($(this).val());
+        });
+
+        $("#brake_type").on("change", function () {
+           brake_type = $("#brake_type").select2().val();
+            $("#components_brake_type").select2().val(brake_type).trigger("change.select2");
+        });
+
+        $("#bike_class").on("change", function () {
+            bike_class = $('#bike_class').select2().val()
+            $("#systems_bike_class").select2().val(bike_class).trigger('change.select2');
+        });
+
+        $("#motor_type").on("change", function () {
+            $("#systems_motor_type").val($(this).val());
+        });
+
+        $("#motor_nominal_output").on("change", function () {
+            $("#systems_motor_nominal_output").val($(this).val());
+        });
+
+        $("#battery_watt_hours").on("change", function () {
+            $("#systems_battery_watt_hours").val($(this).val());
+        });
+
+        $(document).on("click", ".add_button", function () {
+            // Add highlights
+            $(this)
+                .parents(".highlights_append")
+                .append(
+                    '<div class="form-row"> <div class="col-sm-10"> <div class="form-group"> <label>Highlights</label> <textarea class="textarea form-control" name="highlight" id="highlight_1" placeholder="Enter summary." rows="2" cols="40"></textarea> </div></div><div class="col-sm-2" style="align-items: center;display: flex;"> <a class="btn btn-success add_button" id="add_ingredients_list" style="color:#fff; width: 135px;">Add Highlights</a> </div></div>'
+                );
+            $(this).removeClass("add_button");
+            $(this).addClass("remove_div");
+            $(this).addClass("btn-danger");
+            $(this).removeClass("btn-success");
+            $(this).text("Remove Highlights");
+        });
+
+        $(document).on("click", ".remove_div", function () {
+            $(this).closest(".form-row").remove();
+        });
+
+        $('#slug').on('keyup', function(){
+            link = $('#permalink').val();
+            myArray = link.split('/');
+            myArray[myArray.length - 2] = $('#slug').val();
+            let new_link = myArray.join('/');
+            $('#permalink').val(new_link);
+        });
+    </script>
+{% endblock %}

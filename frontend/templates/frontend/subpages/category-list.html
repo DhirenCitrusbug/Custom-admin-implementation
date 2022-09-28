@@ -1,0 +1,109 @@
+
+ {% extends 'frontend/subpages/base.html'%}
+ {% load static %}
+ {% load review_card %}
+ {% block title %}
+ Top Electric Bike Categories | ElectricBikeReview.com
+ {% endblock %}
+
+ {% block seoTag %}
+    <meta name="theme-color" content="#80b600">
+	<meta name="apple-mobile-web-app-status-bar-style" content="#80b600">
+	<meta name="msapplication-navbutton-color" content="#80b600">
+    <meta property='og:url' content='https://electricbikereview.com/' />
+    <meta property="fb:app_id" content="462030500496873" />
+
+    <meta property="og:locale" content="en_us" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Top Electric Bike Categories | ElectricBikeReview.com" />
+    <meta property="og:description" content="Prices, Specs, Videos, Photos" />
+    <meta property="og:site_name" content="ElectricBikeReview.com" />
+    <meta property="og:image" content="{% static 'assets/images/EBRlogo.png' %}" />
+	<meta name="twitter:card" content="summary" />
+    <meta name="twitter:description" content="Prices, Specs, Videos, Photos" />
+    <meta name="twitter:title" content="Top Electric Bike Categories | ElectricBikeReview.com" />
+    <meta name="twitter:image" content="{% static 'assets/images/EBRlogo.png' %}" />
+    <meta name="twitter:site" content="@ebikereview" />
+{% endblock %}
+
+ {% block body %}
+ <!-- Header -->
+        <!-- Middle Area -->
+        <section class="middle_area">
+            <div class="breadcrumb">
+                <a href="/">Home</a>
+                <span class="slash">/</span>
+                <a href="javascript:void(0);" class="active">Electric Bike Categories</a>
+            </div>
+            <div class="main-content">
+                <div class="row m-0">
+                    <div class="col-lg-8 col-xl-9 col-md-6 col-sm-6 p-0">
+                        <div class="left-side-content">
+                            <h3 class="section-title">Electric Bike Categories</h3>
+                            <p class="desc_p">Listed below are the primary categories and sub-categories that we use to group electric bike reviews. Each one has a description to help educate and inform. You can also use the search engine and filters at the top of each page to narrow down as you determine the perfect ebike for your budget and lifestyle.</p>
+                            <div class="category-list-ul">
+                                <ul>
+                                    {% for category in bike_category %}
+                                        <li><a href="#{{ category.slug }}">{{ category.slug | category_name_clean }}</a></li>
+                                        {% if forloop.counter|divisibleby:"7" %}
+                                            </ul>
+                                            <ul>
+                                        {% endif %}
+                                    {% endfor %}
+                                </ul>
+                            </div>
+                            <div class="categorylist-datawrapper">
+                                {% for category in bike_category %}
+                                    <div class="category-type" id="{{ category.slug }}">
+                                        <h3 class="cl-item-title">{{ category.name }}</h3>
+                                        <div class="ctegory-list-item">
+                                            {% if category.icon_image %}
+                                                <img src="https://ebr-dev-bucket.s3.amazonaws.com/{{ category.icon_image }}" alt="{{ category.name }}"/>
+                                            {% endif %}
+                                            <a href="/category/{{ category.slug }}">{{ category.name }} ({{ category.total_review|float_to_value }})</a>
+                                            {% if category.short_description != '-' %}
+                                                <p>{{ category.short_description }}</p>
+                                            {% endif %}
+                                        </div>
+                                        {% for child_category in category.child_bike_category %}
+                                            <div class="ctegory-list-item">
+                                                {% if child_category.icon_image %}
+                                                    <img src="https://ebr-dev-bucket.s3.amazonaws.com/{{ child_category.icon_image }}" alt="{{ child_category.name }}"/>
+                                                {% endif %}
+                                                <a href="/category/{{ child_category.slug }}">{{ child_category.name }} ({{ child_category.total_review|float_to_value }})</a>
+                                                {% if child_category.short_description != '-' %}
+                                                    <p>{{ child_category.short_description }}</p>
+                                                {% endif %}
+                                            </div>
+                                        {% endfor %}
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                    {% include 'frontend/include/discussion.html' %}
+                </div>
+            </div>
+        </section>
+    
+{% endblock %}
+
+{% block script %}
+        
+{% endblock %}
+    <!-- <script src="./assets/js/jquery.js"></script>
+    <script src="https://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.js"></script>
+    <script src="./assets/js/jquery-ui.min.js"></script>
+    <script src="./assets/js/popper.min.js"></script>
+    <script src="./assets/js/bootstrap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="./assets/js/custom.js"></script>
+    <script src="assets/js/flyto.js"></script>
+    <script>
+        $('.product-card-wrapper').flyto({
+            item      : 'a.product-card-item',
+            target    : '.compare-icon-head',
+            button    : '.compare-btn'
+        });
+        
+    </script> -->

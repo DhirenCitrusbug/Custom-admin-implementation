@@ -1,0 +1,72 @@
+<!-- <!DOCTYPE html> -->
+<link rel="stylesheet" href="https://electricbikereview.website/dashboard-integration/shops-carrying/app.min.css" />
+<link rel="stylesheet" href="https://electricbikereview.website/fa-assets/css/all.min.css" />
+
+<script type="text/javascript">
+	// These endpoints should dynamically set and work for any environment
+
+	SITE_DOMAIN = 'electricbikereview.website';
+	DASHBOARD_GEOLOCATE_ENDPOINT = 'https://partner-dashboard.' + SITE_DOMAIN + '/api/geolocate';
+	DASHBOARD_SHOPS_CARRYING_ENDPOINT = 'https://partner-dashboard.' + SITE_DOMAIN + '/api/shops/carrying';
+</script>
+<script src="https://electricbikereview.website/dashboard-integration/shops-carrying/iframeResizer.contentWindow.min.js"></script>
+<script onload="initShopsCarrying();" src="https://electricbikereview.com/dashboard-integration/shops-carrying/app.min.js" defer></script>
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0" />
+
+<div class="shops-carrying-widget">
+	<!-- Location Search section is always visible -->
+	<!-- Local Shops first  -->
+	<div class="shops-carrying-section" id="local-section">
+		<div class="shops-carrying-header" id="local-header">
+			<h2 class="shops-carrying-title" id="local-title">
+				<a class="shops-carrying-link" href="" id="local-link">
+					<i class="fas fa-map-marked-alt"></i>
+					Local Shops that Carry <span class="brand-name"></span>
+				</a>
+			</h2>
+		</div>
+	<div class="" id="locate-me-section">
+		<input type="input" class="location-search-input" id="carrying-location-input" alt="Search by Location" title="Search by Location" placeholder="Enter a new location..." autocomplete="off">
+		<button class="button" id="carrying-location-button" alt="Search by Location" title="Search by Location" onclick="newCarryingLocationSearch()">Go</button>
+	</div>
+		<div class="shops-carrying-body minimized" id="local-shops-container">
+			<!-- Shops will be injected here  -->
+		</div>
+		<div class="hidden" id="no-local-message">
+			No local shops were found, try searching by city name or postal code
+		</div>
+		<button class="button hidden" id="show-more">Show More Local Shops</button>
+	</div>
+	<!-- Official Shops second  -->
+	<div class="shops-carrying-section hidden" id="official-section">
+		<div class="shops-carrying-header" id="official-header">
+			<h2 class="shops-carrying-title" id="official-title">
+				<a class="shops-carrying-link" href="" id="official-link">
+					<i class="fa fa-shield-check"></i>
+					Official Shop for <span class="brand-name" id="official"></span>
+				</a>
+			</h2>
+		</div>
+		<div class="shops-carrying-body" id="official-shop-container">
+			<!-- Shops will be injected here  -->
+		</div>
+	</div>
+	<!-- Online Shops last  -->
+	<div class="shops-carrying-section hidden" id="online-section">
+		<div class="shops-carrying-header" id="online-header">
+			<h2 class="shops-carrying-title" id="online-title">
+				<a class="shops-carrying-link" href="" id="online-link">
+					<i class="fas fa-globe-americas"></i>
+					Online Shops that Carry <span class="brand-name"></span>
+				</a>
+			</h2>
+		</div>
+		<div class="shops-carrying-body" id="online-shops-container">
+			<!-- Shops will be injected here  -->
+		</div>
+	</div>
+	<div class="notice">
+		Shops pay to appear on this list, <a href="https://electricbikereview.com/advertise/" target="_blank">learn more</a>
+	</div>
+</div>

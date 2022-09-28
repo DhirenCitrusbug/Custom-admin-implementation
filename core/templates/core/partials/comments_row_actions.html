@@ -1,0 +1,15 @@
+{% load misc_filters %}
+
+{% if has_view_permission or has_change_permission or has_delete_permission    %}
+    {% if o.is_spam %}
+        <button onclick="spam_unspam({{ o.pk }}, false)" title="Make unspam" class="btn btn-success btn-xs action_btn"><i class="fas fa-exclamation-triangle"></i></button>
+    {% else %}
+        <button onclick="spam_unspam({{ o.pk }}, true)" title="Make spam" class="btn btn-success btn-xs action_btn"><i class="fas fa-exclamation-triangle"></i></button>
+    {% endif %}
+    <button onclick="reply_comment({{ o.pk }})" title="Reply" class="btn btn-info btn-xs action_btn"><i class="fas fa-reply"></i></button>
+    <a href="{% url opts|admin_urlname:'update' o.pk|admin_urlquote %}" title="Edit" class="btn btn-primary btn-xs action_btn"><i class="fas fa-pencil-alt"></i></a>
+{% endif %}
+
+{% if has_delete_permission %}
+    <a data-title="{{ o }}" title="Delete" href="{% url opts|admin_urlname:'delete' o.pk|admin_urlquote %}" class="btn btn-danger btn-xs btn-delete action_btn"><i class="fas fa-trash-alt"></i></a>
+{% endif %}

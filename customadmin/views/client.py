@@ -1,8 +1,25 @@
 from django.views.generic import ListView
 from client_user.models import Client
 from django.urls import reverse
-from django.views.generic import ListView,UpdateView,DeleteView
+from django.views.generic import ListView,UpdateView,DeleteView,CreateView
 from client.forms import ClientChangeForm
+
+class ClientCreateView(CreateView):
+    """
+    View to create ReviewBrand
+    """
+    model = Client
+    form_class = ClientChangeForm
+    template_name = "core/client/client_create.html"
+    permission_required = ("core.add_reviewbrand",)
+
+    def form_valid(self, form):
+        form.instance.create_by = self.request.user
+        return super().form_valid(form)
+
+    def get_success_url(self):
+        # opts = self.model._meta
+        return reverse("core:client-list")
 
 
 class ClientListView(ListView):

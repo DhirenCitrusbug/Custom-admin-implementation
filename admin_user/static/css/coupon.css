@@ -1,0 +1,76 @@
+.rw_coupon_table .dataTables_paginate {
+  display: block;
+}
+.rw_coupon_table .default_label {
+  text-align: center;
+  max-width: 67px;
+  display: flex;
+  justify-content: center;
+  margin: 0 auto;
+}
+.rw_coupon_table .default_label p {
+  background: linear-gradient(269.36deg, #ed2a3a -23.62%, #f7983b 120.63%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  margin-bottom: 0;
+  font-weight: normal;
+  font-size: 12px;
+  line-height: 24px;
+}
+.rw_coupon_table table tr td:nth-child(1) {
+  width: 24%;
+}
+.rw_coupon_table table tr td:nth-child(2) {
+  width: 26%;
+}
+.rw_coupon_table table tr td:nth-child(3) {
+  width: 13%;
+}
+.rw_coupon_table table tr td:nth-child(4) {
+  width: 12%;
+}
+.rw_coupon_table table tr td:nth-child(5) {
+  width: 14%;
+}
+.rw_coupon_table table tr td:nth-child(6) {
+  width: 6%;
+}
+.rw_coupon_table table tr td:nth-child(7) {
+  width: 5%;
+  min-width: 60px;
+}
+
+.date_disabled {
+  background: #ebecf4 !important;
+}
+
+/**** Responsive ****/
+@media (max-width: 1023px) {
+  .rw_coupon_table table tr td:nth-child(1) {
+    min-width: 150px;
+  }
+  .rw_coupon_table table tr td:nth-child(2) {
+    min-width: 220px;
+  }
+  .rw_coupon_table table tr td:nth-child(3) {
+    min-width: 90px;
+  }
+  .rw_coupon_table table tr td:nth-child(4) {
+    min-width: 60px;
+  }
+  .rw_coupon_table table tr td:nth-child(5) {
+    min-width: 60px;
+  }
+  .rw_coupon_table table tr td:nth-child(6) {
+    min-width: 60px;
+  }
+  .rw_coupon_table table tr td:nth-child(7) {
+    min-width: 60px;
+  }
+}
+@media (max-width: 479px) {
+  .coupon_page .admin_user_select .rw_selectbox.tags {
+    max-width: 100% !important;
+    margin-right: 0;
+  }
+}/*# sourceMappingURL=coupon.css.map */

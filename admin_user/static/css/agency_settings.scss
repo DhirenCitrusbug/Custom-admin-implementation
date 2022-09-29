@@ -1,0 +1,230 @@
+@import "common";
+.rw_inner_form_area {
+  padding: 0;
+  .rw_inner_form_inner_area {
+    margin: 25px 48px 0;
+  }
+}
+.rw_tabs {
+  .rw_tab_ul {
+    background-color: #fff;
+    margin-top: 5px;
+    padding: 0 0 0 48px;
+    li {
+      margin-right: 60px;
+      .tab_link {
+        display: block;
+        font-weight: 400;
+        font-size: 16px;
+        line-height: 26px;
+        padding: 19px 0;
+        color: rgba(17, 38, 60, 0.5);
+        text-transform: capitalize;
+        transition: all 0.3s ease-in-out;
+        position: relative;
+        transition: all 0.3s ease-in-out;
+        &::after {
+          content: "";
+          position: absolute;
+          left: 0;
+          bottom: 0;
+          right: 0;
+          width: 0;
+          height: 2px;
+          background: $main_gradient;
+        }
+        &:hover {
+          color: $dark_blue;
+          &::after {
+            width: 100%;
+          }
+        }
+        &.active {
+          color: $dark_blue;
+          &::after {
+            width: 100%;
+          }
+        }
+      }
+    }
+  }
+}
+.mast_ac_title {
+  background-color: rgba(248, 136, 33, 0.1);
+  padding: 8px 0 8px 24px;
+  h1 {
+    font-size: 18px;
+    line-height: 32px;
+    color: $dark_blue;
+    text-transform: capitalize;
+    margin-bottom: 0;
+  }
+}
+.twilio_master_account {
+  margin-bottom: 34px;
+  .rw_inn_form_box {
+    margin-top: 0 !important;
+  }
+}
+.ac_sid_td {
+  display: flex;
+  align-items: center;
+  .td_icon {
+    display: inline-block;
+    margin-left: 20px;
+  }
+}
+.ac_auth_token_td {
+  display: flex;
+  align-items: center;
+  .td_icon {
+    display: inline-block;
+    margin-left: 33px;
+  }
+  .rw_form_inputs {
+    width: 70%;
+    .rw_input {
+      margin: 0;
+      input {
+        height: auto !important;
+        padding: 0 !important;
+        border: none;
+        font-weight: normal;
+        font-size: 13px;
+        color: #11263c;
+        pointer-events: none;
+      }
+    }
+  }
+}
+.rw_twilio_table {
+  .dataTables_filter {
+    display: none;
+  }
+  table {
+    margin-top: 0 !important;
+    tr {
+      td {
+        &:nth-child(1) {
+          width: 33.3%;
+        }
+        &:nth-child(2) {
+          width: 33.3%;
+        }
+        &:nth-child(3) {
+          width: 33.3%;
+        }
+      }
+    }
+  }
+  .dataTables_paginate {
+    display: none;
+  }
+}
+
+#account_settings {
+  .rw_save_btn {
+    .rw_btn {
+      margin: 58px 0 122px auto;
+    }
+  }
+}
+#account_twilio {
+  .rw_save_btn {
+    .rw_btn {
+      margin: 50px 0 0 auto;
+    }
+  }
+}
+.twilio_modal {
+  .rw_form_label {
+    color: rgba(0, 0, 0, 0.4) !important;
+  }
+  .modal-footer {
+    border-top: none;
+    padding: 0px 24px 20px;
+  }
+}
+/* Responsive Css */
+@media (max-width: 1440px) {
+  .rw_twilio_table {
+    table {
+      tr {
+        td {
+          &:nth-child(1) {
+            min-width: 160px;
+          }
+          &:nth-child(2) {
+            min-width: 280px;
+          }
+          &:nth-child(3) {
+            min-width: 440px;
+          }
+        }
+      }
+    }
+  }
+}
+@media (max-width: 991px) {
+  .ac_auth_token_td {
+    .rw_form_inputs {
+      .rw_input {
+        .input_icon {
+          right: -35px;
+        }
+      }
+    }
+  }
+}
+@media (max-width: 768px) {
+  .rw_inner_form_area {
+    padding: 0;
+    .rw_inner_form_inner_area {
+      margin: 25px 30px 0;
+    }
+  }
+  .rw_tabs {
+    .rw_tab_ul {
+      padding: 0 0 0 30px;
+      li {
+        margin-right: 25px;
+        .tab_link {
+          padding: 15px 0;
+          font-size: 15px;
+        }
+      }
+    }
+  }
+  #account_settings {
+    .rw_save_btn {
+      .rw_btn {
+        margin: 40px auto;
+      }
+    }
+  }
+  #account_twilio {
+    .rw_save_btn {
+      .rw_btn {
+        margin: 40px auto;
+      }
+    }
+  }
+}
+@media (max-width: 767px) {
+  .rw_inner_form_area {
+    padding: 0;
+    .rw_inner_form_inner_area {
+      margin: 25px 15px 0;
+    }
+  }
+  .rw_tabs {
+    .rw_tab_ul {
+      padding: 0 0 0 15px;
+    }
+  }
+  .mast_ac_title {
+    h1 {
+      font-size: 16px;
+    }
+  }
+}

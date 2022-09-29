@@ -1,0 +1,164 @@
+{% extends 'client_base.html' %}
+{% load static %}
+{% block title %}
+    <title>Client Settings</title>
+{% endblock %}
+
+{% block page_content %}
+<div class="rw_inner_area rw_inner_form_area rw_modal_backdrop">
+    <div class="rw_tabs">
+        <ul class="nav rw_tab_ul" id="myTab" role="tablist">
+            <li class="nav-item" role="presentation">
+                <a href="{% url 'client-account-setting' %}" class="tab_link active" aria-selected="false">Account settings</a>
+            </li>
+            
+
+
+
+
+        </ul>
+    </div>
+
+      {% if messages %}
+    {% for message in messages %}
+         {% if message.tags == 'error' %}
+             <div class="rw_suc_err_wrapper rw_error_toast active" style="padding-left: 50px; padding-top: 20px;">
+                <div class="rw_suc_err_block ">
+                    <img src="{% static 'images/icons/error.svg'%}" alt="error">
+                    <p>{{message}}</p>
+                    <a href="javascript:;" class="close error_close"><img src="{% static 'images/icons/close_white.svg'%}" alt="close"></a>
+                </div>
+            </div>
+        {% else %}
+        <div class="rw_suc_err_wrapper rw_success_toast active" style="padding-left: 50px; padding-top: 20px;">
+            <div class="rw_suc_err_block ">
+                <img src="{% static 'images/icons/check_white.svg' %}" alt="Done">
+                <p>{{message}}</p>
+                <a href="javascript:;" class="close success_close"><img src="{% static 'images/icons/close_white.svg' %}" alt="close"></a>
+            </div>
+        </div>
+        {% endif %}
+{% endfor %}
+{% endif %}
+    <div class="tab-content">
+        <div class="tab-pane active" id="account_settings" role="tabpanel" >
+            <form method="post">
+                {% csrf_token %}
+            <div class="rw_inner_form_inner_area">
+            <div class="rw_inn_form_box">
+                <div class="row">
+                    <div class="col-lg-4 col-md-6">
+                        <div class="rw_form_inputs" id="div_first">
+                            <label class="rw_form_label">
+
+                                First Name</label>
+                            <div class="rw_input">
+                                {{form.first_name}}
+                            </div>
+                            <div class="form_error" id="first_error"></div>
+                        </div>
+                    </div>
+                    <div class="col-lg-4 col-md-6">
+                        <div class="rw_form_inputs" id="div_last">
+                            <label class="rw_form_label">
+
+                                Last Name</label>
+                            <div class="rw_input">
+                                {{form.last_name}}
+                            </div>
+                            <div class="form_error" id="last_error"></div>
+                        </div>
+                    </div>
+                    <div class="col-lg-4 col-md-6">
+                        <div class="rw_form_inputs">
+                            <label class="rw_form_label">Email Address</label>
+                            <div class="rw_input" style="opacity: 0.4;">
+                                <input type="text" placeholder="Enter e-mail" readonly value="{{request.user.email}}">
+                                <span class="input_icon email"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="rw_inn_form_box">
+                <div class="form_title">
+                    <h3>change password</h3>
+                </div>
+                <div class="row">
+                    <div class="col-lg-4 col-md-6">
+                        <div class="rw_form_inputs" id="div_old">
+                            <label class="rw_form_label">
+                                Current Password</label>
+                            <div class="rw_input">
+                                {{form.oldpassword}}
+                                <span class="input_icon rw_eye"></span>
+                            </div>
+                            <div class="form_error" id="old_error"></div>
+                        </div>
+                    </div>
+                    <div class="col-lg-4 col-md-6">
+                        <div class="rw_form_inputs" id="div_new">
+                            <label class="rw_form_label">New Password</label>
+                            <div class="rw_input">
+                                {{form.newpassword}}
+                                <span class="input_icon rw_eye"></span>
+                            </div>
+                            <div class="form_error" id="new_error"></div>
+                        </div>
+                    </div>
+                    <div class="col-lg-4 col-md-6">
+                        <div class="rw_form_inputs" id="div_confirm">
+                            <label class="rw_form_label">Confirm Password</label>
+                            <div class="rw_input">
+                                {{form.confirmpassword}}
+                                <span class="input_icon rw_eye"></span>
+                            </div>
+                            <div class="form_error" id="confirm_error"></div>
+                        </div>
+                    </div>
+                    <div class="form_error" style="padding-left: 15px;">{{ form.non_field_errors }}</div>
+                </div>
+            </div>
+            <div class="rw_save_btn">
+                <input type="submit" value="save" class="rw_btn" id="save_btn"
+                    style="border:none;min-width: 107px; max-width: 107px;">
+            </div>
+            </div>
+            </form>
+        </div>
+    </div>
+{% endblock %}
+
+{% block script %}
+    <script>
+         $('#id_first_name').on('keyup change', function(event){
+            if ($("#id_first_name").val().length > 0){
+                $("#first_error").text('')
+                $('#div_first').removeClass('error')
+                if ($("#id_last_name").val().length > 0){
+                    $('#save_btn').removeAttr("disabled")
+                }
+            }
+            else{
+                $('#first_error').text('Please add first name')
+                $('#div_first').addClass('error')
+                $('#save_btn').prop('disabled', true)
+            }
+        });
+     $('#id_last_name').on('keyup change', function(event){
+            if ($("#id_last_name").val().length > 0){
+                $("#last_error").text('')
+                $('#div_last').removeClass('error')
+                if ($("#id_first_name").val().length > 0){
+                    $('#save_btn').removeAttr("disabled")
+                }
+            }
+            else{
+                $('#last_error').text('Please add last name')
+                $('#div_last').addClass('error')
+                $('#save_btn').prop('disabled', true)
+            }
+        });
+
+    </script>
+{% endblock %}

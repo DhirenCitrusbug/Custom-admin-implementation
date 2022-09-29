@@ -1,0 +1,416 @@
+@import "common";
+.client_list_page {
+  .admin_user_select {
+    justify-content: flex-end;
+  }
+}
+.rw_client_list_table2 {
+  table {
+    tr {
+      td {
+        &:nth-child(1) {
+          width: 33%;
+        }
+        &:nth-child(2) {
+          width: 28%;
+        }
+        &:nth-child(3) {
+          width: 34%;
+        }
+        &:nth-child(4) {
+          width: 5%;
+          min-width: 60px;
+        }
+      }
+    }
+  }
+  .dataTables_paginate {
+    display: block;
+    margin-top: 20px !important;
+  }
+}
+.client_list_modal {
+  .rw_inp_focus {
+    &.rw_form_inputs {
+      label {
+        color: rgba(17, 38, 60, 0.4) !important;
+      }
+      .rw_radio_btns {
+        input {
+          &:checked {
+            & ~ label {
+              color: rgba(17, 38, 60, 1) !important;
+            }
+          }
+        }
+      }
+    }
+  }
+  .rw_form_inputs {
+    .rw_input {
+      margin-bottom: 23px;
+    }
+  }
+  .list_type {
+    margin-top: 10px;
+    li {
+      margin-bottom: 21px;
+      &:last-child {
+        margin-bottom: 15px;
+      }
+      .rw_radio_btns {
+        label {
+          font-size: 14px;
+        }
+      }
+    }
+  }
+  .modal-footer {
+    border-top: none;
+    padding-top: 0;
+  }
+}
+.client_list_modal_2 {
+  .modal-body {
+    padding-top: 0;
+  }
+  .modal-footer {
+    padding: 0 24px 16px;
+  }
+  .search_box {
+    position: relative;
+    margin-bottom: 25px;
+    input {
+      width: 100%;
+      height: 48px;
+      background: #ffffff;
+      border: 1px solid #ebecf4;
+      box-sizing: border-box;
+      border-radius: 2px;
+      padding: 0 25px 0 51px;
+      outline: none;
+    }
+    .inp_icon {
+      position: absolute;
+      top: 9px;
+      left: 12px;
+    }
+  }
+  table {
+    tr {
+      th {
+        padding: 8px 15px 8px 0 !important;
+      }
+      td {
+        box-shadow: none !important;
+        padding: 8px 15px 8px 0 !important;
+      }
+      &:last-child {
+        td {
+          box-shadow: inset 0px -2px 0px rgba(68, 42, 11, 0.04) !important;
+        }
+      }
+    }
+  }
+}
+.revenue_setting {
+  background-color: rgba(245, 246, 247, 0.7);
+  border-radius: 2px;
+  padding: 16px 16px 1px;
+  .revenue_head {
+    display: flex;
+    justify-content: space-between;
+    border-bottom: 2px solid #fff;
+    margin-bottom: 15px;
+    h6 {
+      font-weight: normal;
+      font-size: 14px;
+      line-height: 24px;
+      color: #000000;
+      text-transform: capitalize;
+    }
+    a {
+      font-size: 16px;
+      line-height: 24px;
+      letter-spacing: 0.4px;
+      font-weight: 600;
+      background: linear-gradient(269.36deg, #ed2a3a -23.62%, #f7983b 120.63%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      text-transform: uppercase;
+    }
+  }
+  .rev_input_wrapper {
+    .revenue_input_area {
+      display: flex;
+      .revenue_inputs {
+        display: flex;
+        width: 100%;
+        .condition {
+          margin-right: 28px;
+          .rw_bootstrap_drop_down {
+            position: relative;
+            &::after {
+              content: "";
+              position: absolute;
+              top: 50%;
+              right: -28px;
+              width: 28px;
+              height: 1px;
+              border-bottom: 1px dotted rgba(0, 0, 0, 0.5);
+              transform: translateY(-50%);
+            }
+          }
+        }
+        .rw_form_inputs {
+          width: 41%;
+          max-width: 218px;
+          .rw_input {
+            input {
+              height: 40px;
+              padding: 0 16px;
+            }
+          }
+          .rw_bootstrap_drop_down {
+            .dropdown-toggle {
+              height: 40px;
+            }
+          }
+        }
+        .reven_amt {
+          width: 55%;
+          max-width: 260px;
+        }
+      }
+      .condition_100 {
+        .rw_form_inputs {
+          width: 48%;
+        }
+        .rw_input {
+          input {
+            width: 100%;
+          }
+        }
+      }
+      .close_btn {
+        margin-top: 34px;
+        margin-left: 8px;
+        a {
+          width: 40px;
+          height: 40px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          background: #ffffff;
+          border: 1px solid #ebecf4;
+          box-sizing: border-box;
+          border-radius: 2px;
+        }
+      }
+    }
+    .rw_input {
+      display: flex;
+      align-items: center;
+      input {
+        width: 48%;
+        &:first-child {
+          margin-right: 8px;
+        }
+      }
+    }
+  }
+}
+.cnl_head {
+  background-color: rgba(231, 233, 235, 0.4);
+  padding: 7px 24px;
+  a {
+    display: flex;
+    align-items: center;
+    font-weight: normal;
+    font-size: 14px;
+    line-height: 26px;
+    color: #11263c;
+    text-transform: capitalize;
+    img {
+      margin-right: 13px;
+    }
+  }
+}
+.static_list_table {
+  max-height: 288px;
+  overflow: hidden;
+  overflow-y: auto;
+  &::-webkit-scrollbar {
+    width: 3px;
+  }
+  &::-webkit-scrollbar-track {
+    width: 3px;
+  }
+  &::-webkit-scrollbar-thumb {
+    width: 3px;
+    height: 48px;
+    background-color: $dark_blue;
+  }
+}
+.client_smart_list {
+  .rw_table_wrapper .col-sm-12.col-md-5 {
+    display: block !important;
+  }
+
+  div.dataTables_wrapper div.dataTables_info {
+    padding-top: 0;
+    font-weight: normal;
+    font-size: 14px;
+    line-height: 24px;
+    color: #000000;
+    opacity: 0.4;
+    position: absolute;
+    bottom: -36px;
+  }
+}
+.static_list_table {
+  margin-top: 62px;
+}
+.static_list_table .dataTables_filter {
+  display: block !important;
+  position: absolute;
+  top: 33px;
+  left: 18px;
+  width: 92%;
+  text-align: left !important;
+}
+.static_list_table .dataTables_filter label {
+  position: relative;
+  width: 100%;
+}
+.static_list_table .dataTables_filter label::after {
+  content: url(../images/icons/search_light.svg);
+  position: absolute;
+  top: 13px;
+  left: 15px;
+}
+.static_list_table .dataTables_filter input {
+  width: 100% !important;
+  max-width: 100% !important;
+  height: 48px;
+  background: #ffffff;
+  border: 1px solid #ebecf4;
+  box-sizing: border-box;
+  border-radius: 2px;
+  padding: 0 25px 0 38px;
+  outline: none;
+}
+.rev_input_wrapper .rw_selectbox {
+  height: 40px;
+}
+
+/***** Responsive *****/
+
+@media (max-width: 1023px) {
+  .rw_client_list_table2 {
+    table {
+      tr {
+        td {
+          &:nth-child(1) {
+            min-width: 250px;
+          }
+          &:nth-child(2) {
+            min-width: 100px;
+          }
+          &:nth-child(3) {
+            min-width: 190px;
+          }
+          &:nth-child(4) {
+            min-width: 60px;
+          }
+        }
+      }
+    }
+  }
+}
+@media (max-width: 991px) {
+  .client_smart_list {
+    div.dataTables_wrapper div.dataTables_info {
+      position: unset;
+      padding: 10px 0 20px;
+    }
+  }
+  .rw_client_list_table2 {
+    .dataTables_filter {
+      label {
+        input {
+          min-width: 193px;
+          max-width: 193px;
+        }
+      }
+    }
+  }
+}
+@media (max-width: 767px) {
+  .rev_input_wrapper {
+    .revenue_input_area {
+      align-items: center;
+      position: relative;
+      .revenue_inputs {
+        flex-direction: column;
+        .condition {
+          margin-right: 0;
+          .rw_bootstrap_drop_down {
+            position: relative;
+            &::after {
+              display: none;
+            }
+          }
+        }
+        .rw_form_inputs {
+          width: 95% !important;
+          max-width: 100% !important;
+        }
+      }
+      .close_btn {
+        position: absolute;
+        top: 0;
+        right: 0;
+        a {
+          width: 30px !important;
+          height: 30px !important;
+        }
+      }
+    }
+  }
+}
+
+@media (max-width: 575px) {
+  .static_list_table .dataTables_filter {
+    width: 88%;
+  }
+  .revenue_setting {
+    padding: 16px;
+  }
+  .rev_input_wrapper {
+    .revenue_input_area {
+      flex-direction: column;
+      .revenue_inputs {
+        flex-direction: column;
+        .rw_form_inputs {
+          width: 100% !important;
+        }
+        .condition {
+          .rw_bootstrap_drop_down {
+            .dropdown-toggle {
+              margin-bottom: 10px;
+            }
+          }
+        }
+      }
+      .close_btn {
+        margin: 0 !important;
+      }
+    }
+  }
+}
+@media (max-width: 374px) {
+  .reven_amt .rw_input input {
+    padding: 0 10px !important;
+  }
+}

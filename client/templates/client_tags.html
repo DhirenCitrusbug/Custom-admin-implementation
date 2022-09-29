@@ -1,0 +1,316 @@
+{% extends 'client_base.html' %}
+{% load static %}
+{% load tz %}
+{% block title %}
+    <title>Client Tags</title>
+{% endblock %}
+{% block page_content %}
+<div class="rw_inner_area rw_inner_form_area rw_modal_backdrop">
+    <div class="rw_tabs">
+        <ul class="nav rw_tab_ul" id="myTab" role="tablist">
+            
+            <li class="nav-item" role="presentation">
+                <a href="{% url 'client-settings' client.id %}" class="tab_link " id="business_settings_tab" >Business settings</a>
+            </li>
+            <li class="nav-item" role="presentation">
+                <a href="{% url 'client-user' client.id %}" class="tab_link" id="campaign_user_tab"
+                    data-bs-target="#campaign_user" aria-selected="false">Users</a>
+            </li>
+            <li class="nav-item" role="presentation">
+                <a href="{% url 'client-phone-view' client.id %}" class="tab_link" id="campaign_phone_numbers_tab" >Phone Numbers</a>
+            </li>
+            <li class="nav-item" role="presentation">
+                <a href="{% url 'add-custom-fields' client.id %}" class="tab_link " id="campaign_custom_fields_tab" >Custom fields</a>
+            </li>
+            <li class="nav-item" role="presentation">
+                <a href="{% url 'client-tag-view' client.id %}" class="tab_link active" id="campaign_custom_tags_tab" >Tags</a>
+            </li>
+            
+            
+
+
+
+
+        </ul>
+    </div>
+
+      {% if messages %}
+    {% for message in messages %}
+         {% if message.tags == 'error' %}
+             <div class="rw_suc_err_wrapper rw_error_toast active" style="padding-left: 50px; padding-top: 20px;">
+                <div class="rw_suc_err_block ">
+                    <img src="{% static 'images/icons/error.svg'%}" alt="error">
+                    <p>{{message}}</p>
+                    <a href="javascript:;" class="close error_close"><img src="{% static 'images/icons/close_white.svg'%}" alt="close"></a>
+                </div>
+            </div>
+        {% else %}
+        <div class="rw_suc_err_wrapper rw_success_toast active" style="padding-left: 50px; padding-top: 20px;">
+            <div class="rw_suc_err_block ">
+                <img src="{% static 'images/icons/check_white.svg' %}" alt="Done">
+                <p>{{message}}</p>
+                <a href="javascript:;" class="close success_close"><img src="{% static 'images/icons/close_white.svg' %}" alt="close"></a>
+            </div>
+        </div>
+        {% endif %}
+{% endfor %}
+{% endif %}
+   
+        <div class="tab-content ">
+            <div class="tab-pane active" id="campaign_custom_fields" role="tabpanel" >
+                <div class="rw_inner_tab_area user_tab_content ">
+                    <div class="admin_user_select">  
+
+                    <div class="search_icon_wrapper">                          
+                        <div class="rw_dashboard_btn">
+                            <a href="javascript:;" class="rw_btn" data-bs-toggle="modal" data-bs-target="#add_tag" id="openaddtagmodal">+Add Tag</a>
+                        </div>
+                    </div>
+                    </div> 
+                    <div class="rw_table_wrapper">
+                        <div class="rw_table_inner rw_admin_user_table  rw_custom_field_table ">                
+                            <table id="client_tags" class="table rw_pagination tags_option">
+                                <thead>
+                                    <tr>
+                                        <th>Name</th>
+                                        <th>Date</th>
+                                        <th class="sorting_none text-center">actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                {% for i in tags %}
+                                <tr>
+                                    <td>{{i.name|title}}</td>
+                                    {% if request.user.time_zone %}
+                                    {% timezone request.user.time_zone.value %}
+                                    <td data-order="{{i.created_at|date:'Y-m-d H:i'}}">Added on {{i.created_at | date:"j M, Y h:i A"}}</td>
+                                    {% endtimezone %}
+                                    {% else %}
+                                    <td data-order="{{i.created_at|date:'Y-m-d H:i'}}">Added on {{i.created_at | date:"j M, Y h:i A"}}</td>
+                                    {% endif %}
+                                    <td class="text-center">
+                                        <div class="action_dropdown">
+                                        <ul class="drop_ul">
+                                            <li class="position-relative"><a href="javascript:;" class="action_btn"><img src="{% static 'images/icons/action.svg'%}" alt="action"></a>
+                                                <ul class="action_submenu">
+                                                    <li><a href="javascript:;" class="remove_action edit_field" data-bs-toggle="modal" data-bs-target="#edit_tag" tag-id="{{i.id}}"><img src="{% static 'images/icons/edit.svg'%}" alt="image">Edit</a></li>
+                                                    <li><a href="javascript:;" class="remove_action delete_field" data-bs-toggle="modal" data-bs-target="#delete_confirm_popup-{{i.id}}" ><img src="{% static 'images/icons/delete.svg'%}" alt="image">delete</a></li>
+                                                    <!-- <li><a href="javascript:;" class="remove_action" data-bs-toggle="modal" data-bs-target="#"><img src="../assets/images/icons/colored_icon/campaing.svg" alt="image">Send Broadcast</a></li> -->
+                                                </ul>
+                                            </li>
+                                        </ul>                                    
+                                        </div>
+                                    </td>
+                                </tr>
+                                <div class="modal fade rw_modal delete_popup" id="delete_confirm_popup-{{i.id}}" tabindex="-1"  aria-hidden="true">
+                                    <div class="modal-dialog modal-dialog-centered">
+                                      <div class="modal-content">
+                                        <div class="modal-header">
+                                            <div class="modal_title">
+                                                <h4>Delete Tag</h4>
+                                            </div>
+                                          <a href="javascript:;" class="popup_close" data-bs-dismiss="modal" aria-label="Close"><img src="{% static 'images/icons/close.svg'%}" alt="close"></a>
+                                        </div>
+                                        <div class="modal-body">
+                                            <div class="delete_modal_body">
+                                                <img src="{% static 'images/delete_popup.svg'%}" alt="">
+                                                <h1>Delete Tag</h1>
+                                                <p>Are you sure you want to delete {{i.name}}?</p>
+                                            </div>
+                                        </div>
+                                        <div class="modal-footer">
+                                         <ul class="modal_btns">
+                                             <li><a href="javascript:;" class="modal_btn cancel" data-bs-dismiss="modal">no</a></li>
+                                             <li><a href="{% url 'client-tag-delete' i.id %}" id="contact_delete_id" class="modal_btn" >Yes</a></li>
+                                         </ul>
+                                        </div>
+                                      </div>
+                                    </div>
+                                </div>
+                                {% endfor %}
+
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>  
+                </div>
+            </div>
+        </div>
+
+
+    <!-- Create Tag Popup -->
+    <div class="modal fade rw_modal client_list_modal" id="add_tag" tabindex="-1"  aria-hidden="true">
+        {% csrf_token %}
+        <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal_title">
+                    <h4>Add Tag</h4>
+                </div>
+            <a href="javascript:;" class="popup_close" data-bs-dismiss="modal" aria-label="Close"><img src="{% static 'images/icons/close.svg'%}" alt="close"></a>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="rw_form_inputs" id="div_tag">
+                            <label  class="rw_form_label">Tag Name</label>
+                            <div class="rw_input">
+                                <input type="text" id="tag_name" placeholder="Tag Name" value=""  maxlength="30">
+                            </div>
+                            <div class="form_error" id="error_field_name"></div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+            <div class="modal-footer">
+            <input type="hidden" id="client_id" value="{{client.id}}">
+            <ul class="modal_btns">
+                <li><a href="javascript:;" class="modal_btn cancel" data-bs-dismiss="modal">cancel</a></li>
+                <li><a href="javascript:;" class="modal_btn" id="add_new_tag">Add</a></li>
+            </ul>
+            </div>
+        </div>
+        </div>
+    </div>
+
+    <!-- Edit Tag Popup -->
+    <div class="modal fade rw_modal client_list_modal" id="edit_tag" tabindex="-1"  aria-hidden="true">
+        {% csrf_token %}
+        <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal_title">
+                    <h4>Edit Tag</h4>
+                </div>
+            <a href="javascript:;" class="popup_close" data-bs-dismiss="modal" aria-label="Close"><img src="{% static 'images/icons/close.svg'%}" alt="close"></a>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="rw_form_inputs" id="div_tag_edit">
+                            <label  class="rw_form_label">Tag Name</label>
+                            <div class="rw_input">
+                                <input type="text" id="tag_name_edit" placeholder="Tag Name" value=""  maxlength="30">
+                            </div>
+                            <div class="form_error" id="error_tag_name"></div>
+                        </div>
+                    </div>
+                    <input type="hidden" id="tag_id" value="">
+                </div>
+            </div>
+            <div class="modal-footer">
+            <ul class="modal_btns">
+                <li><a href="javascript:;" class="modal_btn cancel" data-bs-dismiss="modal">cancel</a></li>
+                <li><a href="javascript:;" class="modal_btn" id="edit_tag_btn">Save</a></li>
+            </ul>
+            </div>
+        </div>
+        </div>
+    </div>
+
+
+    
+{% endblock %}
+
+{% block script %}
+    <script>
+    $(".search_icon_wrapper").find('a').click(function(){
+        $("#error_field_name").empty()
+        $("#div_tag").removeClass("error")
+        $("#tag_name").val("")
+    })
+    $('#tag_name').on('keyup', function(){
+        if ($("#tag_name").val().trim().length > 0){
+            $("#error_field_name").empty()
+            $("#div_tag").removeClass("error")
+        }
+    });
+    $('#tag_name_edit').on('keyup', function(){
+        if ($("#tag_name_edit").val().trim().length > 0){
+            $("#error_tag_name").empty()
+            $("#div_tag_edit").removeClass("error")
+        }
+    });
+     $('#add_new_tag').on('click', function(){
+            var valid = true;
+
+            if ($("#tag_name").val().trim().length <= 0){
+                $('#error_field_name').text('Please enter Tag Name')
+                    $("#div_tag").addClass('error')
+                valid=false;
+            }
+            if (valid==true) {
+                $('#loader').removeClass('rw_loader_none')
+                $.ajax({
+                    type: 'POST',
+                    url: "{% url 'client-tag-view' client.id %}",
+                    data: {
+                        client_id: $("#client_id").val(),
+                        tag_name: $("#tag_name").val(),
+                        csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val(),
+                    },
+                    success: function(response){
+                        $('#loader').addClass('rw_loader_none')
+                       if (response['status'] == false ){
+                        $('#error_field_name').text(response['msg'])
+                        $("#div_tag").addClass('error')
+                       }else{
+                        location.reload()
+                       }
+                    }
+                });
+            }
+            
+        });
+
+        $('.edit_field').on('click', function(){
+            var tag_id = $(this).attr('tag-id')
+            console.log(tag_id)
+            $.ajax({
+                type: 'GET',
+                url: "{% url 'client-tag-edit' %}",
+                data: {
+                    tag_id: tag_id,
+                },
+                success: function(response){
+                    console.log(response);
+                    $('#tag_name_edit').val(response['data']['name'])
+                    $("#tag_id").val(response['data']['id'])
+                }
+            });
+        });
+
+        
+        $('#edit_tag_btn').on('click', function(){
+            var valid = true;
+
+            if ($("#tag_name_edit").val().trim().length <= 0){
+                $('#error_tag_name').text('Please enter Tag Name')
+                    $("#div_tag_edit").addClass('error')
+                valid=false;
+            }
+            if(valid==true){
+                console.log($("#tag_id").val())
+                $.ajax({
+                    type: 'POST',
+                    url: "{% url 'client-tag-edit' %}",
+                    data: {
+                        tag_id: $("#tag_id").val(),
+                        tag_name:$("#tag_name_edit").val(),
+                        csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val(),
+                    },
+                    success: function(response){
+                        $('#loader').addClass('rw_loader_none')
+                        if (response['status'] == false ){
+                            $('#error_tag_name').text(response['msg'])
+                            $("#div_tag_edit").addClass('error')
+                        }else{
+                            location.reload()
+                        }
+                    }
+                }); 
+            }
+        });
+    </script>
+{% endblock %}

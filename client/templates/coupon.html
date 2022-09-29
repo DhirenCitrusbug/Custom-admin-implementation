@@ -1,0 +1,432 @@
+{% extends 'client_base.html' %}
+{% load tz %}
+{% load static %}
+{% load tag_filter %}
+{% block title %}
+<title>Client Coupons</title>
+{% endblock %}
+{% block page_content %}
+        <div class="rw_inner_area">
+            {% if messages %}
+    {% for message in messages %}
+         {% if message.tags == 'error' %}
+             <div class="rw_suc_err_wrapper rw_error_toast active" >
+                <div class="rw_suc_err_block ">
+                    <img src="{% static 'images/icons/error.svg'%}" alt="error">
+                    <p></p>
+                    <a href="javascript:;" class="close error_close"><img src="{% static 'images/icons/close_white.svg'%}" alt="close"></a>
+                </div>
+            </div>
+        {% else %}
+        <div class="rw_suc_err_wrapper rw_success_toast active" >
+            <div class="rw_suc_err_block ">
+                <img src="{% static 'images/icons/check_white.svg' %}" alt="Done">
+                <p>{{message}}</p>
+                <a href="javascript:;" class="close success_close"><img src="{% static 'images/icons/close_white.svg' %}" alt="close"></a>
+            </div>
+        </div>
+        {% endif %}
+{% endfor %}
+{% endif %}
+            <div class="rw_dashboard_box_wrapper">
+                <div class="admin_header agency_header">
+                    <div class="dashboard_title">
+                        <h1>Coupons</h1>
+                    </div> 
+                </div>
+            </div> 
+            <div class="admin_user_select">  
+
+               <div class="search_icon_wrapper">                          
+                    <div class="rw_dashboard_btn">
+                        <a href="javascript:;" class="rw_btn" data-bs-toggle="modal" data-bs-target="#add_coupon">+Add coupon</a>
+                    </div>
+               </div>
+            </div>
+
+            <div class="rw_table_wrapper">
+                <div class="rw_table_inner rw_admin_user_table rw_coupon_table">                
+                    <table id="rw_coupon_table" class="table rw_pagination" >
+                        <thead>
+                            <tr>
+                                <th>Name</th>                                
+                                <th>Date</th>
+                                <th class="text-center">Status</th>
+                                <th class="sorting_none text-center">Discount</th>
+                                <th class="sorting_none text-center">Reedems</th>
+                                <th class=" text-center">sales</th>
+                                <th class="sorting_none text-center">actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        {% for i in coupon %}
+                           <tr>
+                               <td>{{i.coupon_name|title}}</td>
+                               {% if request.user.time_zone %}
+                                {% timezone request.user.time_zone.value %}
+                               <td data-order="{{i.created_at|date:'Y-m-d H:i'}}">Added on {{i.created_at|date:"j M, Y h:i A"}}</td>
+                               {% endtimezone %}
+                               {% else %}
+                               <td data-order="{{i.created_at|date:'Y-m-d H:i'}}">Added on {{i.created_at|date:"j M, Y h:i A"}}</td>
+                               {% endif %}
+                               <td><div class="default_label"><p>{% if i.is_valid %}valid{% else %} Expired {% endif %}</p></div></td>
+                               <td class="text-center">{% if i.discount_type == "percentage" %}{{i.discount_value|roundoff}}%{% else %}${{i.discount_value|roundoff}}{% endif %}</td>
+                               <td class="text-center">{%if i.is_read_count %}{{i.is_read_count}}{%else%}0{%endif%}/{%if i.max_read_count %}{{i.max_read_count}}{%else%}0{%endif%}</td>
+                               <td class="text-center">${%if i.sales %}{{i.sales|roundoff}}{%else%}0{%endif%}</td>
+                               <td class="text-center">
+                                <div class="action_dropdown">
+                                 <ul class="drop_ul">
+                                     <li class="position-relative"><a href="javascript:;" class="action_btn"><img src="{% static 'images/icons/action.svg'%}" alt="action"></a>
+                                         <ul class="action_submenu">                                             
+                                             <!-- <li><a href="javascript:;" class="remove_action" data-bs-toggle="modal" data-bs-target="#"><img src="{% static 'images/icons/edit.svg'%}" alt="image">Edit</a></li> -->
+                                             <li><a href="javascript:;" class="remove_action" data-bs-toggle="modal" data-bs-target="#delete_confirm_popup-{{i.id}}"><img src="{% static 'images/icons/delete.svg'%}" alt="image">delete</a></li>
+                                             <!-- <li><a href="javascript:;" class="remove_action" ><img src="{% static 'images/icons/colored_icon/campaing.svg'%}" alt="image">Send Broadcast</a></li> -->
+                                         </ul>
+                                     </li>
+                                 </ul>                                    
+                                </div>
+                            </td>
+                           </tr>
+                        <div class="modal fade rw_modal delete_popup" id="delete_confirm_popup-{{i.id}}" tabindex="-1"  aria-hidden="true">
+                            <div class="modal-dialog modal-dialog-centered">
+                              <div class="modal-content">
+                                <div class="modal-header">
+                                    <div class="modal_title">
+                                        <h4>Delete Coupon</h4>
+                                    </div>
+                                  <a href="javascript:;" class="popup_close" data-bs-dismiss="modal" aria-label="Close"><img src="{% static 'images/icons/close.svg'%}" alt="close"></a>
+                                </div>
+                                <div class="modal-body">
+                                    <div class="delete_modal_body">
+                                        <img src="{% static 'images/delete_popup.svg'%}" alt="">
+                                        <h1>Delete Coupon</h1>
+                                        <p>Are you sure you want to delete {{i.coupon_name|title}}?</p>
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                 <ul class="modal_btns">
+                                     <li><a href="javascript:;" class="modal_btn cancel" data-bs-dismiss="modal">no</a></li>
+                                     <li><a href="{% url 'coupon-delete' i.id %}" id="contact_delete_id" class="modal_btn" >Yes</a></li>
+                                 </ul>
+                                </div>
+                              </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>  
+        </div>
+
+<!-- Add Coupon -->
+{% csrf_token %}
+    <div class="modal fade rw_modal add_contact rw_select2_modal" id="add_coupon" tabindex="-1"  aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered ">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal_title">
+                    <h4>Create New Coupon</h4>
+                </div>
+            <a href="javascript:;" class="popup_close" data-bs-dismiss="modal" aria-label="Close"><img src="{% static 'images/icons/close.svg'%}" alt="close"></a>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="rw_form_inputs" id="div_name">
+                            <label  class="rw_form_label">Coupon Name</label>
+                            <div class="rw_input">
+                                <input type="text" placeholder="Coupon Name" id="coupon_name" maxlength="30">
+                            </div>
+                            <div class="form_error" id="name_error"></div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="rw_form_inputs rw_select2_inputs" id="div_type">
+                            <label  class="rw_form_label">Discount type</label>
+                            <div class="rw_custom_dropdown">
+                                <select name="dis_type" id="dis_type" class="rw_popup_cstm_dropdown">
+                                    <option value="">Select Discount Type</option>
+                                    <option value="2">Dollar</option>
+                                    <option value="1">Percentage</option>
+                                </select>
+                            </div>
+                            <div class="form_error" id="dis_type_error"></div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <div class="rw_form_inputs" id="div_value">
+                            <label  class="rw_form_label">Discount Value</label>
+                            <div class="rw_input">
+                                <input type="text" placeholder="Discount Value" id="dis_value"  maxlength="6">
+
+                            </div>
+                            <div class="form_error" id="value_error"></div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="rw_form_inputs" id="div_spend">
+                                <label  class="rw_form_label">Minimum Spend ($)</label>
+                                <div class="rw_input">
+                                    <input type="text" placeholder="Minimum Spend ($)"  id="spend" maxlength="6">
+                                </div>
+                                <div class="form_error" id="spend_error"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="rw_form_inputs rw_date_input" id="div_from">
+                            <label  class="rw_form_label">Valid From</label>
+                            <div class="rw_input">
+                                <input type="text" placeholder="dd/mm/yyyy" id="datepicker" class="date_input">
+                                <span class="input_icon calendar"></span>
+                            </div>
+                            <div class="form_error" id="from_error"></div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="rw_form_inputs rw_date_input" id="div_to">
+                            <label  class="rw_form_label">To</label>
+                            <div class="rw_input">
+                                <input type="text" class="date_input" placeholder="dd/mm/yyyy" id="datepicker2" >
+                                <span class="input_icon calendar"></span>
+                            </div>
+                            <div class="form_error" id="to_error"></div>
+                        </div>
+                    </div>
+                    <div class="col-md-12">
+                        <div class="rw_checkbox ">
+                            <input type="checkbox" id="no_end" name="no_end" class="check_input">
+                            <label for="no_end">No end date</label>
+                        </div>
+                        <div class="form_error" id="end_error"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+            <ul class="modal_btns">
+                <li><a href="javascript:;" class="modal_btn cancel" data-bs-dismiss="modal">cancel</a></li>
+                <li><a href="javascript:;" class="modal_btn" id="create_coupon" >create</a></li>
+            </ul>
+            </div>
+        </div>
+        </div>
+    </div>
+
+    <!-- </div> -->
+    
+ {% endblock %}
+
+{% block script %}
+<script>
+
+$(".date_input").click(function (e) {
+  $(".modal").addClass("overflow_hidden");
+  e.stopPropagation();
+});
+
+$(document).on("click", function (e) {
+  if ($(e.target).is(".modal") === false) {
+    $(".modal").removeClass("overflow_hidden");
+  }
+});
+
+$(document).ready(function () {
+    $("#dis_type").select2({
+        dropdownParent: $("#add_coupon"),
+        placeholder: "Select Discount Type",
+        allowClear: false,
+        minimumResultsForSearch: -1,
+    });
+});
+
+
+$('body').on('click','.check_input', function(){
+    console.log('asdasdasd')
+    console.log($('input[type="checkbox"]').prop('checked'))
+    if ($("#no_end").prop('checked') == false){
+        $("#datepicker2").removeClass('date_disabled')
+        $("#datepicker2").prop("disabled", false);
+        $("#div_to").removeClass('error')
+        $('#to_error').text('')
+    }else{
+        $("#datepicker2").addClass('date_disabled')
+        $("#datepicker2").prop("disabled", true);
+        $("#div_to").removeClass('error')
+        $('#to_error').text('')
+        $("#datepicker2").val('')
+    }
+});
+$('body').on('change','#dis_type', function(){
+    console.log('asdasdas')
+   $('#dis_type_error').text('')
+});
+$('#coupon_name').on('keyup', function (event) {
+    if ($("#coupon_name").val().trim().length > 0){
+        $("#div_name").removeClass('error')
+        $('#name_error').text('')
+    }
+});
+$('#dis_value').on('keyup', function (event) {
+    if ($("#dis_value").val().trim().length > 0){
+        $("#div_value").removeClass('error')
+        $('#value_error').text('')
+    }
+});
+$('#spend').on('keyup', function (event) {
+    if ($("#spend").val().trim().length > 0){
+        $("#div_spend").removeClass('error')
+        $('#spend_error').text('')
+    }
+});
+$('#dis_value').on('keypress', function (event) {
+    var regex = new RegExp("^[0-9\.]+$");
+    var key = String.fromCharCode(!event.charCode ? event.which : event.charCode);
+    if (!regex.test(key)) {
+       event.preventDefault();
+       return false;
+    }
+});
+$('#spend').on('keypress', function (event) {
+    var regex = new RegExp("^[0-9\.]+$");
+    var key = String.fromCharCode(!event.charCode ? event.which : event.charCode);
+    if (!regex.test(key)) {
+       event.preventDefault();
+       return false;
+    }
+});
+$('#datepicker').on('change', function (event) {
+    if ($("#datepicker").val().trim().length > 0){
+        $("#div_from").removeClass('error')
+        $('#from_error').text('')
+    }
+});
+$('#datepicker2').on('change', function (event) {
+    if ($("#datepicker2").val().trim().length > 0){
+        $("#div_to").removeClass('error')
+        $('#to_error').text('')
+    }
+});
+
+
+
+
+$('body').on('click','#create_coupon', function(){
+    var valid=true;
+    var end=true;
+    console.log('asdasdasd')
+    if ($("#coupon_name").val().trim().length <= 0 ){
+        $("#div_name").addClass('error')
+        $('#name_error').text('Please enter Coupon Name')
+        valid=false;
+    }
+    if ($("#dis_type").val() == "" ){
+        $("#div_type").addClass('error')
+        $('#dis_type_error').text('Please select Discount Type')
+        valid=false;
+    }
+
+     if ($("#dis_value").val().trim().length <= 0 ){
+        $("#div_value").addClass('error')
+        $('#value_error').text('Please enter Discount Value')
+        valid=false;
+    }
+    if ($("#dis_type").val() == "1" ){
+        console.log(parseInt($("#dis_value").val()))
+        if (parseInt($("#dis_value").val()) <= 0 || $("#dis_value").val() > 100 ){
+            $("#div_value").addClass('error')
+            $('#value_error').text('Please enter proper Discount Value')
+            valid=false;
+        }
+    }
+    if ($("#spend").val().trim().length <= 0 ){
+        $("#div_spend").addClass('error')
+        $('#spend_error').text('Please enter Mininum Spend')
+        valid=false;
+    }
+
+
+    if ($("#datepicker").val().trim().length <= 0 ){
+        $("#div_from").addClass('error')
+        $('#from_error').text('Please select Valid From Date')
+        valid=false;
+    }
+    if ($("#no_end").prop("checked") == false ){
+        end=false;
+         var from = $("#datepicker").val().split("-")
+        var to = $("#datepicker2").val().split("-")
+
+        console.log(from)
+        console.log(to)
+
+        // var from_date=new Date(from[0], from[1]-1, from[2])
+        // var to_date=new Date(to[0], to[1]-1, to[2])
+        var from_date=moment(from, 'DD-MM-YYYY');
+        var to_date=moment(to, 'DD-MM-YYYY');
+        
+        console.log(from_date['_i'])
+        console.log(to_date['_i'])
+        if ($("#datepicker2").val().trim().length <= 0 ){
+            console.log("True");
+            $("#div_to").addClass('error')
+            $('#to_error').text('Please select Valid To Date')
+            valid=false;
+        }else{
+            if (from_date['_i'] >= to_date['_i']){
+                $('#to_error').text('Past Date cannot exceed Future Date')
+                $('#div_to').addClass('error')
+                valid=false;
+            }
+            if (from_date['_i'] == to_date['_i']){
+                $('#to_error').text('Past Date and Future Date cannot be same')
+                $('#div_to').addClass('error')
+                valid=false;
+            }
+        }
+    }
+    if (valid==true){
+        $('#loader').removeClass('rw_loader_none')
+        link = "{% url 'client-coupon' client.id %}";
+        $.ajax({
+            type: 'POST',
+            url: link,
+            data: {
+                name:$("#coupon_name").val(),
+                dis_type:$("#dis_type").val(),
+                dis_value:$("#dis_value").val(),
+                spend:$("#spend").val(),
+                valid_from:$("#datepicker").val(),
+                valid_to:$("#datepicker2").val(),
+                is_end:end,
+                csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val(),
+            },
+            success: function (response) {
+            $('#loader').addClass('rw_loader_none')
+                console.log(response)
+                location.reload()
+            }
+        });
+    }
+});
+$('#add_coupon').find('a').slice(0, 2).click(function(){
+    $('#coupon_name').val('')
+    $('#dis_type').val('').change()
+    $('#dis_value').val('')
+    $('#spend').val('')
+    $('#datepicker').val('')
+    $('#datepicker2').val('')
+    $('.check_input').prop('checked',false);
+
+    $('.form_error').empty()
+    
+    $("#div_name").removeClass('error')
+    $("#div_type").removeClass('error')
+    $("#div_value").removeClass('error')
+    $("#div_spend").removeClass('error')
+    $("#div_from").removeClass('error')
+    $("#div_to").removeClass('error')
+})
+</script>
+{% endblock %}

@@ -1,0 +1,324 @@
+@import "common";
+.add_number_check {
+  display: flex;
+  margin-bottom: 26px;
+  li {
+    margin-right: 48px;
+    .rw_radio_btns {
+      label {
+        font-size: 14px;
+      }
+    }
+  }
+}
+.number_checkbox {
+  max-height: 288px;
+  overflow: hidden;
+  overflow-y: auto;
+  &::-webkit-scrollbar {
+    width: 3px;
+  }
+  &::-webkit-scrollbar-track {
+    width: 3px;
+  }
+  &::-webkit-scrollbar-thumb {
+    width: 3px;
+    height: 48px;
+    background-color: $dark_blue;
+  }
+  li {
+    line-height: 0;
+
+    label {
+      display: block;
+      font-weight: normal;
+      font-size: 14px;
+      color: $dark_blue;
+      background: #ffffff;
+      box-shadow: inset 0px -2px 0px rgba(68, 42, 11, 0.04);
+      padding: 19px 13px 24px 19px;
+      position: relative;
+      &::after {
+        content: url(../images/icons/done.svg);
+        position: absolute;
+        top: 50%;
+        right: 17px;
+        transform: translateY(-50%);
+        opacity: 0;
+        visibility: hidden;
+        border-radius: 2px;
+      }
+    }
+    input {
+      appearance: none;
+      width: 100%;
+      border: none;
+      position: absolute;
+      left: -999999999999px;
+      outline: none;
+      &:checked {
+        & ~ label {
+          background-color: rgba(248, 136, 33, 0.2);
+          color: #f88821;
+          &::after {
+            opacity: 1;
+            visibility: visible;
+          }
+        }
+      }
+    }
+  }
+}
+.add_new_number {
+  .modal-footer {
+    border: none;
+    padding: 10px 24px 14px;
+  }
+  .rw_checkbox {
+    margin-top: 39px;
+    label {
+      opacity: 1;
+      a {
+        background: linear-gradient(
+          269.36deg,
+          #ed2a3a -23.62%,
+          #f7983b 120.63%
+        );
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        text-decoration: none;
+      }
+    }
+  }
+  .purchase_btn {
+    min-width: 155px !important;
+  }
+}
+/********** Campaign User **********/
+.user_tab_content {
+  .rw_dashboard_btn {
+    .rw_btn {
+      min-width: 160px;
+      max-width: 160px;
+      margin-left: 8px;
+    }
+  }
+}
+.rw_campaign_user_table {
+  .dataTables_paginate {
+    display: block;
+    margin-top: 20px !important;
+  }
+  table {
+    tr {
+      td {
+        &:nth-child(1) {
+          width: 26%;
+        }
+        &:nth-child(2) {
+          width: 26%;
+        }
+        &:nth-child(3) {
+          width: 31%;
+        }
+        &:nth-child(4) {
+          width: 12%;
+        }
+        &:nth-child(5) {
+          width: 5%;
+        }
+      }
+    }
+  }
+}
+/********** Campaign Phone number **********/
+.campaign_phone_table {
+  .dataTables_filter {
+    display: block !important;
+  }
+  .dataTables_info {
+    display: none;
+  }
+  .dataTables_paginate {
+    display: block;
+    .pagination {
+      margin-top: 22px !important;
+    }
+  }
+  .default_label {
+    margin-left: 17px;
+  }
+  table {
+    tr {
+      td {
+        &:nth-child(1) {
+          width: 34%;
+        }
+        &:nth-child(2) {
+          width: 21%;
+        }
+        &:nth-child(3) {
+          width: 31%;
+        }
+        &:nth-child(4) {
+          width: 15%;
+        }
+        &:nth-child(5) {
+          width: 5%;
+          min-width: 60px;
+        }
+      }
+    }
+  }
+}
+.campaign_phone_content {
+  .rw_dashboard_btn {
+    .rw_btn {
+      min-width: 187px;
+    }
+  }
+}
+
+/********** Campaign Custom field **********/
+.rw_custom_field_table {
+  .default_label {
+    max-width: 80px;
+    text-align: center;
+    margin: 0 auto;
+    padding: 0 15px 1px;
+  }
+  .dataTables_paginate {
+    display: block;
+    margin-top: 22px !important;
+  }
+  table {
+    tr {
+      td {
+        &:nth-child(1) {
+          width: 25%;
+        }
+        &:nth-child(2) {
+          width: 12%;
+        }
+        &:nth-child(3) {
+          width: 25%;
+        }
+        &:nth-child(4) {
+          width: 33%;
+        }
+        &:nth-child(5) {
+          width: 5%;
+          min-width: 60px;
+        }
+      }
+    }
+  }
+}
+
+/********** Responsive **********/
+@media (max-width: 1023px) {
+  .rw_campaign_user_table {
+    table {
+      tr {
+        td {
+          &:nth-child(1) {
+            min-width: 150px;
+          }
+          &:nth-child(2) {
+            min-width: 150px;
+          }
+          &:nth-child(3) {
+            min-width: 220px;
+          }
+          &:nth-child(4) {
+            min-width: 60px;
+          }
+          &:nth-child(5) {
+            min-width: 60px;
+          }
+        }
+      }
+    }
+  }
+  .campaign_phone_table {
+    table {
+      tr {
+        td {
+          &:nth-child(1) {
+            min-width: 240px;
+          }
+          &:nth-child(2) {
+            min-width: 100px;
+          }
+          &:nth-child(3) {
+            min-width: 220px;
+          }
+          &:nth-child(4) {
+            min-width: 80px;
+          }
+          &:nth-child(5) {
+            width: 10%;
+            min-width: 60px;
+          }
+        }
+      }
+    }
+  }
+  .rw_custom_field_table {
+    table {
+      tr {
+        td {
+          &:nth-child(1) {
+            min-width: 140px;
+          }
+          &:nth-child(2) {
+            min-width: 80px;
+          }
+          &:nth-child(3) {
+            min-width: 100px;
+          }
+          &:nth-child(4) {
+            min-width: 220px;
+          }
+          &:nth-child(5) {
+            min-width: 60px;
+          }
+        }
+      }
+    }
+  }
+}
+@media (max-width: 991px) {
+  .rw_inner_tab_area {
+    padding: 34px 30px;
+  }
+}
+
+@media (max-width: 767px) {
+  .rw_inner_tab_area {
+    padding: 25px 15px !important;
+  }
+}
+@media (max-width: 575px) {
+  .number_checkbox {
+    li {
+      label {
+        padding: 19px 13px 24px 15px;
+      }
+    }
+  }
+  .add_number_check {
+    flex-direction: column;
+    li {
+      margin-bottom: 10px;
+      margin-right: 0;
+    }
+  }
+  .user_tab_content {
+    .rw_dashboard_btn {
+      .rw_btn {
+        margin-left: 0;
+      }
+    }
+  }
+}

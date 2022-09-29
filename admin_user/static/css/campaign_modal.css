@@ -1,0 +1,76 @@
+.rw_modal.campaign_modal .modal-dialog{
+  max-width: 429px;
+}
+.rw_modal.campaign_modal .modal-body{
+  padding:0px;
+}
+.rw_modal.campaign_modal .campaigns_action_content .campaigns_box{
+    max-width: 429px;
+    min-width: 429px;
+}
+
+.compaign_section_1{
+    width: 100%;
+    max-width: 381px;
+    opacity: 0;
+    visibility: hidden;
+}
+.modal-backdrop.fade.show{
+    display: block !important;
+}
+.campaigns_action_content .campaigns_box .text_input_box .input_icon_wrapper .input_icons li{
+
+    margin-bottom: 0;
+    position: relative;
+}
+.campaigns_action_content .campaigns_box .text_input_box .input_icon_wrapper .input_icons .input_submenu {
+    min-width: 220px;
+    text-align: left;
+    position: absolute;
+    top: 35px;
+    right: -9px;
+    z-index: 999;
+    display: none;
+    align-items: flex-start;
+    flex-direction: column;
+    box-shadow:0px 0px 18px 1px rgba(0,0,0,0.06);
+    padding:0;
+}
+.campaigns_action_content .campaigns_box .text_input_box .input_icon_wrapper .input_icons .input_submenu.active{
+    display:block;
+     height: 255px;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+.campaigns_action_content .campaigns_box .text_input_box .input_icon_wrapper .input_icons .input_submenu li {
+    width: 100%;
+    margin-right:0;
+}
+
+.campaigns_action_content .campaigns_box .text_input_box .input_icon_wrapper .input_icons .input_submenu li a {
+    display: flex;
+    align-items: center;
+    font-size: 14px;
+    line-height: 16px;
+    color: #000000;
+    padding: 17px 18px 18px;
+    background: #fff;
+    box-shadow: inset 0px -2px 0px rgb(68 42 11 / 4%);
+    margin-left:0;
+    width:100%;
+}
+.rw_modal.campaign_modal .modal-dialog {
+    margin-left: auto;
+    margin-right: auto;
+}
+@media (max-width : 767px)  {
+    .rw_modal.campaign_modal .campaigns_action_content .campaigns_box {
+        min-width: initial;
+    }
+    .campaigns_action_content .campaigns_box .textmessage_footer ul li .popup_close {
+        justify-content: space-around;
+    }
+    .campaigns_action_content>form {
+        width: 100%;
+    }
+}

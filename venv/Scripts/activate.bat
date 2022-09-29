@@ -8,7 +8,7 @@ if defined _OLD_CODEPAGE (
     "%SystemRoot%\System32\chcp.com" 65001 > nul
 )
 
-set VIRTUAL_ENV=C:\Users\Citrusbug\Downloads\ebr-randy-develop (1)\ebr-randy-develop\venv
+set VIRTUAL_ENV=C:\Users\Citrusbug\Downloads\reeach-backend\reeach-backend\venv
 
 if not defined PROMPT set PROMPT=$P$G
 

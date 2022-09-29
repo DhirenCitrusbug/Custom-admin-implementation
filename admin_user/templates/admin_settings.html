@@ -1,0 +1,168 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}
+    <title>Admin Settings</title>
+{% endblock %}
+
+{% block head %}
+<link rel="stylesheet" href="{% static 'css/agency_dashboard.css' %}">
+<link rel="stylesheet" href="{% static 'css/agency_settings.css' %}">
+<link rel="stylesheet" href="{% static 'css/admin_account_settings.css' %}">
+<link rel="stylesheet" href= "{% static 'css/icons.css' %}">
+{% endblock %}
+
+
+{% block page_content %}
+<form method="post" id="edit_form" enctype="multipart/form-data">
+    {% csrf_token %}
+<div class="rw_inner_area">
+{% if messages %}
+    {% for message in messages %}
+         {% if message.tags == 'error' %}
+             <div class="rw_suc_err_wrapper rw_error_toast active" >
+                <div class="rw_suc_err_block ">
+                    <img src="../assets/images/icons/error.svg" alt="error">
+                    <p>There was a problem saving your changes</p>
+                    <a href="javascript:;" class="close error_close"><img src="../assets/images/icons/close_white.svg" alt="close"></a>
+                </div>
+            </div>
+        {% else %}
+        <div class="rw_suc_err_wrapper rw_success_toast active" >
+            <div class="rw_suc_err_block ">
+                <img src="{% static 'images/icons/check_white.svg' %}" alt="Done">
+                <p>{{message}}</p>
+                <a href="javascript:;" class="close success_close"><img src="{% static 'images/icons/close_white.svg' %}" alt="close"></a>
+            </div>
+        </div>
+        {% endif %}
+{% endfor %}
+{% endif %}
+
+    <div class="rw_dashboard_box_wrapper">
+        <div class="admin_header">
+            <div class="dashboard_title">
+                <h1>account settings</h1>
+            </div>
+        </div>
+    </div>
+    <div class="rw_inner_form_inner_area">
+        <div class="rw_inn_form_box">
+            <div class="row">
+                <div class="col-lg-4 col-md-6">
+                    <div class="rw_form_inputs" id="div_first">
+                        <label  class="rw_form_label">
+
+                            First Name</label>
+                        <div class="rw_input">
+                            {{form.first_name}}
+                        </div>
+                        <div class="form_error" id="first_error"></div>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6">
+                    <div class="rw_form_inputs" id="div_last">
+                        <label  class="rw_form_label">
+                            
+                            Last Name</label>
+                        <div class="rw_input">
+                            {{form.last_name}}
+                        </div>
+                        <div class="form_error" id="last_error"></div>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6">
+                    <div class="rw_form_inputs" >
+                        <label  class="rw_form_label">Email Address</label>
+                        <div class="rw_input" style="opacity: 0.4;">
+                            <input type="text" placeholder="Enter e-mail" readonly value="{{request.user.email}}">
+                            <span class="input_icon email"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="rw_inn_form_box">
+            <div class="form_title">
+                <h3>change password</h3>
+            </div>
+            <div class="row">
+                <div class="col-lg-4 col-md-6">
+                    <div class="rw_form_inputs" id="div_old">
+                        <label  class="rw_form_label">
+                            Current Password</label>
+                        <div class="rw_input">
+                            {{form.oldpassword}}
+                            <span class="input_icon rw_eye"></span>
+                        </div>
+                        <div class="form_error" id="old_error"></div>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6">
+                    <div class="rw_form_inputs" id="div_new">
+                        <label  class="rw_form_label">New Password</label>
+                        <div class="rw_input">
+                            {{form.newpassword}}
+                            <span class="input_icon rw_eye"></span>
+                            <span style="color: red;" id="new_error"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6">
+                    <div class="rw_form_inputs" id="div_confirm">
+                        <label  class="rw_form_label">Confirm Password</label>
+                        <div class="rw_input">
+                            {{form.confirmpassword}}
+                            <span class="input_icon rw_eye"></span>
+                            <span style="color: red;" id="confirm_error"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="form_error" style="padding-left: 15px;">{{ form.non_field_errors }}</div>
+            </div>
+        </div>
+        <div class="rw_save_btn">
+            <input type="submit" value="save" class="rw_btn" id="save_btn" style="border:none;min-width: 107px; max-width: 107px;">
+        </div>
+    </div>
+</div>
+</form>
+
+{% endblock %}
+
+{% block script %}
+<script>
+    $('#id_first_name').on('keyup change', function(event){
+            if ($("#id_first_name").val().length > 0){
+                $("#first_error").text('')
+                $('#div_first').removeClass('error')
+                if ($("#id_last_name").val().length > 0){
+                    $('#save_btn').removeAttr("disabled")
+                }
+            }
+            else{
+                $('#first_error').text('Please enter First Name')
+                $('#div_first').addClass('error')
+                $('#save_btn').prop('disabled', true)
+            }              
+        });
+     $('#id_last_name').on('keyup change', function(event){
+            if ($("#id_last_name").val().length > 0){
+                $("#last_error").text('')
+                $('#div_last').removeClass('error')
+                if ($("#id_first_name").val().length > 0){
+                    $('#save_btn').removeAttr("disabled")
+                }
+            }
+            else{
+                $('#last_error').text('Please enter Last Name')
+                $('#div_last').addClass('error')
+                $('#save_btn').prop('disabled', true)
+            }              
+        });
+     $('#save_btn').on('click', function(event){
+        $('#loader').removeClass('rw_loader_none')
+     });
+     
+</script>
+
+{% endblock %}

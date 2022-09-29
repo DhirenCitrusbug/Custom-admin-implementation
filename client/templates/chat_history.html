@@ -1,0 +1,13 @@
+<input type="hidden" value='{{contact.phone_no}}' id="user_phone_no">
+{% for i in messages %}
+    {% if i.is_receive == True %}
+        <div class="chat_message chat_message_rcv" style="word-break: break-all;">
+            <p>{{i.message}}</p>
+        </div>
+    {% endif %}
+    {% if i.is_send == True %}
+        <div class="chat_message chat_message_send" style="word-break: break-all;">
+            <p>{{i.message}}</p>
+        </div>
+    {% endif %}
+{% endfor %}

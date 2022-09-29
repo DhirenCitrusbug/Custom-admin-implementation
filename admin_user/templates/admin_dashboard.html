@@ -1,0 +1,206 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load tag_filter %}
+
+{% block page_content %}
+<div class="rw_inner_area">
+{% if messages %}
+        <div class="col-lg-12 col-md-12" style=" padding: 0 0 0 48px;">
+            <ul class="messages">
+                {% for message in messages %}
+                <div style="color: green; font-size:16px;">{{ message }}</div>
+                {% endfor %}
+            </ul>
+        </div>
+        {% endif %}
+
+
+    <div class="rw_dashboard_box_wrapper">
+        <div class="admin_header">
+            <div class="dashboard_title">
+                <h1>Dashboard</h1>
+            </div>
+            <div class="rw_selectbox admin_select">
+                <select name="admin_details" id="admin_filter_details">
+                    <option value="All">All</option>
+                    <option value="Today">Today</option>
+                    <option value="Last 7 Days">Last 7 Days</option>
+                    <option value="This Month">This Month</option>
+                </select>
+            </div>
+        </div>
+        <!-- <div class="rw_dashboard_inner">
+            <div class="dashboard_box">
+                <div class="dashboard_box_text">
+                    <h1>{{agency_count}}</h1>
+                    <p>Agencies</p>
+                </div>
+                <div class="dashboard_box_icon">
+                    <img src="{% static 'images/icons/agency.svg' %}" alt="image">
+                </div>
+            </div>
+            <div class="dashboard_box">
+                <div class="dashboard_box_text">
+                    <h1>{{client_count}}</h1>
+                    <p>Clients</p>
+                </div>
+                <div class="dashboard_box_icon">
+                    <img src="{% static 'images/icons/client.svg' %}" alt="image">
+                </div>
+            </div>
+            <div class="dashboard_box">
+                <div class="dashboard_box_text">
+                    <h1>{{contact_user}}</h1>
+                    <p>Contacts</p>
+                </div>
+                <div class="dashboard_box_icon">
+                    <img src="{% static 'images/icons/phone.svg' %}" alt="image">
+                </div>
+            </div>
+            <div class="dashboard_box">
+                <div class="dashboard_box_text">
+                    <h1>{{total_sales.amount__sum|million}}</h1>
+                    <p>Total Sales</p>
+                </div>
+                <div class="dashboard_box_icon">
+                    <img src="{% static 'images/icons/dollor.svg' %}" alt="image">
+                </div>
+            </div>
+        </div> -->
+    </div>
+    <div id="admin_dashboard">
+        <div class="rw_dashboard_box_wrapper">
+            <!-- <div class="admin_header">
+                <div class="dashboard_title">
+                    <h1>Dashboard</h1>
+                </div>
+                <div class="rw_selectbox admin_select">
+                    <select name="" id="">
+                        <option value="All">All</option>
+                        <option value="Today">Today</option>
+                        <option value="Last 7 Days">Last 7 Days</option>
+                        <option value="This Month">This Month</option>
+                    </select>
+                </div>
+            </div> -->
+            <div class="rw_dashboard_inner">
+                <div class="dashboard_box">
+                    <div class="dashboard_box_text">
+                        <h1>{{agency_count}}</h1>
+                        <p>Agencies</p>
+                    </div>
+                    <div class="dashboard_box_icon">
+                        <img src="{% static 'images/icons/agency.svg' %}" alt="image">
+                    </div>
+                </div>
+                <div class="dashboard_box">
+                    <div class="dashboard_box_text">
+                        <h1>{{client_count}}</h1>
+                        <p>Clients</p>
+                    </div>
+                    <div class="dashboard_box_icon">
+                        <img src="{% static 'images/icons/client.svg' %}" alt="image">
+                    </div>
+                </div>
+                <div class="dashboard_box">
+                    <div class="dashboard_box_text">
+                        <h1>{{contact_user}}</h1>
+                        <p>Contacts</p>
+                    </div>
+                    <div class="dashboard_box_icon">
+                        <img src="{% static 'images/icons/phone.svg' %}" alt="image">
+                    </div>
+                </div>
+                <div class="dashboard_box">
+                    <div class="dashboard_box_text">
+                        <h1>{{total_sales.amount__sum|million}}</h1>
+                        <p>Total Sales</p>
+                    </div>
+                    <div class="dashboard_box_icon">
+                        <img src="{% static 'images/icons/dollor.svg' %}" alt="image">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="rw_table_wrapper">
+            <div class="rw_table_header">
+                <div class="table_title">
+                    <h3>Newly Added Agencies</h3>
+                </div>
+    <!--            <div class="add_new">-->
+    <!--                <a href="">+add</a>-->
+    <!--            </div>-->
+            </div>
+            <div class="rw_table_inner rw_admin_dashboard_table">
+                <table id="admin_dashboard_table" class="table rw_pagination" cellpadding="0" cellspacing="0">
+                    <thead>
+                        <tr>
+                            <th>Agency Name </th>
+                            <th>Contact Name </th>
+                            <th>Date</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    {% for i in agency %}
+                    <tr>
+                        <td>{{i.business_name|title}}</td>
+                            <td >{{i.first_name|title}} {{i.last_name|title}}</td>
+                            <td data-order="{{i.created_at|date:'Y-m-d H:i'}}">Added on {{i.created_at | date:"j M, Y h:i A"}}</td>
+                    </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script>
+    $("#admin_filter_details").on("change", function () {
+        $('#loader').removeClass('rw_loader_none')
+        console.log('*****************************')
+        // var client_id = $('#client_id').val();
+        console.log($(this).val());
+        $.ajax({
+            type: 'GET',
+            url: '{% url "admin-dashboard-filter" %}',
+            data: {
+                details: $(this).val(),
+                // id: client_id,
+            },
+            success: function (response) {
+                console.log("******************");
+                $('#loader').addClass('rw_loader_none')
+
+                $("#admin_dashboard").html(response)
+                $("#admin_dashboard_table").dataTable({
+                    // language: {
+                    // search: "",
+                    // searchPlaceholder: "Search Agency Name,Contact Name and Date",
+                    // paginate: {
+                    //     next: '<img src="../static/images/icons/chevron_right.svg" alt="image">',
+                    //     previous:
+                    //     '<img src="../static/images/icons/chevron_left.svg" alt="image">',
+                    // },
+                    // },
+                    bPaginate: true,
+                    bLengthChange: false,
+                    responsive: true,
+                    "order": [[2, "desc"]],
+                    aoColumnDefs: [
+                        {
+                            bSortable: true,
+                            aTargets: [-1]
+                        }
+                    ],
+                    "oLanguage": {
+                        "sEmptyTable": "No Records Found"
+                    }
+                });
+            },
+        });
+    })
+</script>
+
+{% endblock %}

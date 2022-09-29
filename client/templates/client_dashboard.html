@@ -1,0 +1,468 @@
+{% extends 'client_base.html' %}
+{% load static %}
+{% load tz %}
+{% load tag_filter %}
+{% block head %}
+
+{% endblock %}
+
+{% block page_content %}
+<div class="rw_inner_area">
+    <div class="rw_dashboard_box_wrapper">
+        <div class="admin_header">
+            <div class="dashboard_title">
+                <h1>Dashboard</h1>
+            </div>
+            <input type="hidden" id="client_id" value="{{client.id}}">
+            <div class="rw_selectbox admin_select">
+                <select id="filter_details" name="details">
+                    <option value="All">All</option>
+                    <option value="Today">Today</option>
+                    <option value="Last 7 Days">Last 7 Days</option>
+                    <option value="This Month">This Month</option>
+                </select>
+            </div>
+        </div>
+        <!-- <div class="rw_dashboard_inner">
+            <div class="dashboard_box">
+                <div class="dashboard_box_text">
+                    <h1>{{count_contact}}</h1>
+                    <p>Contacts</p>
+                </div>
+                <div class="dashboard_box_icon">
+                    <img src="{% static 'images/icons/contact.svg' %}" alt="image">
+                </div>
+            </div>
+            <div class="dashboard_box">
+                <div class="dashboard_box_text">
+                    <h1>{{total_sales.amount__sum|million}}</h1>
+                    <p>Total Sales</p>
+                </div>
+                <div class="dashboard_box_icon">
+                    <img src="{% static 'images/icons/dollor.svg'%}" alt="image">
+                </div>
+            </div>
+            <div class="dashboard_box">
+                <div class="dashboard_box_text">
+                    <h1>{{coupon_claimed}}</h1>
+                    <p>Coupons Claimed</p>
+                </div>
+                <div class="dashboard_box_icon">
+                    <img src="{% static 'images/icons/coupon.svg'%}" alt="image">
+                </div>
+            </div>
+            <div class="dashboard_box">
+                <div class="dashboard_box_text">
+                    <h1>{{message_sent}}</h1>
+                    <p>Messages Sent</p>
+                </div>
+                <div class="dashboard_box_icon">
+                    <img src="{% static 'images/icons/message_white.svg'%}" alt="image">
+                </div>
+            </div>
+        </div> -->
+    </div>
+    <div id="dashboard">
+    <div class="rw_dashboard_box_wrapper">
+        <!-- <div class="admin_header">
+            <div class="dashboard_title">
+                <h1>Dashboard</h1>
+            </div>
+            <input type="hidden" id="client_id" value="{{client.id}}">
+            <div class="rw_selectbox admin_select">
+                <select id="filter_details" name="details">
+                    <option value="All">All</option>
+                    <option value="Today">Today</option>
+                    <option value="Last 7 Days">Last 7 Days</option>
+                    <option value="This Month">This Month</option>
+                </select>
+            </div>
+        </div> -->
+        <div class="rw_dashboard_inner">
+            <div class="dashboard_box">
+                <div class="dashboard_box_text">
+                    <h1>{{count_contact}}</h1>
+                    <p>Contacts</p>
+                </div>
+                <div class="dashboard_box_icon">
+                    <img src="{% static 'images/icons/contact.svg' %}" alt="image">
+                </div>
+            </div>
+            <div class="dashboard_box">
+                <div class="dashboard_box_text">
+                    <h1>{{total_sales.amount__sum|million}}</h1>
+                    <p>Total Sales</p>
+                </div>
+                <div class="dashboard_box_icon">
+                    <img src="{% static 'images/icons/dollor.svg'%}" alt="image">
+                </div>
+            </div>
+            <div class="dashboard_box">
+                <div class="dashboard_box_text">
+                    <h1>{{coupon_claimed}}</h1>
+                    <p>Coupons Claimed</p>
+                </div>
+                <div class="dashboard_box_icon">
+                    <img src="{% static 'images/icons/coupon.svg'%}" alt="image">
+                </div>
+            </div>
+            <div class="dashboard_box">
+                <div class="dashboard_box_text">
+                    <h1>{{message_sent}}</h1>
+                    <p>Messages Sent</p>
+                </div>
+                <div class="dashboard_box_icon">
+                    <img src="{% static 'images/icons/message_white.svg'%}" alt="image">
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="rw_table_wrapper">
+        <div class="rw_table_header">
+            <div class="table_title">
+                <h3>Newly Added Contacts</h3>
+            </div>
+            <!-- <div class="add_new">
+                <a href="javascript:;">+add</a>
+            </div> -->
+        </div>
+        <div class="rw_table_inner rw_client_dashboard_table">
+            <table id="admin_dashboard_table" class="table rw_pagination">
+                <thead>
+                    <tr>
+                        <th>Number</th>
+                        <th>Name</th>
+                        <th>Date</th>
+                        <th>Sales</th>
+                        <!-- <th class="sorting_none text-center">Status</th>
+                        <th class="text-center sorting_none">actions</th> -->
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for i in client_contact %}
+                    <tr>
+                        <td>{{i.phone_no}}</td>
+                        <td>
+                            {% if i.first_name and i.last_name %}
+                                {{i.first_name|title}} {{i.last_name|title}}
+                            {% elif i.first_name and not i.last_name %}
+                                {{i.first_name|title}}
+                            {% elif not i.first_name and i.last_name %}
+                                {{i.last_name|title}}
+                            {%else%}
+                                N/A
+                            {%endif%}
+                        </td>
+                        {% if request.user.time_zone %}
+                        {% timezone request.user.time_zone.value %}
+                        <td data-order="{{i.created_at|date:'Y-m-d H:i'}}">Added on {{i.created_at | date:"j M, Y h:i A"}}</td>
+                        {% endtimezone %}
+                        {% else %}
+                        <td data-order="{{i.created_at|date:'Y-m-d H:i'}}">Added on {{i.created_at | date:"j M, Y h:i A"}}</td>
+                        {% endif %}
+                        <td>${%if i.sales %}{{i.sales|floatformat:2}}{%else%}0{%endif%}</td>
+                        <!-- <td class="text-center">
+                            <div class="rw_toggle_switch">
+                                <div class="rw_switch">
+                                    <input type="checkbox" checked="">
+                                </div>
+                            </div>
+                        </td>
+                        <td class="text-center">
+                            <div class="action_dropdown">
+                                <ul class="drop_ul">
+                                    <li class="position-relative"><a href="javascript:;" class="action_btn"><img
+                                                src="{% static 'images/icons/action.svg'%}" alt="action"></a>
+                                        <ul class="action_submenu">
+                                            <li><a href="javascript:;" class="remove_action"><img
+                                                        src="{% static 'images/icons/edit.svg'%}" alt="image">edit</a></li>
+                                            <li><a href="javascript:;" class="remove_action"><img
+                                                        src="{% static 'images/icons/delete.svg'%}" alt="image">delete</a>
+                                            </li>
+                                            <li><a href="javascript:;" class="remove_action"><img
+                                                        src="{% static 'images/icons/make_default.svg'%}" alt="image">Make
+                                                    Default</a></li>
+                                        </ul>
+                                    </li>
+                                </ul>
+                            </div>
+                        </td> -->
+                    </tr>
+                    {% endfor %}
+                    <!-- <tr>
+                        <td>919999999999</td>
+                        <td>johndoe@gmail.com</td>
+                        <td>Added on 3 Dec, 2021 03:00 PM</td>
+                        <td>$100</td>
+                        <td class="text-center">
+                            <div class="rw_toggle_switch">
+                                <div class="rw_switch">
+                                    <input type="checkbox" checked="">
+                                </div>
+                            </div>
+                        </td>
+                        <td class="text-center">
+                            <div class="action_dropdown">
+                                <ul class="drop_ul">
+                                    <li class="position-relative"><a href="javascript:;" class="action_btn"><img
+                                                src="{% static 'images/icons/action.svg'%}" alt="action"></a>
+                                        <ul class="action_submenu">
+                                            <li><a href="javascript:;" class="remove_action"><img
+                                                        src="{% static 'images/icons/edit.svg'%}" alt="image">edit</a></li>
+                                            <li><a href="javascript:;" class="remove_action"><img
+                                                        src="{% static 'images/icons/delete.svg'%}" alt="image">delete</a>
+                                            </li>
+                                            <li><a href="javascript:;" class="remove_action"><img
+                                                        src="{% static 'images/icons/make_default.svg'%}" alt="image">Make
+                                                    Default</a></li>
+                                        </ul>
+                                    </li>
+                                </ul>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>919999999999</td>
+                        <td>johndoe@gmail.com</td>
+                        <td>Added on 3 Dec, 2021 03:00 PM</td>
+                        <td>$100</td>
+                        <td class="text-center">
+                            <div class="rw_toggle_switch">
+                                <div class="rw_switch">
+                                    <input type="checkbox" checked="">
+                                </div>
+                            </div>
+                        </td>
+                        <td class="text-center">
+                            <div class="action_dropdown">
+                                <ul class="drop_ul">
+                                    <li class="position-relative"><a href="javascript:;" class="action_btn"><img
+                                                src="{% static 'images/icons/action.svg'%}" alt="action"></a>
+                                        <ul class="action_submenu">
+                                            <li><a href="javascript:;" class="remove_action"><img
+                                                        src="{% static 'images/icons/edit.svg'%}" alt="image">edit</a></li>
+                                            <li><a href="javascript:;" class="remove_action"><img
+                                                        src="{% static 'images/icons/delete.svg'%}" alt="image">delete</a>
+                                            </li>
+                                            <li><a href="javascript:;" class="remove_action"><img
+                                                        src="{% static 'images/icons/make_default.svg'%}" alt="image">Make
+                                                    Default</a></li>
+                                        </ul>
+                                    </li>
+                                </ul>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>919999999999</td>
+                        <td>johndoe@gmail.com</td>
+                        <td>Added on 3 Dec, 2021 03:00 PM</td>
+                        <td>$100</td>
+                        <td class="text-center">
+                            <div class="rw_toggle_switch">
+                                <div class="rw_switch">
+                                    <input type="checkbox" checked="">
+                                </div>
+                            </div>
+                        </td>
+                        <td class="text-center">
+                            <div class="action_dropdown">
+                                <ul class="drop_ul">
+                                    <li class="position-relative"><a href="javascript:;" class="action_btn"><img
+                                                src="{% static 'images/icons/action.svg'%}" alt="action"></a>
+                                        <ul class="action_submenu">
+                                            <li><a href="javascript:;" class="remove_action"><img
+                                                        src="{% static 'images/icons/edit.svg'%}" alt="image">edit</a></li>
+                                            <li><a href="javascript:;" class="remove_action"><img
+                                                        src="{% static 'images/icons/delete.svg'%}" alt="image">delete</a>
+                                            </li>
+                                            <li><a href="javascript:;" class="remove_action"><img
+                                                        src="{% static 'images/icons/make_default.svg'%}" alt="image">Make
+                                                    Default</a></li>
+                                        </ul>
+                                    </li>
+                                </ul>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>919999999999</td>
+                        <td>johndoe@gmail.com</td>
+                        <td>Added on 3 Dec, 2021 03:00 PM</td>
+                        <td>$100</td>
+                        <td class="text-center">
+                            <div class="rw_toggle_switch">
+                                <div class="rw_switch">
+                                    <input type="checkbox" checked="">
+                                </div>
+                            </div>
+                        </td>
+                        <td class="text-center">
+                            <div class="action_dropdown">
+                                <ul class="drop_ul">
+                                    <li class="position-relative"><a href="javascript:;" class="action_btn"><img
+                                                src="{% static 'images/icons/action.svg'%}" alt="action"></a>
+                                        <ul class="action_submenu">
+                                            <li><a href="javascript:;" class="remove_action"><img
+                                                        src="{% static 'images/icons/edit.svg'%}" alt="image">edit</a></li>
+                                            <li><a href="javascript:;" class="remove_action"><img
+                                                        src="{% static 'images/icons/delete.svg'%}" alt="image">delete</a>
+                                            </li>
+                                            <li><a href="javascript:;" class="remove_action"><img
+                                                        src="{% static 'images/icons/make_default.svg'%}" alt="image">Make
+                                                    Default</a></li>
+                                        </ul>
+                                    </li>
+                                </ul>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>919999999999</td>
+                        <td>johndoe@gmail.com</td>
+                        <td>Added on 3 Dec, 2021 03:00 PM</td>
+                        <td>$100</td>
+                        <td class="text-center">
+                            <div class="rw_toggle_switch">
+                                <div class="rw_switch">
+                                    <input type="checkbox" checked="">
+                                </div>
+                            </div>
+                        </td>
+                        <td class="text-center">
+                            <div class="action_dropdown">
+                                <ul class="drop_ul">
+                                    <li class="position-relative"><a href="javascript:;" class="action_btn"><img
+                                                src="{% static 'images/icons/action.svg'%}" alt="action"></a>
+                                        <ul class="action_submenu">
+                                            <li><a href="javascript:;" class="remove_action"><img
+                                                        src="{% static 'images/icons/edit.svg'%}" alt="image">edit</a></li>
+                                            <li><a href="javascript:;" class="remove_action"><img
+                                                        src="{% static 'images/icons/delete.svg'%}" alt="image">delete</a>
+                                            </li>
+                                            <li><a href="javascript:;" class="remove_action"><img
+                                                        src="{% static 'images/icons/make_default.svg'%}" alt="image">Make
+                                                    Default</a></li>
+                                        </ul>
+                                    </li>
+                                </ul>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>919999999999</td>
+                        <td>johndoe@gmail.com</td>
+                        <td>Added on 3 Dec, 2021 03:00 PM</td>
+                        <td>$100</td>
+                        <td class="text-center">
+                            <div class="rw_toggle_switch">
+                                <div class="rw_switch">
+                                    <input type="checkbox" checked="">
+                                </div>
+                            </div>
+                        </td>
+                        <td class="text-center">
+                            <div class="action_dropdown">
+                                <ul class="drop_ul">
+                                    <li class="position-relative"><a href="javascript:;" class="action_btn"><img
+                                                src="{% static 'images/icons/action.svg'%}" alt="action"></a>
+                                        <ul class="action_submenu">
+                                            <li><a href="javascript:;" class="remove_action"><img
+                                                        src="{% static 'images/icons/edit.svg'%}" alt="image">edit</a></li>
+                                            <li><a href="javascript:;" class="remove_action"><img
+                                                        src="{% static 'images/icons/delete.svg'%}" alt="image">delete</a>
+                                            </li>
+                                            <li><a href="javascript:;" class="remove_action"><img
+                                                        src="{% static 'images/icons/make_default.svg'%}" alt="image">Make
+                                                    Default</a></li>
+                                        </ul>
+                                    </li>
+                                </ul>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>919999999999</td>
+                        <td>johndoe@gmail.com</td>
+                        <td>Added on 3 Dec, 2021 03:00 PM</td>
+                        <td>$100</td>
+                        <td class="text-center">
+                            <div class="rw_toggle_switch">
+                                <div class="rw_switch">
+                                    <input type="checkbox" checked="">
+                                </div>
+                            </div>
+                        </td>
+                        <td class="text-center">
+                            <div class="action_dropdown">
+                                <ul class="drop_ul">
+                                    <li class="position-relative"><a href="javascript:;" class="action_btn"><img
+                                                src="{% static 'images/icons/action.svg'%}" alt="action"></a>
+                                        <ul class="action_submenu">
+                                            <li><a href="javascript:;" class="remove_action"><img
+                                                        src="{% static 'images/icons/edit.svg'%}" alt="image">edit</a></li>
+                                            <li><a href="javascript:;" class="remove_action"><img
+                                                        src="{% static 'images/icons/delete.svg'%}" alt="image">delete</a>
+                                            </li>
+                                            <li><a href="javascript:;" class="remove_action"><img
+                                                        src="{% static 'images/icons/make_default.svg'%}" alt="image">Make
+                                                    Default</a></li>
+                                        </ul>
+                                    </li>
+                                </ul>
+                            </div>
+                        </td>
+                    </tr> -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+    </div>
+</div>
+
+<script>
+    $("#filter_details").on("change", function(){
+        $('#loader').removeClass('rw_loader_none')
+        var client_id = $('#client_id').val();
+        console.log($(this).val());
+        $.ajax({
+            type: 'GET',
+            url: '{% url "client-dashboard-filter" %}',
+            data: {
+                details: $(this).val(),
+                id: client_id,
+            },
+            success: function(response){
+                console.log("******************");
+                $('#loader').addClass('rw_loader_none')
+
+                $("#dashboard").html(response)
+                $("#admin_dashboard_table").dataTable({
+                    // language: {
+                    // search: "",
+                    // searchPlaceholder: "Search Agency Name,Contact Name and Date",
+                    // paginate: {
+                    //     next: '<img src="../static/images/icons/chevron_right.svg" alt="image">',
+                    //     previous:
+                    //     '<img src="../static/images/icons/chevron_left.svg" alt="image">',
+                    // },
+                    // },
+                    bPaginate: true,
+                    bLengthChange: false,
+                    responsive: true,
+                    "order": [[ 2, "desc" ]],
+                    aoColumnDefs: [
+                        {
+                            bSortable: true,
+                            aTargets: [ -1 ]
+                        }
+                        ],
+                        "oLanguage": {
+                        "sEmptyTable": "No Records Found"
+                    }
+                });
+            },
+        });
+    })
+</script>
+{% endblock %}

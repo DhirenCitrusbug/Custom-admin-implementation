@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+
+<head>
+    {% block title %}
+    <title>Client Dashboard</title>
+    {% endblock %}
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
+    <link rel="stylesheet" href="{% static 'css/datatables.bootstrap.min.css' %}">
+    <link rel="stylesheet" href="{% static 'fonts/graphik_font.css' %}">
+    <link rel="stylesheet" href="{% static 'css/dataTables.bootstrap5.min.css' %}">
+    <link rel="stylesheet" href="{% static 'css/select2.min.css' %}">
+    <link rel="stylesheet" href="{% static 'css/jquery-ui.css' %}">
+    <link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
+    <link rel="stylesheet" href="{% static 'css/admin_account_settings.css' %}">
+    <link rel="stylesheet" href="{% static 'css/admin_user.css' %}">
+    <link rel="stylesheet" href="{% static 'css/agency_dashboard.css' %}">
+    <link rel="stylesheet" href="{% static 'css/agency_settings.css' %}">
+    <link rel="stylesheet" href="{% static 'css/broadcast.css' %}">
+    <link rel="stylesheet" href="{% static 'css/campaigns.css' %}">
+    <link rel="stylesheet" href="{% static 'css/campaign_creation.css' %}">
+    <link rel="stylesheet" href="{% static 'css/custom_select_2.css' %}">
+    <link rel="stylesheet" href="{% static 'css/campaigns_setting.css' %}">
+    <link rel="stylesheet" href="{% static 'css/client_contact.css' %}">
+    <link rel="stylesheet" href="{% static 'css/client_dashboard.css' %}">
+    <link rel="stylesheet" href="{% static 'css/client_list.css' %}">
+    <link rel="stylesheet" href="{% static 'css/client_schedule.css' %}">
+    <link rel="stylesheet" href="{% static 'css/coupon.css' %}">
+    <link rel="stylesheet" href="{% static 'css/icons.css' %}">
+    <link rel="stylesheet" href="{% static 'css/custom.css' %}">
+    <link rel="stylesheet" href="{% static 'css/reedem.css' %}">
+    <link rel="stylesheet" href="{% static 'css/twilio.css' %}">
+    <link rel="stylesheet" href="{% static 'css/agency_dashboard.css' %}">
+    <link rel="stylesheet" href="{% static 'css/agency_settings.css' %}">
+    <link rel="stylesheet" href="{% static 'css/jquery.datetimepicker.min.css' %}">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js" crossorigin="anonymous"></script>
+
+    {% block head %}
+    {% endblock head %}
+</head>
+<style>
+    .gray_p {
+        font-size: 14px;
+        line-height: 16px;
+        color: #11263c;
+        opacity: 0.4;
+        margin: 4px 0 0;
+    }
+</style>
+
+<body class="rw_custom_dropdown_wrapper">
+    <div class="rw_loader three col rw_loader_none" id="loader">
+        <div class="loading-dots">
+            <div class="loading-dots--dot"></div>
+            <div class="loading-dots--dot"></div>
+            <div class="loading-dots--dot"></div>
+            <div class="loading-dots--dot"></div>
+            <div class="loading-dots--dot"></div>
+        </div>
+    </div>
+    <div class="admin_dashboard_page client_dashboard_page rw_modal_backdrop ">
+        <header class="rw_header_wrapper">
+                <div class="rw_header_inner">
+                    {% block header_title %}
+                    {% if agency %}
+                    <div class="header_title agency_header_title" data-bs-toggle="offcanvas" data-bs-target="#offcanvasExample">
+                    {% else %}
+                    <div class="header_title " data-bs-toggle="offcanvas" data-bs-target="#offcanvasExample">
+                    {% endif %}
+                        <h3>{{client.business_name}}</h3>
+
+                        <p class="gray_p">Client Account</p>
+                    </div>
+                    {% endblock %}
+                    <div class="header_profile dropdown">
+                        <a href="javascript:;" class="dropdown-toggle" id="dropdownMenuButton1"
+                            data-bs-toggle="dropdown" aria-expanded="false">
+                            <h4>{{request.user.first_name|title}} {{request.user.last_name|title}}</h4>
+                            <div class="header_profile_image">
+                                <img src="{% static 'images/profile-pic.png' %}" alt="image">
+                                <span class="profile_arrow"></span>
+                            </div>
+                        </a>
+                        <ul class="header_profile_dropdown">
+                            {% if agency %}
+                            <li><a href="https://reeach.zohodesk.com.au/portal/en/newticket" target="_blank"><img src="{% static 'images/icons/support_agent.svg' %}" alt=""> Support</a></li>
+                            {% elif client.aegency.support_email %}
+                            <li><a href="mailto:{{client.aegency.support_email}}"><img src="{% static 'images/icons/support_agent.svg' %}" alt=""> Support</a></li>
+                            {% endif %}            
+                            <li><a href="{% url 'client-logout' %}"><img src="{% static 'images/icons/logout.svg' %}"
+                                        alt=""> Logout</a></li>
+                        </ul>
+                    </div>
+                    <div class="rw_hamburger">
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                    </div>
+                </div>
+
+                <div class="rw_sidebar">
+                    <div class="header_logo">
+                        {% if client %}
+                        <a href="{% url 'client-dashboard' client.id %}"><img src="{% static 'images/msg-icon.png' %}"
+                                alt="logo"></a>
+                        <span style="height: 33px;"></span>
+                        {% else %}
+                        <a href="{% url 'client-dashboard' request.user.id %}"><img src="{% static 'images/logo.svg' %}"
+                                alt="logo"></a>
+                        {% endif %}
+                    </div>
+                    <ul>{% if client %}
+                        <li><a href="{% url 'client-dashboard' client.id %}" {% if 'dashboard' in request.path %}class="active" {% endif %}><img src="{% static 'images/icons/dashboard.svg' %}"
+                                    alt="dashboard"></a></li>
+                        <li><a href="{% url 'client-contact' client.id %}" {% if 'contact' in request.path %}class="active" {% endif %}><img src="{% static 'images/icons/contact.svg' %}"
+                                    alt="settings"></a></li>
+                        <li><a href="{% url 'client-list' client.id %}" {% if 'client-list' in request.path %}class="active" {% endif %}><img src="{% static 'images/icons/bar.svg' %}" alt="settings"></a></li>
+                        <li><a href="{% url 'client-sch-broadcast' client.id %}" {% if 'broadcast' in request.path %}class="active" {% endif %}><img src="{% static 'images/icons/broadcast.svg' %}"
+                                    alt="settings"></a></li>
+                        <li><a href="{% url 'client-campaigns' client.id %}" {% if 'client-campaigns' in request.path %}class="active" {% elif 'campaign-creation' in request.path %}class="active" {% elif 'campaign-edit' in request.path %}class="active" {% endif %}><img src="{% static 'images/icons/campaigns.svg' %}"
+                                    alt="settings"></a></li>
+                        <li><a href="{% url 'client-coupon' client.id %}" {% if 'coupon' in request.path %}class="active" {% endif %}><img src="{% static 'images/icons/coupon.svg' %}"
+                                    alt="settings"></a></li>
+                        <li><a href="{% url 'client-referral-campaign' client.id %}" {% if 'client-referral-campaign' in request.path %}class="active" {% endif %}><img src="{% static 'images/icons/new_referral_logo.svg' %}" alt="settings"></a></li>
+                        {% if agency %}
+                        <li><a href="{% url 'client-settings' client.id %}" {% if 'setting' in request.path %}class="active" {% elif 'client-phone-view' in request.path %}class="active" {% elif 'add-custom-fields' in request.path %}class="active" {% elif 'client-tag-view' in request.path %}class="active" {% endif %}><img src="{% static 'images/icons/settings.svg' %}"
+                                    alt="settings"></a></li>
+                        <li><a href="https://reeach.zohodesk.com.au/portal/en/newticket" target="_blank"><img src="{% static 'images/icons/help_outline.svg' %}" alt="Help"></a></li>                       
+                        {% else %}
+                        <li><a href="{% url 'client-account-setting'  %}" {% if 'setting' in request.path %}class="active" {% endif %}><img src="{% static 'images/icons/settings.svg' %}"
+                                    alt="settings"></a></li>
+                        {% if client.aegency.support_email %}
+                            <li><a href="mailto:{{client.aegency.support_email}}"><img src="{% static 'images/icons/help_outline.svg' %}" alt="Help"></a></li>
+                        {% endif %}
+                        {% endif %}
+                        {% else %}
+                        <li><a href="{% url 'client-dashboard' request.user.id %}" {% if 'dashboard' in request.path %}class="active" {% endif %}><img src="{% static 'images/icons/dashboard.svg' %}"
+                                    alt="dashboard"></a></li>
+                        <li><a href="{% url 'client-contact' request.user.id %}" {% if 'contact' in request.path %}class="active" {% endif %}><img src="{% static 'images/icons/contact.svg' %}"
+                                    alt="settings"></a></li>
+                        <li><a href="{% url 'client-list' request.user.id %}" {% if 'client-list' in request.path %}class="active" {% endif %}><img src="{% static 'images/icons/bar.svg' %}"
+                                    alt="settings"></a></li>
+                        <li><a href="{% url 'client-sch-broadcast' request.user.id %}" {% if 'broadcast' in request.path %}class="active" {% endif %}><img src="{% static 'images/icons/broadcast.svg' %}"
+                                    alt="settings"></a></li>
+                        <li><a href="{% url 'client-campaigns' request.user.id %}" {% if 'client-campaigns' in request.path %}class="active" {% elif 'campaign-creation' in request.path %}class="active" {% elif 'campaign-edit' in request.path %}class="active" {% endif %}><img src="{% static 'images/icons/campaigns.svg' %}"
+                                    alt="settings"></a></li>
+                        <li><a href="{% url 'client-coupon' request.user.id %}" {% if 'coupon' in request.path %}class="active" {% endif %}><img src="{% static 'images/icons/coupon.svg' %}"
+                                    alt="settings"></a></li>
+                        <li><a href="{% url 'client-referral-campaign' request.user.id %}" {% if 'client-referral-campaign' in request.path %}class="active" {% endif %}><img src="{% static 'images/icons/new_referral_logo.svg' %}" alt="settings"></a></li>
+                        {% if agency %}
+                        <li><a href="{% url 'client-settings' client.id %}" {% if 'setting' in request.path %}class="active" {% elif 'client-phone-view' in request.path %}class="active" {% elif 'add-custom-fields' in request.path %}class="active" {% elif 'client-tag-view' in request.path %}class="active" {% endif %}><img src="{% static 'images/icons/settings.svg' %}"
+                                    alt="settings"></a></li>
+                        <li><a href="https://reeach.zohodesk.com.au/portal/en/newticket" target="_blank"><img src="{% static 'images/icons/help_outline.svg' %}" alt="Help"></a></li>
+                        {% else %}
+                        <li><a href="{% url 'client-account-setting' %}" {% if 'setting' in request.path %}class="active" {% endif %}><img src="{% static 'images/icons/settings.svg' %}"
+                                    alt="settings"></a></li>
+                        {% if client.aegency.support_email %}   
+                            <li><a href="mailto:{{client.aegency.support_email}}"><img src="{% static 'images/icons/help_outline.svg' %}" alt="Help"></a></li>
+                        {% endif %}
+                        {% endif %}
+                        {% endif %}
+                    </ul>
+                </div>
+            
+        </header>
+
+        {% block page_content %}
+        {% endblock %}
+        {% if agency %}
+        <div class="offcanvas offcanvas-start agency_offcanvas" tabindex="-1" id="offcanvasExample">
+            <div class="offcanvas-body">
+                <div class="acoount_list_body">
+                    <div class="master_ac">
+                        <h4>Master Account</h4>
+                        <div class="master_ac_inner">
+                            <div class="master_ac_img">
+                                <img src="{% static 'images/icons/circle_checkmark.svg' %}" alt="image">
+                            </div>
+                            <a href="{% url 'agency-dashboard' %}">
+                                <div class="master_ac_text">
+                                    <h3>{{agency.business_name|title}}</h3>
+                                    <p>Agency Login</p>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="client_accounts">
+                        <div class="cs_accounts">
+                            <h4>Client Accounts</h4>
+                            <div class="sorting">
+                                <a href="javascript:;" id="sort_up" class="active-sort"><img
+                                        src="{% static 'images/icons/sort_up.svg'%}" alt="image"></a>
+                                <a href="javascript:;" id="sort_down"><img
+                                        src="{% static 'images/icons/sort_down.svg'%}" alt="image"></a>
+                            </div>
+                        </div>
+                        <div class="search_box">
+                            <input type="text" placeholder="Search accounts.." id="client_search">
+                            <a href="javascript:;" class="inp_icon"><img
+                                    src="{% static 'images/icons/small_search.svg'%}" alt="image"></a>
+                        </div>
+                        <ul class="clientuser_list" id="client_list">
+
+
+                            <li>
+                                <a href="javascript:;" class="add_client" data-bs-toggle="modal"
+                                    data-bs-target="#client_adnew_agency">+ Add New Client</a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal fade twilio_modal rw_modal" id="client_adnew_agency" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered rw_select2_modal">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <div class="modal_title">
+                            <h4>Add New Client</h4>
+                        </div>
+                        <a href="javascript:;" class="popup_close" data-bs-dismiss="modal" aria-label="Close">
+                            <img src="{% static 'images/icons/close.svg' %}" alt="close"></a>
+                    </div>
+                    {% csrf_token %}
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="rw_form_inputs" id="cdiv_first">
+                                    <label class="rw_form_label">First Name</label>
+                                    <div class="rw_input">
+                                        <input type="text" placeholder="First Name" maxlength="15" name="first_name"
+                                            id="cfirst_name">
+
+                                    </div>
+                                    <div class="form_error" id="cfirst_error"></div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="rw_form_inputs" id="cdiv_last">
+                                    <label class="rw_form_label">Last Name</label>
+                                    <div class="rw_input">
+                                        <input type="text" placeholder="Last Name" maxlength="15" name="last_name"
+                                            id="clast_name">
+
+                                    </div>
+                                    <div class="form_error" id="clast_error"></div>
+                                </div>
+                            </div>
+                            <div class="col-md-12">
+                                <div class="rw_form_inputs" id="cdiv_email">
+                                    <label class="rw_form_label">Email Address</label>
+                                    <div class="rw_input">
+                                        <input type="email" placeholder="Email" name="email" id="cemail">
+                                        <span class="input_icon email"></span>
+
+                                    </div>
+                                    <div class="form_error" id="cemail_error"></div>
+                                </div>
+                            </div>
+                            <div class="col-md-12">
+                                <div class="rw_form_inputs" id="cdiv_business">
+                                    <label class="rw_form_label">Business Name</label>
+                                    <div class="rw_input">
+                                        <input type="text" placeholder="Business Name" maxlength="30"
+                                            name="business_name" id="cbusiness_name">
+                                        <span class="input_icon business"></span>
+
+                                    </div>
+                                    <div class="form_error" id="cbusiness_error"></div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <div class="rw_form_inputs rw_select2_inputs">
+                                    <label class="rw_form_label">Time Zone</label>
+                                    <div class="rw_custom_dropdown">
+
+                                        <select name="time_zone" id="ctime_zone" class="rw_popup_cstm_dropdown">
+                                            <option value="">Select Time Zone</option>
+                                            {%for i in time_zone %}
+                                            <option value="{{i.id}}">{{i.name}}</option>
+                                            {% endfor %}
+                                        </select>
+
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="rw_form_inputs">
+                                    <label class="rw_form_label">Country</label>
+                                    <div class="rw_custom_dropdown rw_select2_inputs">
+
+                                        <select name="country" id="ccountry" class="rw_popup_cstm_dropdown">
+                                            <option value="">Select Country</option>
+                                            {%for j in country %}
+                                            <option value="{{j.id}}">{{j.name}}</option>
+                                            {% endfor %}
+                                        </select>
+
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form_error" style="margin-top: 8px;" id="cerror"></div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <ul class="modal_btns">
+                            <li><a href="javascript:;" class="modal_btn cancel popup_close" data-bs-dismiss="modal">cancel</a></li>
+                            <li><input type="submit" id="add_client_btn" value="add" class="modal_btn"
+                                    style="border:none;"></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+
+    </div>
+
+    <script src="{% static 'js/jquery-3.6.0.min.js' %}"></script>
+    <script src="{% static 'js/jquery-ui.js' %}"></script>
+    <!-- <script src="{% static 'js/bootstrap.min.js' %}"></script> -->
+    <!-- <script src="{% static 'js/bootstrap.bundle.min.js' %}"></script> -->
+    <script src="{% static 'js/bootstrap1.bundle.min.js' %}"></script>
+    <!-- <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script> -->
+    <script src="{% static 'js/jquery.dataTables.min.js' %}"></script>
+    <script src="{% static 'js/dataTables.bootstrap5.min.js' %}"></script>
+    <script src="{% static 'js/select2.min.js' %}"></script>
+    <script src="{% static 'js/custom.js' %}"></script>
+    <script src="{% static 'js/common.js' %}"></script>
+    <script>
+        $(document).ready(function () {
+            $(".add_client").click(function (e) {
+                console.log('aaaaaaa')
+                $(".agency_offcanvas").addClass("active");
+                e.stopPropagation();
+            });
+            $("#ctime_zone").select2({
+                dropdownParent: $("#client_adnew_agency"),
+                placeholder: "Select Time Zone",
+                allowClear: false,
+                minimumResultsForSearch: -1,
+            });
+            $("#ccountry").select2({
+                dropdownParent: $("#client_adnew_agency"),
+                placeholder: "Select Country",
+                allowClear: false,
+                minimumResultsForSearch: -1,
+            });
+        });
+    </script>
+    {% block script %}
+    {% endblock %}
+
+</body>
+
+</html>

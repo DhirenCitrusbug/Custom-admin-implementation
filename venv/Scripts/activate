@@ -38,7 +38,7 @@ deactivate () {
 # unset irrelevant variables
 deactivate nondestructive
 
-VIRTUAL_ENV="C:\Users\Citrusbug\Downloads\ebr-randy-develop (1)\ebr-randy-develop\venv"
+VIRTUAL_ENV="C:\Users\Citrusbug\Downloads\reeach-backend\reeach-backend\venv"
 export VIRTUAL_ENV
 
 _OLD_VIRTUAL_PATH="$PATH"

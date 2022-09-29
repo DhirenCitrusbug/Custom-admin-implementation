@@ -1,0 +1,1503 @@
+{% extends 'client_base.html' %}
+{% load static %}
+{% load tz %}
+{% load tag_filter %}
+{% block title %}
+<title>Client Contacts</title>
+{% endblock %}
+{% block head %}
+<link rel="stylesheet" href="{% static 'css/client_contact.css' %}">
+{% endblock head %}
+{% block page_content %}
+<div class="rw_inner_area client_contact_page">
+    {% if messages %}
+    {% for message in messages %}
+    {% if message.tags == 'error' %}
+    <div class="rw_suc_err_wrapper rw_error_toast active">
+        <div class="rw_suc_err_block ">
+            <img src="{% static 'images/icons/error.svg'%}" alt="error">
+            <p></p>
+            <a href="javascript:;" class="close error_close"><img src="{% static 'images/icons/close_white.svg'%}"
+                    alt="close"></a>
+        </div>
+    </div>
+    {% else %}
+    <div class="rw_suc_err_wrapper rw_success_toast active">
+        <div class="rw_suc_err_block ">
+            <img src="{% static 'images/icons/check_white.svg' %}" alt="Done">
+            <p>{{message}}</p>
+            <a href="javascript:;" class="close success_close"><img src="{% static 'images/icons/close_white.svg' %}"
+                    alt="close"></a>
+        </div>
+    </div>
+    {% endif %}
+    {% endfor %}
+    {% endif %}
+    <input type="hidden" value="{{client.id}}" id="client_id">
+
+    <div class="rw_dashboard_box_wrapper">
+        <div class="admin_header agency_header">
+            <div class="dashboard_title">
+                <h1>Contacts</h1>
+            </div>
+        </div>
+    </div>
+    <div class="admin_user_select">
+        <div class="d-flex">
+            <div class="rw_selectbox tags">
+                <select id="tag">
+                    <option value="" selected>Tags</option>
+                    {% for t in tag %}
+                    <option value="{{t.id}}">{{t.name|title}}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="rw_selectbox bulkaction">
+                <select id="bulk_action">
+                    <option value="0">Bulk Actions</option>
+                    <option value="1">Delete</option>
+
+                </select>
+            </div>
+        </div>
+        <div class="search_icon_wrapper">
+            <div class="rw_dashboard_btn">
+                <a href="javascript:;" class="rw_btn" data-bs-toggle="modal" client-id="{{client.id}}"
+                    id="add_new_contact" data-bs-target="#add_contact_tolist">+Add Contact</a>
+            </div>
+        </div>
+    </div>
+    <div class="rw_table_wrapper">
+        <div class="rw_table_inner rw_admin_user_table rw_client_contact_table " id="contact_table">
+            <table id="rw_cl_contact_table" class="table rw_pagination ">
+                <thead>
+                    <tr>
+                        <th class="sorting_none">
+                            <div class="rw_checkbox ">
+                                <input type="checkbox" id="Number1" class="check_input">
+                                <label for="Number1"></label>
+                            </div>
+                        </th>
+                        <th>Number</th>
+                        <th>Name</th>
+                        <th>Date</th>
+                        <th class="text-center">Sales</th>
+                        <th class="sorting_none text-center">status</th>
+                        <th class="sorting_none text-center">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for i in contact %}
+                    <tr>
+                        <td>
+                            <div class="rw_checkbox ">
+                                <input type="checkbox" name="checkbox2" id="checkbox2-{{i.id}}" class="check_input"
+                                    value="{{i.id}}">
+                                <label for="checkbox2-{{i.id}}"></label>
+                            </div>
+                        </td>
+                        <td>{{i.phone_no}}</td>
+                        <td>{% if i.first_name and i.last_name %}
+                                {{i.first_name|title}} {{i.last_name|title}}
+                            {% elif i.first_name and not i.last_name %}
+                                {{i.first_name|title}}
+                            {% elif not i.first_name and i.last_name %}
+                                {{i.last_name|title}}
+                            {%else%}
+                                N/A
+                            {%endif%}
+                        </td>
+                        {% if request.user.time_zone %}
+                        {% timezone request.user.time_zone.value %}
+                        <td data-order="{{i.created_at|date:'Y-m-d H:i'}}">Added on {{i.created_at | date:"j M, Y h:i A"}}</td>
+                        {% endtimezone %}
+                        {% else %}
+                        <td data-order="{{i.created_at|date:'Y-m-d H:i'}}">Added on {{i.created_at | date:"j M, Y h:i A"}}</td>
+                        {% endif %}
+                        <td class="text-center">${%if i.sales %}{{i.sales|million}}{%else%}0{%endif%}</td>
+                        <td class="text-center">
+                            <div class="rw_toggle_switch">
+                                <div class="rw_switch">
+                                    <input type="checkbox" checked>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="text-center">
+                            <div class="action_dropdown">
+                                <ul class="drop_ul">
+                                    <li class="position-relative"><a href="javascript:;" class="action_btn"><img
+                                                src="{% static 'images/icons/action.svg'%}" alt="action"></a>
+                                        <ul class="action_submenu">
+                                            <li><a href="javascript:;" class="remove_action contact_id"
+                                                    data-bs-toggle="modal" data-bs-target="#add_campaigns"
+                                                    contact-id="{{i.id}}"><img
+                                                        src="{% static 'images/icons/colored_icon/campaing.svg'%}"
+                                                        alt="image">Add to Campaign</a></li>
+                                            <li><a href="javascript:;" class="remove_action contact_id contact_add"
+                                                    data-bs-toggle="modal" data-bs-target="#add_list"
+                                                    contact-id="{{i.id}}"><img
+                                                        src="{% static 'images/icons/colored_icon/bar.svg'%}"
+                                                        alt="image">Add to List</a></li>
+                                            <li><a href="javascript:;" class="remove_action contact_id" data-bs-toggle="modal"
+                                                    data-bs-target="#message_popup"  contact-id="{{i.id}}" id="send_message"><img
+                                                        src="{% static 'images/icons/message.svg'%}" alt="image">Send
+                                                    Message</a></li>
+                                            <li><a href="javascript:;" class="remove_action contact_id"
+                                                    data-bs-toggle="modal" data-bs-target="#edit_popup"
+                                                    contact-id="{{i.id}}" id="edit_contact"><img
+                                                        src="{% static 'images/icons/edit.svg'%}" alt="image">Edit</a>
+                                            </li>
+                                            <li><a href="javascript:;" class="remove_action" data-bs-toggle="modal"
+                                                    data-bs-target="#delete_confirm_popup-{{i.id}}"><img
+                                                        src="{% static 'images/icons/delete.svg'%}"
+                                                        alt="image">delete</a></li>
+                                        </ul>
+                                    </li>
+                                </ul>
+                            </div>
+                        </td>
+                    </tr>
+                    <div class="modal fade rw_modal delete_popup" id="delete_confirm_popup-{{i.id}}" tabindex="-1"
+                        aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <div class="modal_title">
+                                        <h4>Delete Contact</h4>
+                                    </div>
+                                    <a href="javascript:;" class="popup_close" data-bs-dismiss="modal"
+                                        aria-label="Close"><img src="{% static 'images/icons/close.svg'%}"
+                                            alt="close"></a>
+                                </div>
+                                <div class="modal-body">
+                                    <div class="delete_modal_body">
+                                        <img src="{% static 'images/delete_popup.svg'%}" alt="">
+                                        <h1>Delete Contact</h1>
+                                        <p>Are you sure you want to delete {{i.phone_no}}?</p>
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <ul class="modal_btns">
+                                        <li><a href="javascript:;" class="modal_btn cancel"
+                                                data-bs-dismiss="modal">no</a></li>
+                                        <li><a href="{% url 'contact-delete' i.id %}" id="contact_delete_id"
+                                                class="modal_btn">Yes</a></li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<!-- </div> -->
+<!-- Edit contact Popup -->
+<div class="modal fade rw_modal add_contact edit_contacts" id="edit_popup" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <form action="" method="post" id="edit_contact_form">
+                {% csrf_token %}
+                <div class="modal-header">
+                    <div class="modal_title">
+                        <h4>Edit Contact</h4>
+                    </div>
+                    <a href="javascript:;" class="popup_close" data-bs-dismiss="modal" aria-label="Close"><img
+                            src="{% static 'images/icons/close.svg'%}" alt="close"></a>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+
+                        <div class="col-md-12">
+                            <div class="rw_form_inputs" id="edit_div_phone">
+                                <label class="rw_form_label">Phone Number</label>
+                                <div class="rw_input">
+                                    {{edit_form.phone_no}}
+                                    <span class="input_icon phone" style="top: 70%;"></span>
+                                </div>
+                                <div class="form_error" id="edit_error_phone"></div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="rw_form_inputs">
+                                <label class="rw_form_label">First Name</label>
+                                <div class="rw_input">
+                                    {{edit_form.first_name}}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="rw_form_inputs">
+                                <label class="rw_form_label">Last Name</label>
+                                <div class="rw_input">
+                                    {{edit_form.last_name}}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="rw_form_inputs rw_date_input">
+                                <label class="rw_form_label">Birthday</label>
+                                <div class="rw_input">
+                                    {{edit_form.birthday}}
+                                    <span id="date_birth" class="input_icon calendar"></span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="rw_form_inputs rw_date_input">
+                                <label class="rw_form_label">Anniversary</label>
+                                <div class="rw_input">
+                                    {{edit_form.anniversary}}
+                                    <span class="input_icon calendar"></span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-12">
+                            <div class="rw_form_inputs rw_select2_inputs" id="div_e_tag">
+                                <label class="rw_form_label">Tags</label>
+                                <div class="rw_select2">
+                                    <span class="input_icon caret"></span>
+                                    <select name="tags" class="js-states form-control select2-hidden-accessible"
+                                        multiple="" id="edit_cont" tabindex="-1"
+                                        aria-hidden="true">
+                                        {% for tag in tag %}
+                                        <option value="{{tag.id}}">{{tag.name}}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="rw_form_inputs rw_select2_inputs" id="div_e_timezone">
+                                <label class="rw_form_label">Override Time Zone</label>
+                                <div class="rw_custom_dropdown">
+
+                                    {{edit_form.time_zone}}
+                                </div>
+                            </div>
+                        </div>
+                        <input type="hidden" id="contact_id">
+                        <div class="col-md-6">
+                            <div class="rw_form_inputs rw_select2_inputs active_camp">
+                                <label class="rw_form_label">Active Campaigns</label>
+                                <div class="rw_select2">
+                                    <span class="input_icon caret"></span>
+                                    <!-- <select id="active_campaigns1" class="js-states form-control" multiple>
+                                    <option selected="selected">Discount Offer</option>
+                                    <option >wedding</option>
+                                    <option>Anniversary</option>
+                                    <option>Anniversary</option>
+                                </select> -->
+                                    {{edit_form.active_campaign}}
+                                </div>
+                            </div>
+                        </div>
+                        {% if custom_fields %}
+                        {% for i in custom_fields %}
+                        {% if i.field_type == 'text' %}
+                        <div class="col-md-6">
+                            <div class="rw_form_inputs">
+                                <label class="rw_form_label">{{i.field_name}}</label>
+                                <div class="rw_input">
+                                    <input type="text" name="edit_{{i.field_name}}"
+                                        placeholder="{% if i.field_placeholder %}{{i.field_placeholder}}{% else %}N/A{% endif %}"
+                                        id="edit_custom_fields_value-{{i.id}}" value=""  maxlength="50">
+                                    <input type="hidden" name="edit_custom_field" value="{{i.id}}">
+                                </div>
+                            </div>
+                        </div>
+                        {% endif %}
+                        {% if i.field_type == 'textarea' %}
+                        <div class="col-md-12">
+                            <div class="rw_form_inputs">
+                                <label class="rw_form_label">{{i.field_name}}</label>
+                                <div class="rw_input">
+                                    <input type="textarea" name="edit_{{i.field_name}}"
+                                        placeholder="{% if i.field_placeholder %}{{i.field_placeholder}}{% else %}N/A{% endif %}"
+                                        id="edit_custom_fields_value-{{i.id}}" value=""  maxlength="300">
+                                    <input type="hidden" name="edit_custom_field" value="{{i.id}}">
+                                </div>
+                            </div>
+                        </div>
+                        {% endif %}
+                        {% if i.field_type == 'date' %}
+                        <div class="col-md-6">
+                            <div class="rw_form_inputs rw_date_input">
+                                <label class="rw_form_label">{{i.field_name}}</label>
+                                <div class="rw_input">
+                                    <input type="text" name="edit_{{i.field_name}}"
+                                        placeholder="{% if i.field_placeholder %}{{i.field_placeholder}}{% else %}N/A{% endif %}"
+                                        id="edit_custom_fields_value-{{i.id}}" class="date_field date_input" value="" autocomplete="off" readonly='true'>
+                                    <input type="hidden" name="edit_custom_field" value="{{i.id}}">
+                                    <span class="input_icon calendar"></span>
+                                </div>
+                            </div>
+                        </div>
+                        {% endif %}
+                        {% if i.field_type == 'number' %}
+                        <div class="col-md-6">
+                            <div class="rw_form_inputs">
+                                <label class="rw_form_label">{{i.field_name}}</label>
+                                <div class="rw_input">
+                                    <input type="text" class="custom_number_field" name="edit_{{i.field_name}}"
+                                        placeholder="{% if i.field_placeholder %}{{i.field_placeholder}}{% else %}N/A{% endif %}"
+                                        id="edit_custom_fields_value-{{i.id}}" value="" maxlength="10">
+                                    <input type="hidden" name="edit_custom_field" value="{{i.id}}">
+                                </div>
+                            </div>
+                        </div>
+                        {% endif %}
+                        {% if i.field_type == 'datetime-local' %}
+                        <div class="col-md-6">
+                            <div class="rw_form_inputs rw_date_input">
+                                <label class="rw_form_label">{{i.field_name}}</label>
+                                <div class="rw_input">
+                                    <input type="text" name="edit_{{i.field_name}}"
+                                        placeholder="{% if i.field_placeholder %}{{i.field_placeholder}}{% else %}N/A{% endif %}"
+                                        id="edit_custom_fields_value-{{i.id}}" class="datetime_field date_input" value="" autocomplete="off" readonly='true'>
+                                    <input type="hidden" name="edit_custom_field" value="{{i.id}}">
+                                    <span class="input_icon calendar"></span>
+                                </div>
+                            </div>
+                        </div>
+                        {% endif %}
+                        {% endfor %}
+                        {% endif %}
+                        <div class="form_error" id="error_edit"></div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <ul class="modal_btns">
+                        <li><a href="javascript:;" class="modal_btn cancel" data-bs-dismiss="modal">cancel</a></li>
+                        <li><input type="button" id="edit_contact_btn" value="save" class="modal_btn"
+                                style="border:none;"></li>
+                    </ul>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<!-- Add contact Popup -->
+<div class="modal fade rw_modal add_contact rw_select2_modal" id="add_contact_tolist" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <form action="{% url 'client-contact' client.id %}" method="post" id="add_contact">
+                {% csrf_token %}
+                <div class="modal-header">
+                    <div class="modal_title">
+                        <h4>Add Contact</h4>
+                    </div>
+                    <a href="javascript:;" class="popup_close" data-bs-dismiss="modal" aria-label="Close"><img
+                            src="{% static 'images/icons/close.svg'%}" alt="close"></a>
+                </div>
+                <div class="modal-body">
+                    <div class="row" id="form_fields">
+
+                        <div class="col-md-12">
+                            <div class="rw_form_inputs" id="div_phone">
+                                <label class="rw_form_label">Phone Number</label>
+                                <div class="rw_input">
+                                    {{forms.phone_no}}
+                                    <span class="input_icon phone" style="top: 70%;"></span>
+                                </div>
+                                <div class="form_error" id="error_phone"></div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="rw_form_inputs">
+                                <label class="rw_form_label">First Name</label>
+                                <div class="rw_input">
+                                    {{forms.first_name}}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="rw_form_inputs">
+                                <label class="rw_form_label">Last Name</label>
+                                <div class="rw_input">
+                                    {{forms.last_name}}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="rw_form_inputs rw_date_input">
+                                <label class="rw_form_label">Birthday</label>
+                                <div class="rw_input">
+                                    {{forms.birthday}}
+                                    <span class="input_icon calendar"></span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="rw_form_inputs rw_date_input">
+                                <label class="rw_form_label">Anniversary</label>
+                                <div class="rw_input">
+                                    {{forms.anniversary}}
+                                    <span class="input_icon calendar"></span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-12">
+                            <div class="rw_form_inputs rw_select2_inputs" id="div_c_tag">
+                                <label class="rw_form_label">Tags</label>
+                                <div class="rw_select2">
+                                    <span class="input_icon caret"></span>
+                                    <select name="tags" class="js-states form-control select2-hidden-accessible"
+                                        multiple="" id="id_tags" data-select2-id="id_tags" tabindex="-1"
+                                        aria-hidden="true">
+                                        {% for tag in tag %}
+                                        <option value="{{tag.id}}">{{tag.name}}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="rw_form_inputs rw_select2_inputs" id="div_c_timezone">
+                                <label class="rw_form_label">Override Time Zone</label>
+                                <div class="rw_custom_dropdown">
+                                    {{forms.time_zone}}
+                                </div>
+                            </div>
+                        </div>
+                        <!-- <div class="col-md-6">
+                        <div class="rw_form_inputs rw_select2_inputs active_camp">
+                            <label class="rw_form_label">Active Campaigns</label>
+                            <div class="rw_select2">
+                                <span class="input_icon caret"></span>
+                                <select id="active_campaigns" class="js-states form-control" multiple>
+                                    <option selected="selected">Discount Offer</option>
+                                    <option >wedding</option>
+                                    <option>Anniversary</option>
+                                    <option>Anniversary</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div> -->
+                        {% if custom_fields %}
+                        {% for i in custom_fields %}
+                        {% if i.field_type == 'text' %}
+                        <div class="col-md-6">
+                            <div class="rw_form_inputs">
+                                <label class="rw_form_label">{{i.field_name}}</label>
+                                <div class="rw_input">
+                                    <input type="text" name="{{i.field_name}}"
+                                        placeholder="{% if i.field_placeholder %}{{i.field_placeholder}}{% else %}N/A{% endif %}"
+                                        id="custom_fields_value-{{i.id}}" value="" maxlength="50">
+                                    <input type="hidden" name="custom_field" value="{{i.id}}">
+                                </div>
+                            </div>
+                        </div>
+                        {% endif %}
+                        {% if i.field_type == 'textarea' %}
+                        <div class="col-md-12">
+                            <div class="rw_form_inputs">
+                                <label class="rw_form_label">{{i.field_name}}</label>
+                                <div class="rw_input">
+                                    <input type="textarea" name="{{i.field_name}}"
+                                        placeholder="{% if i.field_placeholder %}{{i.field_placeholder}}{% else %}N/A{% endif %}"
+                                        id="custom_fields_value-{{i.id}}" value="" maxlength="300">
+                                    <input type="hidden" name="custom_field" value="{{i.id}}">
+                                </div>
+                            </div>
+                        </div>
+                        {% endif %}
+                        {% if i.field_type == 'date' %}
+                        <div class="col-md-6">
+                            <div class="rw_form_inputs rw_date_input">
+                                <label class="rw_form_label">{{i.field_name}}</label>
+                                <div class="rw_input">
+                                    <input type="text" name="{{i.field_name}}"
+                                        placeholder="{% if i.field_placeholder %}{{i.field_placeholder}}{% else %}N/A{% endif %}"
+                                        id="custom_fields_value-{{i.id}}" class="date_field date_input" value="" autocomplete="off" readonly='true'>
+                                    <input type="hidden" name="custom_field" value="{{i.id}}">
+                                    <span class="input_icon calendar"></span>
+                                </div>
+                            </div>
+                        </div>
+                        {% endif %}
+                        {% if i.field_type == 'number' %}
+                        <div class="col-md-6">
+                            <div class="rw_form_inputs">
+                                <label class="rw_form_label">{{i.field_name}}</label>
+                                <div class="rw_input">
+                                    <input type="text" class="custom_number_field" name="{{i.field_name}}"
+                                        placeholder="{% if i.field_placeholder %}{{i.field_placeholder}}{% else %}N/A{% endif %}"
+                                        id="custom_fields_value-{{i.id}}" value="" maxlength="10">
+                                    <input type="hidden" name="custom_field" value="{{i.id}}">
+                                </div>
+                            </div>
+                        </div>
+                        {% endif %}
+                        {% if i.field_type == 'datetime-local' %}
+                        <div class="col-md-6">
+                            <div class="rw_form_inputs rw_date_input">
+                                <label class="rw_form_label">{{i.field_name}}</label>
+                                <div class="rw_input">
+                                    <input type="text" name="{{i.field_name}}"
+                                        placeholder="{% if i.field_placeholder %}{{i.field_placeholder}}{% else %}N/A{% endif %}"
+                                        id="custom_fields_value-{{i.id}}" class="datetime_field date_input" value="" autocomplete="off" readonly='true'>
+                                    <input type="hidden" name="custom_field" value="{{i.id}}">
+                                    <span class="input_icon calendar"></span>
+                                </div>
+                            </div>
+                        </div>
+                        {% endif %}
+                        {% endfor %}
+                        {% endif %}
+                        <div class="form_error" id="error"></div>
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <ul class="modal_btns">
+                        <li><a href="javascript:;" class="modal_btn cancel" data-bs-dismiss="modal">cancel</a></li>
+                        <li><input type="button" id="add_contact_btn" value="save" class="modal_btn"
+                                style="border:none;"></li>
+                    </ul>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<!-- Add campaigns -->
+<div class="modal fade rw_modal client_list_modal client_list_modal_2" id="add_campaigns" tabindex="-1"
+    aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal_title">
+                    <h4>Add to Campaign</h4>
+                </div>
+                <a href="javascript:;" class="popup_close" data-bs-dismiss="modal" aria-label="Close"><img
+                        src="{% static 'images/icons/close.svg'%}" alt="close"></a>
+            </div>
+            <div class="modal-body">
+                <!-- <div class="search_box">
+                    <input type="hidden" name="" value="{{client.id}}" id="add_campaign_client_id">
+                    <input type="text" placeholder="Search Campaigns" id="add_campaign_searchbar">
+                    <a href="javascript:;" class="inp_icon"><img src="{% static 'images/icons/search_big.svg'%}"  alt="image"></a>
+                </div> -->
+                <div class="rw_table_wrapper rw_popup_table_wrapper static_list_table">
+                    <div class="rw_table_inner  rw_popup_table">
+                        <table id="addto_campaings_id" class="table rw_pagination">
+                            <thead>
+                                <tr>
+                                    <th>
+                                        <div class="rw_checkbox">
+                                            <input type="checkbox" class="campaign_check_input"
+                                                id="All_Referral_Program">
+                                            <label for="All_Referral_Program"></label>
+                                        </div>
+                                    </th>
+                                    <th>Name</th>
+                                    <th>Date</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for c in campaign %}
+                                <tr>
+                                    <td>
+                                        <div class="rw_checkbox">
+                                            <input type="checkbox" class="campaign_check_input" name="radio"
+                                                id="Referral_Program-{{c.id}}" value="{{c.id}}">
+                                            <label for="Referral_Program-{{c.id}}"></label>
+                                        </div>
+                                    </td>
+                                    <td>{{c.name|title}}</td>
+                                    {% if request.user.time_zone %}
+                                    {% timezone request.user.time_zone.value %}
+                                    <td data-order="{{c.created_at|date:'Y-m-d H:i'}}">Added on {{c.created_at | date:"j M, Y h:i A"}}</td>
+                                    {% endtimezone %}
+                                    {% else %}
+                                    <td data-order="{{c.created_at|date:'Y-m-d H:i'}}">Added on {{c.created_at | date:"j M, Y h:i A"}}</td>
+                                    {% endif %}
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer border_none">
+                <input type="hidden" name="contact_id">
+                <ul class="modal_btns">
+                    <li><a href="javascript:;" class="modal_btn cancel" data-bs-dismiss="modal">cancel</a></li>
+                    <li><a href="javascript:;" class="modal_btn" id="campaign_add">add</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+<!--Add to List -->
+<div class="modal fade rw_modal client_list_modal client_list_modal_2" id="add_list" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal_title">
+                    <h4>Add to List</h4>
+                </div>
+                <a href="javascript:;" class="popup_close" data-bs-dismiss="modal" aria-label="Close"><img
+                        src="{% static 'images/icons/close.svg'%}" alt="close"></a>
+            </div>
+            <div class="modal-body">
+                <!-- <div class="search_box">
+                    <input type="text" placeholder="Search Lists">
+                    <a href="javascript:;" class="inp_icon"><img src="{% static 'images/icons/search_big.svg'%}"
+                            alt="image"></a>
+                </div> -->
+                <div class="rw_table_wrapper rw_popup_table_wrapper static_list_table">
+                    <div class="rw_table_inner rw_client_contact_table rw_popup_table" id="contact_lists_table">
+                        <table id="add_tolist_id" class="table rw_pagination">
+                            <thead>
+                                <tr>
+                                    <th class="sorting_none">
+                                        <div class="rw_checkbox ">
+                                            <input type="checkbox" id="Number2"
+                                                class="check_input all_list_check_input">
+                                            <label for="Number2"></label>
+                                        </div>
+                                    </th>
+                                    <th>List Name</th>
+                                    <!-- <th>Contacts</th> -->
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for i in list %}
+                                <tr>
+                                    <td>
+                                        <div class="rw_checkbox ">
+                                            <input type="checkbox" name="radio" id="checkbox12-{{i.id}}"
+                                                class="check_input all_list_check_input" value="{{i.id}}">
+                                            <label for="checkbox12-{{i.id}}"></label>
+                                        </div>
+                                    </td>
+                                    <td>{% if i.name %}{{i.name}}{% else %}N/A{% endif %}</td>
+                                    <!-- <td>{{i.contacts.all.count}}</td> -->
+                                </tr>
+                                {% endfor %}
+
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer border_none">
+                <input type="hidden" name="contact_id">
+                <input type="hidden" name="client_id" value="{{client.id}}">
+                <ul class="modal_btns">
+                    <li><a href="javascript:;" class="modal_btn cancel" data-bs-dismiss="modal">cancel</a></li>
+                    <li><a href="javascript:;" class="modal_btn" id="add_contact_to_list">add</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Delete Popup -->
+<div class="modal fade rw_modal delete_popup" id="delete_confirm_popup" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal_title">
+                    <h4>Delete Contacts</h4>
+                </div>
+                <a href="javascript:;" class="popup_close" data-bs-dismiss="modal" aria-label="Close"><img
+                        src="{% static 'images/icons/close.svg'%}" alt="close"></a>
+            </div>
+            <div class="modal-body">
+                <div class="delete_modal_body">
+                    <img src="{% static 'images/delete_popup.svg' %}" alt="">
+                    <h1 id="bulk_h1">Delete 1,239 Contacts</h1>
+                    <p id="bulk_p">Are you sure you want to delete 1239 contacts?</p>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <ul class="modal_btns">
+                    <li><a href="javascript:;" class="modal_btn cancel" data-bs-dismiss="modal">no</a></li>
+                    <li><a href="javascript:;" class="modal_btn" id="bulk_delete">Yes</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Chat Popup -->
+<div class="modal fade rw_modal Chat_modal" id="message_popup" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal_title">
+                    <h4>Send Text to <span id="rcv_phone_no">+99 9999 9999 99</span></h4>
+                    <input type="hidden" id="message_contact_id" value="">
+                </div>
+                <div class="d-flex">
+                    <a href="javascript:;" class="popup_refresh"><img
+                        src="{% static 'images/icons/refresh_icon.png' %}" alt="close" width="25px" height="25px"></a>
+                    <a href="javascript:;" class="popup_close" data-bs-dismiss="modal" aria-label="Close"><img
+                            src="{% static 'images/icons/close.svg' %}" alt="close"></a>
+                </div>
+            </div>
+            <div class="modal-body" id="chat_data">
+                <div class="chat_body">
+                    <div class="chat_wrapper" id="chat_history">
+                        <div class="chat_message chat_message_rcv">
+                            <p>Praesent sapien massa, convallis a pellentesque nec, egestas non nisi. Pellentesque in
+                                ipsum id orci porta dapibus. Praesent sapien massa, convallis a pellentesque nec,
+                                egestas non nisi.</p>
+                        </div>
+                        <div class="chat_message chat_message_send">
+                            <p>Praesent sapien massa, convallis a pellentesque nec, egestas non nisi. Pellentesque in
+                                ipsum id orci porta dapibus. Praesent sapien massa, conval</p>
+                        </div>
+                        <div class="chat_message chat_message_rcv">
+                            <p>Praesent sapien massa, convallis a pellentesque nec, egestas non nisi. Pellentesque in
+                                ipsum id orci </p>
+                        </div>
+                        <div class="chat_message chat_message_rcv">
+                            <p>Praesent sapien massa, convallis a pellentesque nec, egestas non nisi. Pellentesque in
+                                ipsum id orci porta dapibus.</p>
+                        </div>
+                    </div>
+                    <input type="hidden" id="contact_id">
+                    <div class="type_chat">
+                        <input type="text" placeholder="Type a message" id="message_chat_box">
+                        <span class="input_icon send" id="send_button" style="cursor: pointer;"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block script %}
+<script src="{% static 'js/jquery.datetimepicker.full.min.js' %}"></script>
+<script>
+
+    $(".date_input").click(function (e) {
+        $(".modal").addClass("overflow_hidden");
+        e.stopPropagation();
+    });
+
+    $(document).on("click", function (e) {
+        if ($(e.target).is(".modal") === false) {
+            $(".modal").removeClass("overflow_hidden");
+        }
+    });
+
+    $(document).ready(function () {
+        $('.check_input:checked').val();
+        $("#id_tags").select2({
+            dropdownParent: $("#div_c_tag"),
+            placeholder: "Add tags",
+            allowClear: false,
+            minimumResultsForSearch: -1,
+        });
+        $("#edit_cont").select2({
+         dropdownParent: $("#div_e_tag"),
+         placeholder: "Edit tags",
+         allowClear: false,
+         minimumResultsForSearch: -1,
+        });
+        $("#active_campaigns1").select2({
+            // dropdownParent: $("#edit_popup"),
+            placeholder: "Active Campaigns",
+            allowClear: false,
+            minimumResultsForSearch: -1,
+        });
+        $('#active_campaigns1').on('select2:opening select2:closing', function( event ) {
+            var $searchfield = $(this).parent().find('.select2-search__field');
+            $searchfield.prop('disabled', true);
+        });
+        $("#e_time_zone").select2({
+            dropdownParent: $("#div_e_timezone"),
+            placeholder: "Select Time Zone",
+            allowClear: false,
+            minimumResultsForSearch: -1,
+        });
+        $("#c_time_zone").select2({
+            dropdownParent: $("#div_c_timezone"),
+            placeholder: "Select Time Zone",
+            allowClear: false,
+            minimumResultsForSearch: -1,
+        });
+        $("#id_birthday").datepicker({
+            dateFormat: "mm-dd",
+            dropdownParent: $("#add_contact_tolist"),
+        });
+        $("#id_anniversary").datepicker({
+            dateFormat: "mm-dd",
+            dropdownParent: $(".add_contact"),
+        });
+        $("#birth").datepicker({
+            dateFormat: "mm-dd",
+            dropdownParent: $(".add_contact"),
+        });
+        $("#annivarsary_edit").datepicker({
+            dateFormat: "mm-dd",
+            dropdownParent: $(".add_contact"),
+        });
+        $(".date_field").datepicker({
+            dateFormat: "mm-dd-yy",
+            dropdownParent: $(".add_contact"),
+        });
+        $(".datetime_field").datetimepicker({
+            formatTime:"h:i a",
+            step:15,
+            format: 'm-d-Y h:i a',
+            validateOnBlur: false,
+        });
+        $("#annivarsary_edit").datepicker({
+            dateFormat: "mm-dd",
+            dropdownParent: $(".add_contact"),
+        });
+        $(".rw_custom_dropdown .select2-selection").on("click", function (e) {
+            console.log('asddfasdasdasdasdasdas')
+            e.stopPropagation();
+            if ($(this).parents(".rw_custom_dropdown").hasClass("rw_inp_focus")) {
+                $(this).parents(".rw_custom_dropdown").removeClass("rw_inp_focus");
+            } else {
+                $(".rw_custom_dropdown.active").removeClass("rw_inp_focus");
+                $(this).parents(".rw_custom_dropdown").addClass("rw_inp_focus");
+            }
+            // For stop background
+            $(".modal").addClass("overflow_hidden");
+        });
+
+        // For stop background
+        $('#c_time_zone').on('change', function(e){
+            e.stopPropagation();
+            $(".modal").removeClass("overflow_hidden");
+        })
+        $('#e_time_zone').on('change', function(e){
+            e.stopPropagation();
+            $(".modal").removeClass("overflow_hidden");
+        })
+
+        $(document).on("click", function (e) {
+            if ($(e.target).is(".rw_custom_dropdown") === false) {
+                $(".rw_custom_dropdown").removeClass("rw_inp_focus");
+            }
+            // For stop background
+            $(".modal").removeClass("overflow_hidden");
+        });
+    });
+    $('#Number1').change(function () {
+        $('.check_input').prop('checked', this.checked);
+    });
+
+    $('.check_input').change(function () {
+        if ($('.check_input:checked').length == $('.check_input').length) {
+
+            $('#Number1').prop('checked', true);
+        }
+        else {
+            $('#Number1').prop('checked', false);
+
+        }
+    });
+
+
+    $('#id_phone_no_1').on('keypress', function (event) {
+        var regex = new RegExp("^[0-9]+$");
+        var key = String.fromCharCode(!event.charCode ? event.which : event.charCode);
+        if (!regex.test(key)) {
+            event.preventDefault();
+            return false;
+        }
+    });
+    $('#phone_1').on('keypress', function (event) {
+        var regex = new RegExp("^[0-9]+$");
+        var key = String.fromCharCode(!event.charCode ? event.which : event.charCode);
+        if (!regex.test(key)) {
+            event.preventDefault();
+            return false;
+        }
+    });
+    $('.custom_number_field').on('keypress', function (event) {
+        var regex = new RegExp("^[0-9]+$");
+        var key = String.fromCharCode(!event.charCode ? event.which : event.charCode);
+        if (!regex.test(key)) {
+            event.preventDefault();
+            return false;
+        }
+    });
+
+    $('#bulk_action').on('change', function (event) {
+        var array = $.map($('input[name="checkbox2"]:checked'), function (c) { return c.value; })
+        console.log(array)
+        console.log(array.length)
+        if (array.length > 1) {
+            $('#delete_confirm_popup').modal('show');
+            $('#bulk_h1').text('Delete ' + array.length + ' Contacts');
+            $('#bulk_p').text('Are you sure you want to delete ' + array.length + ' contacts?');
+            $('#bulk_action').val("0");
+        } else {
+            $('#delete_confirm_popup').modal('show');
+            $('#bulk_h1').text('Delete ' + array.length + ' Contact');
+            $('#bulk_p').text('Are you sure you want to delete ' + array.length + ' contact?');
+            $('#bulk_action').val("0");
+        }
+    });
+    $('#bulk_delete').on('click', function (event) {
+        var array = $.map($('input[name="checkbox2"]:checked'), function (c) { return c.value; })
+        console.log(array)
+        console.log(array.length)
+        if (array.length > 0) {
+            link = "{% url 'contact-delete' client.id %}";
+            $.ajax({
+                type: 'POST',
+                url: link,
+                data: {
+                    contact_id: array,
+                    csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val(),
+                },
+                success: function (response) {
+                    $('#loader').addClass('rw_loader_none')
+                    if (response['status'] == false) {
+                        $('#error').text(response['message'])
+                    } else {
+                        location.reload()
+                    }
+
+                }
+            });
+        }
+    });
+
+    var regex = /\(?([0-9]{3})\)?([ .-]?)([0-9]{3})\2([0-9]{2,4})/;
+    $('#add_contact_btn').on('click', function (event) {
+        console.log($('#id_phone_no_0 option:selected').text());
+        if ($("#id_phone_no_1").val().trim().length <= 0) {
+            $("#div_phone").addClass('error')
+            $('#error_phone').text('Please enter Phone Number')
+        } else if ($("#id_phone_no_1").val().trim().length > 12) {
+            $("#div_phone").addClass('error')
+            $('#error_phone').text('Please enter valid Phone Number')
+        } else if (!$("#id_phone_no_1").val().match(regex)) {
+            $("#div_phone").addClass('error')
+            $('#error_phone').text('Please enter proper Number')
+        }
+        else {
+            var birth = '';
+            var ann = '';
+            $('#loader').removeClass('rw_loader_none')
+            if ($("#id_birthday").val().length > 0) {
+                birth = "2022-" + $("#id_birthday").val()
+            }
+            if ($("#id_anniversary").val().length > 0) {
+                ann = "2022-" + $("#id_anniversary").val()
+            }
+
+            var list_id = []
+            var list_value = []
+            $("input[name='custom_field']").each(function (index, item) {
+                //console.log(item);
+                list_id.push(item['value'])
+            })
+            console.log(list_id);
+            for (let i in list_id) {
+                var id = list_id[i]
+                // alert(id)
+                var value = $('#custom_fields_value-' + id).val()
+                console.log(value);
+                if ($('#custom_fields_value-' + id).val()) {
+                    console.log(id);
+                    temp = {
+                        'id': id,
+                        'value': value,
+                    }
+                    list_value.push(temp)
+                }
+            }
+            console.log(list_value);
+
+            link = "{% url 'client-contact' client.id %}";
+            $.ajax({
+                type: 'POST',
+                url: link,
+                dataType: "JSON",
+                data: {
+                    first_name: $("#id_first_name").val(),
+                    last_name: $("#id_last_name").val(),
+                    phone_1: $("#id_phone_no_1").val(),
+                    phone_2: $("#id_phone_no_0").val(),
+                    tags: $("#id_tags").val(),
+                    time_zone: $("#id_time_zone").val(),
+                    birthday: birth,
+                    anniversary: ann,
+                    custom_fields: JSON.stringify(list_value),
+                    country_code_name : $('#id_phone_no_0 option:selected').text(),
+                    csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val(),
+                },
+
+                success: function (response) {
+                    $('#loader').addClass('rw_loader_none')
+                    if (response['status'] == false) {
+                        $('#error').text(response['message'])
+                    } else {
+                        location.reload()
+                    }
+                }
+            });
+
+        }
+
+    });
+    $('#id_phone_no_1').on('keyup', function (event) {
+        if ($("#id_phone_no_1").val().trim().length > 0) {
+            $("#div_phone").removeClass('error')
+            $('#error_phone').text('')
+        }
+
+    });
+
+
+    $(document).on("click", "#edit_contact", function () {
+        console.log('aaA')
+        var contact_id = $(this).attr('contact-id');
+
+        var field_id = []
+        $("input[name='edit_custom_field']").each(function (index, item) {
+            console.log(item);
+            field_id.push(item['value'])
+        })
+        console.log(field_id);
+
+        link = "{% url 'contact-edit' %}";
+        $.ajax({
+            type: 'GET',
+            url: link,
+            data: {
+                contact_id: contact_id,
+            },
+            success: function (response) {
+                console.log(response)
+                if (!response['contact']['country_code_name']){
+                    $('#phone_0').val(response['contact']['phone_no1'])
+                }else{
+                    var old_html = $('#phone_0').html()
+                    $('#phone_0').html('')
+                    var old_option = '<option value="'+response['contact']['phone_no1']+'">'+response['contact']['country_code_name']+'</option>'
+                    var new_option = '<option value="'+response['contact']['phone_no1']+'" selected>'+response['contact']['country_code_name']+'</option>'
+                    var new_html = old_html.replace(old_option, new_option);
+                    $('#phone_0').append(new_html)
+                }
+                $('#phone_1').val(response['contact']['phone_no2'])
+                $('#f_name').val(response['contact']['first_name'])
+                $('#l_name').val(response['contact']['last_name'])
+                $('#birth').val(response['contact']['birth'])
+                $('#contact_id').val(response['contact']['id'])
+                $('#annivarsary_edit').val(response['contact']['anniversary_date'])
+                $('#e_time_zone').val(response['contact']['time_zone']).change()
+                var testArray = response['contact']['tags_string'].split(',');
+                var testArray = testArray.map(function (item) { return item.trim(); });
+                console.log(testArray)
+                console.log($('#edit_cont').val())
+                $('#edit_cont').val(testArray).change();
+                console.log($('#edit_cont').val())
+                $('#e_time_zone').val(response['contact']['time_zone'])
+                console.log(response['custom_field_value']);
+                var active_campaign_array = response['contact']['active_campaign_string'].split(',');
+                var active_campaign_array = active_campaign_array.map(function (item) { return item.trim(); });
+                $('#active_campaigns1').val(active_campaign_array).change();
+
+                for (var j in field_id) {
+                    $('#edit_custom_fields_value-' + field_id[j]).val('')
+                }
+
+                for (var i in response['custom_field_value']) {
+                    if (contact_id == response['custom_field_value'][i]['contact_user']) {
+                        for (var j in field_id) {
+                            console.log(response['custom_field_value'][i]['custom_field'], 'custom field id');
+                            if (response['custom_field_value'][i]['custom_field'] == field_id[j]) {
+                                $('#edit_custom_fields_value-' + field_id[j]).val(response['custom_field_value'][i]['field_value'])
+                            }
+                        }
+                    }
+                }
+
+            }
+        });
+    });
+    $('#phone_1').on('keyup', function (event) {
+        if ($("#phone_1").val().trim().length > 0) {
+            $("#edit_div_phone").removeClass('error')
+            $('#edit_error_phone').text('')
+        }
+
+    });
+    $(document).on("click", "#edit_contact_btn", function () {
+        if ($("#phone_1").val().trim().length <= 0) {
+            $("#edit_div_phone").addClass('error')
+            $('#edit_error_phone').text('Please enter Phone Number')
+        } else if ($("#phone_1").val().trim().length > 12) {
+            $("#edit_div_phone").addClass('error')
+            $('#edit_error_phone').text('Please enter valid Phone Number')
+        } else if (!$("#phone_1").val().match(regex)) {
+            $("#edit_div_phone").addClass('error')
+            $('#edit_error_phone').text('Please enter proper Number')
+        }
+        else {
+            var birth1 = '';
+            var ann1 = '';
+            $('#loader').removeClass('rw_loader_none')
+            if ($("#birth").val().length > 0) {
+                birth1 = "2022-" + $("#birth").val()
+            }
+            if ($("#annivarsary_edit").val().length > 0) {
+                ann1 = "2022-" + $("#annivarsary_edit").val()
+            }
+
+            var list_id = []
+            var list_value = []
+            $("input[name='edit_custom_field']").each(function (index, item) {
+                //console.log(item);
+                list_id.push(item['value'])
+            })
+            console.log(list_id);
+            for (let i in list_id) {
+                var id = list_id[i]
+                // alert(id)
+                var value = $('#edit_custom_fields_value-' + id).val()
+                console.log(value);
+                if ($('#edit_custom_fields_value-' + id).val()) {
+                    console.log(id);
+                    temp = {
+                        'id': id,
+                        'value': value,
+                    }
+                    list_value.push(temp)
+                }
+            }
+            console.log(list_value, 'custom values');
+            link = "{% url 'contact-edit' %}";
+            $.ajax({
+                type: 'POST',
+                url: link,
+                data: {
+                    contact_id: $("#contact_id").val(),
+                    first_name: $("#f_name").val(),
+                    last_name: $("#l_name").val(),
+                    phone_1: $("#phone_0").val(),
+                    phone_2: $("#phone_1").val(),
+                    tags: $("#edit_cont").val(),
+                    active_campaigns: $("#active_campaigns1").val(),
+                    time_zone: $("#e_time_zone").val(),
+                    birthday: birth1,
+                    anniversary: ann1,
+                    custom_fields: JSON.stringify(list_value),
+                    country_code_name : $('#phone_0 option:selected').text(),
+                    csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val(),
+                },
+                success: function (response) {
+                    $('#loader').addClass('rw_loader_none')
+                    if (response['status'] == false) {
+                        $('#error').text(response['message'])
+                    } else {
+                        location.reload()
+                    }
+
+                }
+            });
+        }
+    });
+
+    $('#tag').on('change', function (event) {
+        // console.log(event.target.value.classList.add("selected"));
+        // console.log(event.target);
+        console.log($("#tag").val());
+        $('#loader').removeClass('rw_loader_none')
+        link = "{% url 'tag_wise_filter' %}";
+        $.ajax({
+            type: 'GET',
+            url: link,
+            data: {
+                tag_id: $("#tag").val(),
+                client_id: $("#client_id").val(),
+                
+            },
+            success: function (response) {
+                $('#loader').addClass('rw_loader_none')
+
+                $("#contact_table").html(response)
+                $("#rw_cl_contact_table").dataTable({
+                    language: {
+                        search: "",
+                        searchPlaceholder: "Search number/name",
+                        paginate: {
+                            next: '<img src="/static/images/icons/chevron_right.svg" alt="image">',
+                            previous:
+                                '<img src="/static/images/icons/chevron_left.svg" alt="image">',
+                        },
+                    },
+                    bPaginate: true,
+                    bLengthChange: false,
+                    responsive: true,
+                    "order": [[3, "desc"]],
+                    aoColumnDefs: [
+                        {
+                            bSortable: true,
+                            aTargets: [-1]
+                        }
+                    ],
+                    "columns": [
+                        { "searchable": false },
+                        null,
+                        null,
+                        { "searchable": false },
+                        { "searchable": false },
+                        { "searchable": false },
+                        { "searchable": false }
+                        ],
+                    "oLanguage": {
+                        "sEmptyTable": "No Records Found"
+                    }
+                });
+                $(".action_btn").on("click", function (e) {
+                    e.stopPropagation();
+                    if ($(this).siblings(".action_submenu").hasClass("active")) {
+                        $(this).siblings(".action_submenu").removeClass("active");
+                    } else {
+                        $(".action_submenu.active").removeClass("active");
+                        $(this).siblings(".action_submenu").addClass("active");
+                    }
+                });
+            }
+        });
+    });
+
+
+    $('#All_Referral_Program').change(function () {
+        $('.campaign_check_input').prop('checked', this.checked);
+    });
+
+    $('.campaign_check_input').change(function () {
+        if ($('.campaign_check_input:checked').length == $('.campaign_check_input').length) {
+
+            $('#All_Referral_Program').prop('checked', true);
+        }
+        else {
+            $('#All_Referral_Program').prop('checked', false);
+
+        }
+    });
+
+    $(".contact_id").on("click", function () {
+        var contact_id = $(this).attr('contact-id');
+        console.log(contact_id);
+        $('input[name=contact_id]').val(contact_id)
+    })
+
+    $('#campaign_add').on('click', function () {
+        var array = $.map($('input[name="radio"]:checked'), function (c) { return c.value; })
+        console.log(array);
+        if (array.length > 0) {
+            var link = "{% url 'campaign-start' %}"
+            $.ajax({
+                type: 'POST',
+                url: link,
+                data: {
+                    contact_id: $('input[name=contact_id]').val(),
+                    campaign_id: array,
+                    csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val(),
+                },
+                success: function (response) {
+                    console.log(response);
+                    location.reload();
+                }
+            });
+        }
+    });
+
+
+    $(".contact_add").on("click", function () {
+        // $('#loader').removeClass('rw_loader_none')
+        var contact_id = $('input[name=contact_id]').val()
+        var client_id = $('input[name=client_id]').val()
+        console.log(contact_id);
+        console.log(client_id);
+        $.ajax({
+            type: 'GET',
+            url: '{% url "contact-list-table" %}',
+            data: {
+                contact_id: contact_id,
+                client_id: client_id,
+            },
+            success: function (response) {
+                console.log();
+                // $('#loader').addClass('rw_loader_none')
+                $("#contact_lists_table").html(response)
+
+                $("#add_tolist_id").dataTable({
+                    language: {
+                        search: "",
+                        searchPlaceholder: "Search list",
+                    },
+                    bPaginate: true,
+                    bLengthChange: false,
+                    responsive: true,
+                });
+
+                $('#Number2').change(function () {
+                    $('.all_list_check_input').prop('checked', this.checked);
+                });
+
+                $('.all_list_check_input').change(function () {
+                    if ($('.all_list_check_input:checked').length == $('.all_list_check_input').length) {
+
+                        $('#Number2').prop('checked', true);
+                    }
+                    else {
+                        $('#Number2').prop('checked', false);
+
+                    }
+                });
+            }
+        });
+    })
+
+    $('#Number2').change(function () {
+        $('.all_list_check_input').prop('checked', this.checked);
+    });
+
+    $('.all_list_check_input').change(function () {
+        if ($('.all_list_check_input:checked').length == $('.all_list_check_input').length) {
+
+            $('#Number2').prop('checked', true);
+        }
+        else {
+            $('#Number2').prop('checked', false);
+
+        }
+    })
+
+    $('#add_contact_to_list').on('click', function () {
+        var array = $.map($('input[name="radio"]:checked'), function (c) { return c.value; })
+        var contact_id = $('input[name=contact_id]').val()
+        var client_id = $('input[name=client_id]').val()
+        console.log(array, "**************************");
+        console.log(contact_id);
+        console.log(client_id);
+        if (array.length > 0) {
+            var link = "{% url 'add-contact-to-list' %}"
+            $.ajax({
+                type: 'POST',
+                url: link,
+                data: {
+                    client_id: client_id,
+                    contact_id: contact_id,
+                    list_id: array,
+                    csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val(),
+                },
+                success: function (response) {
+                    console.log(response);
+                    location.reload();
+                }
+            });
+        }
+    });
+    
+    $('#send_button').on('click',function(){
+        var valid = true
+        var message = $('#message_chat_box').val()
+        var contact_id = $('input[name=contact_id]').val()
+        var client_id = $('#client_id').val()
+
+        console.log(message,'****************message',client_id,'******************client',contact_id,'******************contact');
+        if (message.trim().length <= 0){
+            valid = false
+        }
+        if (valid == true){
+            $.ajax({
+                type: 'POST',
+                url: "{% url 'chat-system' %}",
+                data: {
+                    client_id: client_id,
+                    contact_id: contact_id,
+                    message: message,
+                    csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val(),
+                },
+                success: function (response) {
+                    console.log(response);
+                    $('#chat_history').html(response)
+                    $('#message_chat_box').val('')
+                    $('#rcv_phone_no').text($('#user_phone_no').val())
+                }
+            })
+        }
+    })
+
+    $('.contact_id').on('click',function(){
+        var client_id = $('#client_id').val()
+        var contact_id = $(this).attr('contact-id')
+        $('#message_contact_id').val(contact_id)
+        console.log(client_id,'********************************',contact_id);
+        $.ajax({
+            type: 'GET',
+            url: "{% url 'get-chat-history' %}",
+            data: {
+                client_id: client_id,
+                contact_id: contact_id,
+            },
+            success: function (response) {
+                $('#chat_history').html(response)
+                $('#rcv_phone_no').text($('#user_phone_no').val())
+                setTimeout(function () {$('#chat_history').scrollTop($('#chat_history')[0].scrollHeight);}, 200);
+            }
+        })
+    })
+    // Refresh chat 
+    $('.popup_refresh').on('click',function(){
+        var client_id = $('#client_id').val()
+        var contact_id = $('#message_contact_id').val()
+        console.log(client_id,'********************************',contact_id);
+        $.ajax({
+            type: 'GET',
+            url: "{% url 'get-chat-history' %}",
+            data: {
+                client_id: client_id,
+                contact_id: contact_id,
+            },
+            success: function (response) {
+                $('#chat_history').html(response)
+                $('#rcv_phone_no').text($('#user_phone_no').val())
+                $('#chat_history').scrollTop($('#chat_history')[0].scrollHeight);
+            }
+        })
+    })
+
+    $('#add_contact_tolist').find('a').click(function(){
+        $(this).parents('form')[0].reset()
+        $('.form_error').empty()
+        $("#div_phone").removeClass('error')
+    })
+
+
+    $(document).ready(function(){
+
+        
+        $('#id_phone_no_0').html('')
+        $('#id_phone_no_0').append(`<option value>---------</option>
+                                    <option value="+61">Australia +61</option>
+                                    <option value="+1">Canada +1</option>
+                                    <option value="+91">India +91</option>
+                                    <option value="+64">New Zealand +64</option>
+                                    <option value="+44">United Kingdom +44</option>
+                                    <option value="+1" selected>United States +1</option>
+                                    `)    
+        $('#phone_0').html('')
+        $('#phone_0').append(`<option value>---------</option>
+                                <option value="+61">Australia +61</option>
+                                <option value="+1">Canada +1</option>
+                                <option value="+91">India +91</option>
+                                <option value="+64">New Zealand +64</option>
+                                <option value="+44">United Kingdom +44</option>
+                                <option value="+1">United States +1</option>
+                                `)    
+        // console.log($('#id_phone_no_0 option:selected').text(),'........................Country');
+    })
+</script>
+
+{% endblock %}

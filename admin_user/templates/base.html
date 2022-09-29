@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+
+    {% block title %}
+    <title>Admin Dashboard</title>
+    {% endblock %}
+        <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
+    <link rel="stylesheet" href="{% static 'css/datatables.bootstrap.min.css' %}">
+    <link rel="stylesheet" href="{% static 'fonts/graphik_font.css' %}">
+    <link rel="stylesheet" href="{% static 'css/dataTables.bootstrap5.min.css' %}">
+    <link rel="stylesheet" href="{% static 'css/select2.min.css' %}">
+    <link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
+    <link rel="stylesheet" href="{% static 'css/admin_account_settings.css' %}">
+    <link rel="stylesheet" href="{% static 'css/admin_user.css' %}">
+    <link rel="stylesheet" href="{% static 'css/agency_dashboard.css' %}">
+    <link rel="stylesheet" href="{% static 'css/agency_settings.css' %}">
+    <link rel="stylesheet" href="{% static 'css/broadcast.css' %}">
+    <link rel="stylesheet" href="{% static 'css/campaigns.css' %}">
+    <link rel="stylesheet" href="{% static 'css/campaign_creation.css' %}">
+    <link rel="stylesheet" href="{% static 'css/custom_select_2.css' %}">
+    <link rel="stylesheet" href="{% static 'css/campaigns_setting.css' %}">
+    <link rel="stylesheet" href="{% static 'css/client_contact.css' %}">
+    <link rel="stylesheet" href="{% static 'css/client_dashboard.css' %}">
+    <link rel="stylesheet" href="{% static 'css/client_list.css' %}">
+    <link rel="stylesheet" href="{% static 'css/client_schedule.css' %}">
+    <link rel="stylesheet" href="{% static 'css/coupon.css' %}">
+    <link rel="stylesheet" href="{% static 'css/icons.css' %}">
+    <link rel="stylesheet" href="{% static 'css/custom.css' %}">
+    <link rel="stylesheet" href="{% static 'css/reedem.css' %}">
+    <link rel="stylesheet" href="{% static 'css/twilio.css' %}">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js" crossorigin="anonymous"></script>
+
+
+
+
+
+
+
+    {% block head %}
+    {% endblock head %}
+</head>
+<body class="rw_custom_dropdown_wrapper">
+<div class="rw_loader three col rw_loader_none" id="loader">
+    <div class="loading-dots">
+        <div class="loading-dots--dot"></div>
+        <div class="loading-dots--dot"></div>
+        <div class="loading-dots--dot"></div>
+        <div class="loading-dots--dot"></div>
+        <div class="loading-dots--dot"></div>
+</div>
+</div>
+    <div class="admin_dashboard_page">
+        <header class="rw_header_wrapper">
+            <div class="rw_header_inner">            
+                <div class="header_title">
+                    <h3>Admin account</h3>
+                </div>
+            <div class="header_profile dropdown">
+                <a href="javascript:;" class="dropdown-toggle" id="dropdownMenuButton1" data-bs-toggle="dropdown"
+                    aria-expanded="false">
+                    <h4>{{request.user.first_name}} {{request.user.last_name}}</h4>
+                    <div class="header_profile_image">
+                        <img src="{% static 'images/profile-pic.png' %}" alt="image">
+                         <span class="profile_arrow"></span>
+                    </div>
+                </a>
+                 <ul class=" header_profile_dropdown" >
+                    <li><a href="{% url 'admin-logout' %}"><img src="{% static 'images/icons/logout.svg' %}" alt=""> Logout</a></li>
+                </ul>
+            </div>
+                <div class="rw_hamburger">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </div>
+            </div>
+            <div class="rw_sidebar">
+                <div class="header_logo">
+                    <a href="{% url 'index' %}"><img src="{% static 'images/logo.svg' %}" alt="logo"></a>
+                </div>
+                <ul>
+                    <li><a href="{% url 'index' %}" {% if 'admin-dashboard' in request.path %}class="active" {% endif %}><img src="{% static 'images/icons/dashboard.svg' %}" alt="dashboard"></a></li>
+                    <li><a href="{% url 'admin-user' %}" {% if 'agency-list' in request.path %}class="active" {% endif %}><img src="{% static 'images/icons/bar.svg' %}" alt="bar"></a></li>
+                    <li><a href="{% url 'admin-setting' %}" {% if 'admin-setting' in request.path %}class="active" {% endif %}><img src="{% static 'images/icons/settings.svg' %}" alt="settings"></a></li>
+                </ul>
+            </div>
+        </header>
+
+        {% block page_content %}
+        {% endblock %}
+    </div>
+    <script src="{% static 'js/jquery-3.6.0.min.js' %}"></script>
+    <script src="{% static 'js/bootstrap.min.js' %}"></script>
+    <script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
+    <script src="{% static 'js/jquery.dataTables.min.js' %}"></script>
+    <script src="{% static 'js/dataTables.bootstrap5.min.js' %}"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.26.0/moment.min.js"></script>
+    <script src="https://cdn.datatables.net/plug-ins/1.10.21/dataRender/datetime.js"></script>
+    <script src="{% static 'js/select2.min.js' %}"></script>
+    <script src="{% static 'js/custom.js' %}"></script>
+    {% block script %}
+    {% endblock %}
+</body>
+</html>

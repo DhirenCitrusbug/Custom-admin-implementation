@@ -1,0 +1,124 @@
+.admin_user_select {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+
+  .rw_selectbox {
+    min-width: 128px;
+    max-width: 128px;
+    margin-right: 8px;
+  }
+  .rw_dashboard_btn {
+    .rw_btn {
+      min-width: 224px;
+    }
+  }
+}
+.admin_user_page {
+  .rw_inner_area {
+    padding: 47px 48px 34px;
+  }
+  .rw_admin_user_table {
+    table {
+      tr {
+        td {
+          &:nth-child(1) {
+            width: 24%;
+          }
+          &:nth-child(2) {
+            width: 24%;
+          }
+          &:nth-child(3) {
+            width: 37%;
+          }
+          &:nth-child(4) {
+            width: 11%;
+          }
+          &:nth-child(5) {
+            width: 7%;
+            min-width: 60px;
+          }
+        }
+      }
+    }
+  }
+  .dataTables_paginate {
+    display: block;
+    margin-top: 20px !important;
+  }
+}
+#admin_adnew_agency {
+  .modal-footer {
+    padding: 12px 24px 20px;
+    border: none;
+  }
+  .rw_checkbox {
+    label {
+      color: #11263c;
+      opacity: 1;
+      text-align: left;
+    }
+  }
+}
+/****** Responsive ******/
+@media (max-width: 1023px) {
+}
+@media (max-width: 991px) {
+  .admin_user_select {
+    justify-content: space-between;
+  }
+  .rw_admin_user_table {
+    table {
+      tr {
+        td {
+          min-width: 150px;
+          &:nth-child(1) {
+            width: 24%;
+          }
+          &:nth-child(2) {
+            width: 24%;
+          }
+          &:nth-child(3) {
+            width: 37%;
+          }
+          &:nth-child(4) {
+            min-width: 80px;
+          }
+          &:nth-child(5) {
+            min-width: 75px;
+          }
+        }
+      }
+    }
+  }
+}
+@media (max-width: 768px) {
+  .admin_user_page {
+    .rw_inner_area {
+      padding: 27px 15px !important;
+    }
+  }
+}
+@media (max-width: 479px) {
+  .admin_user_select {
+    justify-content: space-between;
+    flex-direction: column;
+    .d-flex {
+      justify-content: space-between !important;
+      width: 100%;
+    }
+    .rw_selectbox {
+      max-width: 47%;
+      margin-bottom: 15px;
+      margin-right: 0;
+    }
+    .search_icon_wrapper {
+      width: 100%;
+      .rw_dashboard_btn {
+        .rw_btn {
+          max-width: 100%;
+        }
+      }
+    }
+  }
+}

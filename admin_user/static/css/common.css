@@ -1,0 +1,14 @@
+.login_btn {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  background-color: linear-gradient(269.36deg, #ED2A3A -23.62%, #F7983B 120.63%);
+  color: #fff;
+}
+/*# sourceMappingURL=common.css.map */

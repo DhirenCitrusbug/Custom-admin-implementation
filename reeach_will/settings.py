@@ -59,7 +59,9 @@ INSTALLED_APPS = [
     'client',
     'client_user',
     'crispy_forms',
-    'customadmin'
+    'customadmin',
+    'extra_views',
+    'widget_tweaks',
 
 ]
 

@@ -44,8 +44,8 @@
                          <td>Inactive</td>
                          {% endif %}
                             <td>                    
-                                <a href="{% url 'core:client-update' pk=i.pk %}" title="Edit" class="btn btn-primary btn-xs"><i class="fas fa-pencil-alt"></i></a>                            
-                                <a data-title="Zen" title="Delete" href="{% url 'core:client-delete' pk=i.pk %}" class="btn btn-danger btn-xs btn-delete"><i class="fas fa-trash-alt"></i></a>                        
+                                <a href="{% url 'customadmin:client-update' pk=i.pk %}" title="Edit" class="btn btn-primary btn-xs"><i class="fas fa-pencil-alt"></i></a>                            
+                                <a data-title="Zen" title="Delete" href="{% url 'customadmin:client-delete' pk=i.pk %}" class="btn btn-danger btn-xs btn-delete"><i class="fas fa-trash-alt"></i></a>                        
                             </td>
     
 

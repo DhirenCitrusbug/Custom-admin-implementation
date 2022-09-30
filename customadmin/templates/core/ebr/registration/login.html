@@ -28,7 +28,7 @@
                 </div>
                 {% endif %}
 
-                <form class="m-t" role="form" action="{% url 'core:auth_login' %}?next={{ next }}" accept-charset="UTF-8" method="post">
+                <form class="m-t" role="form" action="{% url 'customadmin:auth_login' %}?next={{ next }}" accept-charset="UTF-8" method="post">
                     {% csrf_token %}
                     <div class="form-group">
                         {{ form.username }}

@@ -21,7 +21,7 @@ urlpatterns = [
     path('admin/',include('admin_user.urls')),
     path('agency/',include('aegency_user.urls')),
     path('',include('client.urls')),
-    path('customadmin/',include('customadmin.urls'))
+    path('customadmin/',include('customadmin.urls')),
 
 ]
 handler404 = "reeach_will.views.page_not_found_view"

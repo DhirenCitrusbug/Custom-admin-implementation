@@ -1,5 +1,6 @@
 {% extends 'core/change_list.html' %}
 {% load static %}
+{% load widget_tweaks %}
 {% load admin_extras %}
 {% load misc_filters %}
 {% load i18n %}
@@ -45,8 +46,8 @@
                          <td>Inactive</td>
                          {% endif %}
                         <td>                    
-                            <a href="{% url 'core:agency-update' pk=i.pk %}" title="Edit" class="btn btn-primary btn-xs"><i class="fas fa-pencil-alt"></i></a>                            
-                            <a data-title="Zen" title="Delete" href="{% url 'core:agency-delete' pk=i.pk %}" class="btn btn-danger btn-xs btn-delete"><i class="fas fa-trash-alt"></i></a>                        
+                            <a href="{% url 'customadmin:agency-update' pk=i.pk %}" title="Edit" class="btn btn-primary btn-xs"><i class="fas fa-pencil-alt"></i></a>                            
+                            <a data-title="Zen" title="Delete" href="{% url 'customadmin:agency-delete' pk=i.pk %}" class="btn btn-danger btn-xs btn-delete"><i class="fas fa-trash-alt"></i></a>                        
                         </td>
 
                         </tr>
@@ -63,5 +64,9 @@
 
 {% block js %}
     {{ block.super }}
- 
+    <script src="{% static 'core/js/ajax_processing.js' %}"></script>
+
+    <script>
+        var pagination_url = "{% url opts|admin_urlname:'list-ajax' %}";
+    </script>
 {% endblock %}

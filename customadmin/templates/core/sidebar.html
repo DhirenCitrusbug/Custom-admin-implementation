@@ -6,7 +6,7 @@
         <ul class="nav metismenu" id="side-menu">
 
             <li class="nav-header">
-                <a href="{% url 'core:index' %}">
+                <a href="{% url 'customadmin:index' %}">
                     <img class="nav-image" src="{% static 'core/img/logo.svg' %}" width="100%" />
                 </a>
                 <div class="logo-element">
@@ -24,8 +24,8 @@
 <!--            {% endif %}-->
 
             {% if perms.core.add_reviewcategory or perms.core.view_reviewcategory or perms.core.change_reviewcategory or perms.core.delete_reviewcategory or request.user.is_superuser %}
-                <li {% if 'review-category/' in request.path %} class="active" {% endif %}>
-                    <a href="{% url 'core:agency-list'%}">
+                <li {% if 'agency-list/' in request.path %} class="active" {% endif %}>
+                    <a href="{% url 'customadmin:agency-list'%}">
                         <i class="fa fa-list-alt fa-fw fa-2x"></i>
                         <span class="nav-label">Agencies</span>
                     </a>
@@ -33,8 +33,8 @@
             {% endif %}
 
             {% if perms.core.add_reviewbrand or perms.core.view_reviewbrand or perms.core.change_reviewbrand or perms.core.delete_reviewbrand or request.user.is_superuser %}
-                <li {% if 'review-brand/' in request.path %} class="active" {% endif %}>
-                    <a href="{% url 'core:client-list'%}">
+                <li {% if 'client-list/' in request.path %} class="active" {% endif %}>
+                    <a href="{% url 'customadmin:client-list'%}">
                         <i class="fa fa-bicycle fa-fw fa-2x"></i>
                         <span class="nav-label">Clients</span>
                     </a>

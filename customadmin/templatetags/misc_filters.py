@@ -44,7 +44,7 @@ def as_json(obj):
 def admin_urlname(value, arg):
     
     # print('---------------------------------------------------------------------------------',value)
-    pattern = "%s:%s-%s" % (value.app_label, value.model_name, arg)
+    pattern = "%s:%s-%s" % ("customadmin", value.model_name, arg)
     # print('---------------------------------------------------------------------------------',pattern)
     return pattern
 

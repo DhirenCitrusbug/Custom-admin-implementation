@@ -25,6 +25,12 @@ class Client(Admin):
     def __str__(self):
         return self.first_name
 
+    def save(self, *args, **kwargs):
+        password = ''.join(random.choices(
+            string.ascii_uppercase + string.digits, k=10))
+        self.password = password
+        super().save(*args, *kwargs)
+
 
 class Tags(ActivityTracking):
     name=models.CharField(max_length=30)

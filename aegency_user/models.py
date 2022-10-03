@@ -1,5 +1,7 @@
 from django.db import models
 from admin_user.models import Admin, Address, ActivityTracking
+import random
+import string
 # Create your models here.
 
 
@@ -19,6 +21,12 @@ class AgencyUser(Admin):
 
     def __str__(self):
         return self.first_name
+
+    def save(self, *args, **kwargs):
+        password = ''.join(random.choices(
+            string.ascii_uppercase + string.digits, k=10))
+        self.password = password
+        super().save(*args, *kwargs)
 
 class AgencyHostname(ActivityTracking):
     user = models.ForeignKey(AgencyUser, on_delete=models.SET_NULL, blank=True, null=True)

@@ -31,6 +31,66 @@ $(document).ready(function(){
             { data: 'actions', name: 'actions' },
         ],
     });
+
+
+    $('#agencyuser-table').DataTable({
+        pageLength: 25,
+        responsive: true,
+        order: [[ 0, "desc" ]],
+        columnDefs: [{
+            orderable: false,
+            targets: [-1, -2]
+        },],
+
+        // Ajax for pagination
+        "language":
+        {
+            "processing": "<b><i class='fa fa-refresh fa-spin'></i>&nbsp;Loading....</b>",
+        },
+        processing: true,
+        serverSide: true,
+        ajax: {
+            url: window.pagination_url,
+            type: 'get',
+        },
+        columns: [
+            { data: 'id', name: 'id' },
+            { data: 'first_name', name: 'first_name' },
+            { data: 'email', name: 'email' },
+            { data: 'clients', name: 'clients' },
+            { data: 'actions', name: 'actions' },
+        ],
+    });
+
+
+    $('#client-table').DataTable({
+        pageLength: 25,
+        responsive: true,
+        order: [[ 0, "desc" ]],
+        columnDefs: [{
+            orderable: false,
+            targets: [-1, -2]
+        },],
+
+        // Ajax for pagination
+        "language":
+        {
+            "processing": "<b><i class='fa fa-refresh fa-spin'></i>&nbsp;Loading....</b>",
+        },
+        processing: true,
+        serverSide: true,
+        ajax: {
+            url: window.pagination_url,
+            type: 'get',
+        },
+        columns: [
+            { data: 'id', name: 'id' },
+            { data: 'business_name', name: 'business_name' },
+            { data: 'business_email', name: 'business_email' },
+            { data: 'agency', name: 'agency' },
+            { data: 'actions', name: 'actions' },
+        ],
+    });
     // ---------- Review Category Server-side processing END  ----------
 
     // ---------- Review Brand Server-side processing START  ----------
@@ -329,3 +389,6 @@ var userroles = {
         }
     },
 };
+
+
+

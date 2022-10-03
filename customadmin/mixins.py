@@ -19,8 +19,11 @@ class SuccessMessageMixin(object):
     def form_valid(self, form):
         response = super().form_valid(form)
         success_message = self.get_success_message()
-        if not self.request.is_ajax() and success_message:
-            messages.success(self.request, success_message)
+        try:
+            if not self.request.is_ajax() and success_message:
+                messages.success(self.request, success_message)
+        except:
+            pass
         return response
 
     # def forms_valid(self, forms):

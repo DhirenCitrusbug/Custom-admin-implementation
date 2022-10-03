@@ -14,7 +14,7 @@
 
 {% block current_breadcrumb %}
 <li class="breadcrumb-item">
-    <a href="{% url 'core:index' %}">{% trans 'Home' %}</a>
+    <a href="{% url 'customadmin:index' %}">{% trans 'Home' %}</a>
 </li>
 <li class="breadcrumb-item">
     <a href="">{{ opts.verbose_name_plural|capfirst }}</a>
@@ -63,9 +63,9 @@
     </div>
 
     <div class="modal-footer">
-        <a href="{% url 'core:index' %}" class="btn btn-white"><i class="fa fa-times"></i> Cancel</a>
+        <a href="{% url 'customadmin:index' %}" class="btn btn-white"><i class="fa fa-times"></i> Cancel</a>
 
-        {% if user.is_admin %}
+        {% if not perms_lacking and not protected and has_delete_permission %}
         {% comment %} <input type="submit" value="Yes, I'm Sure" class="btn btn-danger"/> {% endcomment %}
         <button class="btn btn-danger" onclick="myPageLoader()" type="submit"><i class="fa fa-check"></i> Yes, I'm Sure</button>
         {% endif %}

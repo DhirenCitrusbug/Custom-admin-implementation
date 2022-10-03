@@ -1,8 +1,7 @@
 {% extends "core/ebr/registration/base.html" %}
 {% load static %}
-{% comment %}
 {% load widget_tweaks %}
-{% endcomment %}
+
 
 {% block title %}Login{% endblock %}
 
@@ -28,13 +27,13 @@
                 </div>
                 {% endif %}
 
-                <form class="m-t" role="form" action="{% url 'customadmin:auth_login' %}?next={{ next }}" accept-charset="UTF-8" method="post">
+                <form class="m-t" role="form" action="{% url 'auth:auth_login' %}?next={{ next }}" accept-charset="UTF-8" method="post">
                     {% csrf_token %}
                     <div class="form-group">
-                        {{ form.username }}
+                        {{ form.username|attr:"required"|attr:"autofocus"|attr:"placeholder:Email"|attr:"class:form-control" }}
                     </div>
                     <div class="form-group">
-                        {{ form.password }}
+                        {{ form.password|attr:"required"|attr:"placeholder:Password"|attr:"class:form-control" }}
                     </div>
                     <!--<div class="form-group text-left">
                         <div class="i-checks"><input type="checkbox"><i></i> Remember me</div>

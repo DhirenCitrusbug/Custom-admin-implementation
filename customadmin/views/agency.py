@@ -1,15 +1,17 @@
+from multiprocessing.connection import Client
 from django.urls import reverse
-from django.views.generic import ListView,UpdateView,DeleteView,CreateView
 from aegency_user.models import AgencyUser
+from client.models import Client
 from ..forms import AgencyCreateForm
 from aegency_user.forms import AegencyChangeForm
 from .generic import (
-    MyListView, MyDetailView, MyCreateView, MyUpdateView, MyDeleteView, MyLoginRequiredView,
+    MyListView, MyCreateView, MyUpdateView, MyDeleteView, MyLoginRequiredView,
 )
 from django.http import JsonResponse
 from django.db.models import Q
 from django.template.loader import get_template
 from ..mixins import HasPermissionsMixin
+from django_datatables_too.mixins import DataTableMixin
 
 class AgencyCreateView(MyCreateView):
     """
@@ -18,7 +20,7 @@ class AgencyCreateView(MyCreateView):
     model = AgencyUser
     form_class = AgencyCreateForm
     template_name = "core/agency/agency_create.html"
-    permission_required = ("customadmin.add_AgencyUser",)
+    permission_required = ("agency_user.add_agencyUser",)
 
     def form_valid(self, form):
         form.instance.create_by = self.request.user
@@ -26,7 +28,7 @@ class AgencyCreateView(MyCreateView):
 
     def get_success_url(self):
         # opts = self.model._meta
-        return reverse("customadmin:agencyuser-list")
+        return reverse("customadmin:agency-list")
 
 class AgencyListView(MyListView):
     """
@@ -37,7 +39,7 @@ class AgencyListView(MyListView):
     model = AgencyUser
     queryset = model.objects.all()
     template_name = "core/agency/agency_list.html"
-    permission_required = ("customadmin.view_agencyUser",)
+    permission_required = ("agency_user.view_agencyuser",)
 
 # class AgencyListView(MyListView):
 #     """
@@ -60,7 +62,7 @@ class AgencyUpdateView(MyUpdateView):
     model = AgencyUser
     form_class = AegencyChangeForm
     template_name = "core/agency/agency_change_form.html"
-    permission_required = permission_required = ("core.add_agencyuser",)
+    permission_required = ("agency_user.add_agencyuser",)
 
     def get_success_url(self):
         return reverse("core:agency-list")
@@ -68,12 +70,12 @@ class AgencyUpdateView(MyUpdateView):
 class AgencyDeleteView(MyDeleteView):
    model = AgencyUser
    template_name = "core/confirm_delete.html"
-   permission_required = permission_required = ("core.add_reviewcategory",)
+   permission_required = permission_required = ("agency_user.add_agencyuser",)
 
    def get_success_url(self):
-       return reverse("core:agency-list")
+       return reverse("customadmin:agency-list")
 
-class AgencyUserAjaxPagination(HasPermissionsMixin, MyLoginRequiredView):
+class AgencyUserAjaxPagination(DataTableMixin,HasPermissionsMixin, MyLoginRequiredView):
     """
     Ajax-Pagination view for AgencyUser
     """
@@ -107,8 +109,8 @@ class AgencyUserAjaxPagination(HasPermissionsMixin, MyLoginRequiredView):
         # If a search term, filter the query
         if self.search:
             return qs.filter(
-                Q(name__icontains=self.search) |
-                Q(slug__icontains=self.search)
+                Q(first_name__icontains=self.search) |
+                Q(email__icontains=self.search)
             )
         return qs
 
@@ -117,17 +119,17 @@ class AgencyUserAjaxPagination(HasPermissionsMixin, MyLoginRequiredView):
         # Create row data for datatables
         data = []
         for o in qs:
-            if o.slug:
-                slug = o.slug
+            if o.email:
+                slug = o.email
             else:
                 slug = '-'
 
             data.append(
                 {
                     "id": o.id,
-                    "name": o.first_name,
-                    "slug": slug,
-                    "reviews": AgencyUser.objects.filter(brands=o.id).count(),
+                    "first_name": o.first_name,
+                    "email": o.email,
+                    "clients": Client.objects.filter(aegency=o.id).count(),
                     "actions": self._get_actions(o),
                 }
             )

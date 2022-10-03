@@ -8,7 +8,7 @@
 {% block page_content %}
     {% csrf_token %}
 
-    {% include "core/includes/list_header_card.html" with title="Create a new review brand" subtitle="You can add a new brand details by clicking this button." show_button=True %}
+    {% include "core/includes/list_header_card.html" with title="Create a new client" subtitle="You can add a new brand details by clicking this button." show_button=True %}
 
     <div class="ibox float-e-margins">
         <div class="ibox-content">
@@ -16,23 +16,24 @@
                 <table class="table table-striped table-bordered table-hover" id="{{ opts.model_name }}-table">
                     <thead>
                     <tr>
-                        <th>Client Name</th>
-                        <th>Contact Name</th>
-                        <th>Email</th>
-                        <th>Status</th>
+                        <th>Client ID</th>
+                        <th>Business Name</th>
+                        <th>Business Email</th>
+                        <th>Agency</th>
                         <th>Actions</th>
                     </tr>
                     </thead>
                     <tfoot>
                     <tr>
-                        <th>Client Name</th>
-                        <th>Contact Name</th>
-                        <th>Email</th>
-                        <th>Status</th>
-                        <th>Actions</th>     
+                        <th>Client ID</th>
+                        <th>Business Name</th>
+                        <th>Business Email</th>
+                        <th>Agency</th>
+                        <th>Actions</th> 
                     </tr>
                     </tfoot>
                     <tbody>
+                        {% comment %}
                         {% for i in object_list %}
                         <tr>
                             <td>{{i.business_name}}</td>
@@ -52,6 +53,8 @@
                         </tr>
 
                         {% endfor %}
+                        {% endcomment %}
+
                     </tbody>
                 </table>
             </div>
@@ -63,5 +66,9 @@
 
 {% block js %}
     {{ block.super }}
- 
+    <script src="{% static 'core/js/ajax_processing.js' %}"></script>
+
+    <script>
+        var pagination_url = "{% url opts|admin_urlname:'list-ajax' %}";
+    </script>
 {% endblock %}

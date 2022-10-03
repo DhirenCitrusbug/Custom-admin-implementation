@@ -1,8 +1,8 @@
 {% extends 'core/change_form.html' %}
 {% load static %}
-{% comment %}
+
 {% load widget_tweaks %}
-{% endcomment %}
+
 {% load admin_extras %}
 {% load misc_filters %}
 {% load crispy_forms_tags %}
@@ -10,13 +10,18 @@
 
 
 {% block page_content %}
-    <form id="{{ opts.model_name }}-form" action="" method="post" enctype="multipart/form-data" autocomplete="off">
+    <form id="{{ opts.model_name }}-form" action="" method="post" enctype="multipart/form-data" autocomplete="off" novalidate>
         {{ form.media }}
         {% include "core/partials/form_hidden_fields.html" %}
-
+        
         <div class="ibox float-e-margins">
             {% include "core/partials/ibox_title.html" with ibox_title="Review Brand Details" icon_class="fas fa-info-circle" only %}
             <div class="ibox-content">
+                <div class="row">
+                    <div class="col-sm-6 mt-2">
+                        {{ form.owner|as_crispy_field }}
+                    </div>
+                </div>
                 
                 <div class="row">
                     <div class="col-sm-6 mt-2">
@@ -46,11 +51,6 @@
                 <div class="row">
                     <div class="col-sm-6 mt-2">
                         {{ form.plan_duration|as_crispy_field }}
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-sm-6 mt-2">
-                        {{ form.owner|as_crispy_field }}
                     </div>
                 </div>
                 

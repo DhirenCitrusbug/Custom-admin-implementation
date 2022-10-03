@@ -1,5 +1,5 @@
 
-from django.shortcuts import render
+from django.shortcuts import redirect, render
 
 # Create your views here.
 from django.views.generic import View,TemplateView
@@ -58,6 +58,9 @@ class IndexView(TemplateView):
     context = {}
 
     def get(self, request):
+        print(request.user,'<---------------------------------------')
+        if not request.user.is_authenticated:
+            return redirect('auth:auth_login')
         agency_count = list(AgencyUser.objects.filter(owner=request.user).values_list('id'))
         agency_count = [i[0] for i in agency_count]
         self.context['agency'] = AgencyUser.objects.all().count()

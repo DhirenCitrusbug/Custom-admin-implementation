@@ -20,37 +20,37 @@
 
                 <div class="row">
                     <div class="col-sm-6">
-                        {{ form.email|as_crispy_field }}
+                        {{ form.first_name|as_crispy_field }}
                     </div>
                 </div>
 
                 <div class="row">
                     {% if request.user.id == object.pk %}
                         <div class="col-sm-6">
-                            {{ form.password|as_crispy_field}}
+                            {{ form.last_name|as_crispy_field}}
                         </div>
                     {% endif %}
 
                     {% if not object.pk %}
                         <div class="col-sm-6">
-                            {{ form.password1|as_crispy_field }}
+                            {{ form.newpassword|as_crispy_field }}
                         </div>
                         <div class="col-sm-6">
-                            {{ form.password2|as_crispy_field }}
+                            {{ form.confirmpassword|as_crispy_field }}
                         </div>
                     {% endif %}
                 </div>
 
             </div>
             <!-- /ibox-content -->
-
+{% comment %} fields = [ "oldpassword", "first_name", "last_name", "newpassword", "confirmpassword"] {% endcomment %}
         </div>
         <!-- /ibox -->
 
         <div class="ibox float-e-margins">
 
             {% include "core/partials/ibox_title.html" with ibox_title="Personal Info" icon_class="fas fa-user" only %}
-
+{% comment %} 
             <div class="ibox-content">
 
                 <div class="row">
@@ -76,7 +76,7 @@
                     </div>
                 </div>
 
-            </div>
+            </div> {% endcomment %}
             <!-- /ibox-content -->
 
         </div>

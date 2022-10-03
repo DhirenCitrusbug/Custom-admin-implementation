@@ -162,12 +162,12 @@
 
             {% if request.user.is_authenticated %}
             <li>
-                <a href="">
+                <a href="{% url 'customadmin:user-update' pk=request.user.pk%}">
                 <i class="fa fa-user"></i> {{ request.user }}
                 </a>
             </li>
             <li>
-              <a href="{% url 'customadmin:auth_logout' %}">
+              <a href="{% url 'auth:auth_logout' %}">
                 <i class="fa fa-sign-out-alt"></i> Logout</a>
             </li>
             {% endif %}

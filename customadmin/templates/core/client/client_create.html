@@ -10,7 +10,7 @@
 
 
 {% block page_content %}
-    <form id="{{ opts.model_name }}-form" action="" method="post" enctype="multipart/form-data" autocomplete="off">
+    <form id="{{ opts.model_name }}-form" action="" method="post" enctype="multipart/form-data" autocomplete="off" novalidate>
         {{ form.media }}
         {% include "core/partials/form_hidden_fields.html" %}
 

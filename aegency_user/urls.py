@@ -1,16 +1,8 @@
 from django.contrib import admin
 from django.urls import path, include
-from .viewss import AgencyDashboardView,AgencyUserLogoutView,\
-AgencyTwillioView,ClientActiveUser,ClientDeleteView,AgencyChangePasswordView,AgencyWhitelabelSettingView,AgencyWhitelabeldomianCheckView
-from .views.agency_login import AgencyUserLoginView
-from .views.agency_logout import AgencyUserLogoutView
-from .views.agency_setting import AgencySettingView
-from .views.agency_forgot_password import AgencyForgetPasswordView
-from .views.agency_set_password import AgencySetPasswordView
-from .views.add_client import AddClientView
-from .views.country_wise_state import CountryWiseState
-from .views.client_search import ClientSearch
-from .views.country import CountryView
+from .views import AgencyDashboardView,AgencyUserLogoutView,\
+AgencyTwillioView,ClientActiveUser,ClientDeleteView,AgencyChangePasswordView,AgencyWhitelabelSettingView,AgencyWhitelabeldomianCheckView,AgencyUserLoginView,AgencyUserLogoutView,AgencySettingView,AgencyForgetPasswordView,AgencySetPasswordView,AddClientView,CountryWiseState,ClientSearch,CountryView
+
 urlpatterns = [
    path('agency-login/',AgencyUserLoginView.as_view(),name="agency-login"),
    path('agency-dashboard/',AgencyDashboardView.as_view(),name="agency-dashboard"),

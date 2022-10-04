@@ -2,11 +2,12 @@ from multiprocessing.connection import Client
 from django.urls import reverse
 from aegency_user.models import AgencyUser
 from client.models import Client
-from ..forms import AgencyCreateForm
+from ..forms import AgencyCreateForm,MyAegencyChangeForm
 from aegency_user.forms import AegencyChangeForm
 from .generic import (
     MyListView, MyCreateView, MyUpdateView, MyDeleteView, MyLoginRequiredView,
 )
+
 from django.http import JsonResponse
 from django.db.models import Q
 from django.template.loader import get_template
@@ -60,7 +61,7 @@ class AgencyUpdateView(MyUpdateView):
     """
 
     model = AgencyUser
-    form_class = AegencyChangeForm
+    form_class = MyAegencyChangeForm
     template_name = "core/agency/agency_change_form.html"
     permission_required = ("agency_user.add_agencyuser",)
 

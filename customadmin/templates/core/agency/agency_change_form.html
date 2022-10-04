@@ -12,9 +12,20 @@
         {% include "core/partials/form_hidden_fields.html" %}
 
         <div class="ibox float-e-margins">
-            {% include "core/partials/ibox_title.html" with ibox_title="Review Brand Details" icon_class="fas fa-info-circle" only %}
+            {% include "core/partials/ibox_title.html" with ibox_title="Agency User Details" icon_class="fas fa-info-circle" only %}
             <div class="ibox-content">
 
+                <div class="row">
+                    <div class="col-sm-6 mt-2">
+                        {{ form.first_name|as_crispy_field }}
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-6 mt-2">
+                        {{ form.last_name|as_crispy_field }}
+                    </div>
+                </div>
+                
                 <div class="row">
                     <div class="col-sm-6 mt-2">
                         {{ form.business_name|as_crispy_field }}

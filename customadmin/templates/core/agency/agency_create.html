@@ -15,7 +15,7 @@
         {% include "core/partials/form_hidden_fields.html" %}
         
         <div class="ibox float-e-margins">
-            {% include "core/partials/ibox_title.html" with ibox_title="Review Brand Details" icon_class="fas fa-info-circle" only %}
+            {% include "core/partials/ibox_title.html" with ibox_title="Create Agency User" icon_class="fas fa-info-circle" only %}
             <div class="ibox-content">
                 <div class="row">
                     <div class="col-sm-6 mt-2">
@@ -53,6 +53,11 @@
                         {{ form.plan_duration|as_crispy_field }}
                     </div>
                 </div>
+                {% comment %} <div class="row">
+                    <div class="col-sm-6 mt-2">
+                        {{ form.password|as_crispy_field }}
+                    </div>
+                </div> {% endcomment %}
                 
                
 

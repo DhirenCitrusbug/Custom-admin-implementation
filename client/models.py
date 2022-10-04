@@ -26,11 +26,11 @@ class Client(Admin):
         return self.first_name
 
     def save(self, *args, **kwargs):
-        password = ''.join(random.choices(
-            string.ascii_uppercase + string.digits, k=10))
-        self.password = password
-        super().save(*args, *kwargs)
 
+        super().save(*args, *kwargs)
+    class Meta:
+        verbose_name = "Client"
+        verbose_name_plural = "Clients"
 
 class Tags(ActivityTracking):
     name=models.CharField(max_length=30)

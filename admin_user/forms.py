@@ -12,7 +12,7 @@ class EditProfileForm(forms.ModelForm):
 
     class Meta:
         model = Admin
-        fields = [ "oldpassword", "first_name", "last_name", "newpassword", "confirmpassword"]
+        fields = [ "oldpassword", "first_name", "last_name", "newpassword", "confirmpassword",'email']
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
